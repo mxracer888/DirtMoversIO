@@ -311,7 +311,7 @@ export default function MainActivity() {
             loadNumber={loadNumber}
             onAction={handleLogActivity}
             isLoading={logActivityMutation.isPending}
-            disabled={false}
+            disabled={isButtonDisabled || logActivityMutation.isPending}
           />
 
           {/* Rewind Button - Always show for testing */}
