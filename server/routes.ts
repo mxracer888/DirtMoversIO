@@ -15,12 +15,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
-      // Simple session (in production, use proper JWT or session management)
+      // Set session and save it
       req.session.userId = user.id;
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+        }
+      });
+      
+      console.log("Login successful, session set:", req.session.userId);
       
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
     } catch (error) {
+      console.error("Login error:", error);
       res.status(400).json({ error: "Invalid request data" });
     }
   });
@@ -35,6 +43,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/api/auth/me", async (req, res) => {
+    console.log("Auth check - Session ID:", req.sessionID);
+    console.log("Auth check - User ID in session:", req.session?.userId);
+    
     if (!req.session?.userId) {
       return res.status(401).json({ error: "Not authenticated" });
     }
@@ -44,6 +55,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).json({ error: "User not found" });
     }
 
+    console.log("Auth check successful for user:", user.email);
     const { password: _, ...userWithoutPassword } = user;
     res.json({ user: userWithoutPassword });
   });
