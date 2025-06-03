@@ -44,11 +44,11 @@ export default function DailySetup() {
     resolver: zodResolver(setupSchema),
     defaultValues: {
       workDate: new Date().toISOString().split('T')[0],
-      truckId: 0,
-      jobId: 0,
-      materialId: 0,
-      sourceLocationId: 0,
-      destinationLocationId: 0,
+      truckId: 1, // Default to first truck
+      jobId: 1,   // Default to first job
+      materialId: 1, // Default to first material
+      sourceLocationId: 1, // Default to first source
+      destinationLocationId: 2, // Default to first destination
     },
   });
 
@@ -110,8 +110,15 @@ export default function DailySetup() {
   });
 
   const onSubmit = (data: SetupFormData) => {
-    console.log("Form data:", data);
+    console.log("Form submitted with data:", data);
     console.log("Form errors:", form.formState.errors);
+    console.log("Form is valid:", form.formState.isValid);
+    
+    if (!form.formState.isValid) {
+      console.log("Form validation failed, not submitting");
+      return;
+    }
+    
     startDayMutation.mutate(data);
   };
 
