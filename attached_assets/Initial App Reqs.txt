@@ -1,0 +1,54 @@
+The app should be lightweight and quick. To start, it will just be one truck testing it but the app needs to scale to be able to handle 50-100 trucks concurrently accessing the database and inputting data to the api. If things go well, scalability up to maybe even more than a hundred trucks needs to be a possibility. 
+
+I primarily work in Python so I would like as much of the project as possible to be in python as it is easier for me to understand and work on as well. But I realize Python alone can't handle everything so I'm willing to take suggestions on different technologies as they are required. 
+
+The apple/android app will be a simple interface with essentially one button at a time. It will be a button that says something like "arrived at load site" and then when clicked the time and gps location are logged, then the next visible button would be "loaded with material" and again time and gps are logged, then the next button would be "arrived at dump site" with the time and gps location, and then "dumped material" with time and gps logged, then it would loop back and the next button would be back to "arrived at load site" 
+
+The app will of course need to have login functionality and the driver will need to enter in some basic data at the start of the day like truck number, company that is hauling the dirt/operating the dump truck ("company"), the company that is receiving the dirt ("customer"), the name of the driver, the source/source location of the material being hauled, and the location receiving the material. 
+
+The app is intended for dump truck brokers so it would be helpful for the dump truck broker to be able to pre-fill some of the info as dispatch instructions and then the dumptruck operator could just select a site. and example is below
+
+Customer: Pivot Excavating
+Work Date: 4/23
+Type of truck: side dump
+Job Name: Jordan River Heights
+Start Time: 7:00
+Type of Material: A1A
+Material From: Kilgore West Valley
+Delivered To: Jordan River Heights
+Travel Time: 45 mins
+
+Data like "type of truck" will be a global varialbe independent of the customer. Types include: 
+
+-Side dump
+-super side dump
+- double side dump
+- belly dump
+- double belly dump
+- End dump
+- End + pup
+- Strongarm
+
+Type of material is also global, types include: 
+
+- A1A
+- A1B
+- State Spec Road Base
+- Commercial Road Base
+- Hard Pack
+- 3/4 Crushed gravel
+- Bedding Sand
+- Cyclone Sand
+- XOUT
+
+Material From could be a project or a mine. If it's a mine there's only a handful of mines that we could pre-load, if it's a project for ex out it would be broker definable. Materials we can have a constantly growing list where the broker can either use a material that is already listed or add a new material
+
+The only other major feature I can think of for the app is that at the end of the day the driver needs to sign out with an operator and that operator needs to sign the freight ticket, since it's app based they'd just be able to use a digital signature panel and then of course timestamp and gps stamp that signature as well
+
+I'm sure this app will grow in scope, but that is a rough idea to get us off the ground. 
+
+As for a backend server to receive and store data we need an api that the app will integrate to and then a database to store it. I want your suggestions on technologies to use here but I like Python FastAPI (https://fastapi.tiangolo.com/) and it seems Postgres is good for a database, specifically Timescale (https://www.timescale.com/) which is Postgres based but optimized for time series data which is largely what we're dealing with. 
+
+This data will ultimately be used to submit invoicing to the customer for payment and will also be used for future, currently undetermined data analysis projects. 
+
+Please ask me for clarifying questions, and research all potential technologies and recommend what is best to use, this may include a front end website that the broker can use to view info on their computer or phone. 
