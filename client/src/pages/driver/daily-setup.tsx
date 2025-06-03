@@ -13,7 +13,9 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { insertWorkDaySchema } from "@shared/schema";
 import { z } from "zod";
 
-const setupSchema = insertWorkDaySchema.extend({
+const setupSchema = insertWorkDaySchema.omit({
+  driverId: true,
+}).extend({
   workDate: z.string(),
 }).refine((data) => data.truckId > 0, {
   message: "Please select a truck",
