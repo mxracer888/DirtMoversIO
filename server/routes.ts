@@ -104,22 +104,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Not authenticated" });
       }
 
-      console.log("Received work day data:", req.body);
+      // Manual validation of required fields
+      const { truckId, jobId, materialId, sourceLocationId, destinationLocationId, workDate } = req.body;
       
-      const workDayData = insertWorkDaySchema.parse({
-        ...req.body,
+      if (!truckId || !jobId || !materialId || !sourceLocationId || !destinationLocationId || !workDate) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Create the work day data object
+      const workDayData = {
         driverId: req.session.userId,
-        workDate: new Date(req.body.workDate),
-      });
-      
-      console.log("Parsed work day data:", workDayData);
+        truckId: parseInt(truckId),
+        jobId: parseInt(jobId),
+        materialId: parseInt(materialId),
+        sourceLocationId: parseInt(sourceLocationId),
+        destinationLocationId: parseInt(destinationLocationId),
+        workDate: new Date(workDate),
+        status: req.body.status || "active",
+        startTime: new Date(),
+        totalLoads: 0,
+      };
       
       const workDay = await storage.createWorkDay(workDayData);
       res.json(workDay);
     } catch (error) {
       console.error("Work day creation error:", error);
-      console.error("Error details:", error instanceof Error ? error.message : error);
-      res.status(400).json({ error: "Invalid work day data", details: error instanceof Error ? error.message : String(error) });
+      res.status(400).json({ 
+        error: "Failed to create work day", 
+        details: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
