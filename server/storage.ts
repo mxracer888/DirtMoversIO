@@ -235,6 +235,8 @@ export class MemStorage implements IStorage {
       ...insertUser,
       id: this.currentUserId++,
       createdAt: new Date(),
+      role: insertUser.role ?? "driver",
+      companyId: insertUser.companyId ?? null,
     };
     this.users.set(user.id, user);
     return user;
@@ -250,6 +252,9 @@ export class MemStorage implements IStorage {
       ...insertCompany,
       id: this.currentCompanyId++,
       createdAt: new Date(),
+      address: insertCompany.address ?? null,
+      contactEmail: insertCompany.contactEmail ?? null,
+      contactPhone: insertCompany.contactPhone ?? null,
     };
     this.companies.set(company.id, company);
     return company;
@@ -269,6 +274,7 @@ export class MemStorage implements IStorage {
       ...insertTruck,
       id: this.currentTruckId++,
       createdAt: new Date(),
+      isActive: insertTruck.isActive ?? null,
     };
     this.trucks.set(truck.id, truck);
     return truck;
@@ -288,6 +294,10 @@ export class MemStorage implements IStorage {
       ...insertJob,
       id: this.currentJobId++,
       createdAt: new Date(),
+      status: insertJob.status ?? null,
+      startDate: insertJob.startDate ?? null,
+      endDate: insertJob.endDate ?? null,
+      description: insertJob.description ?? null,
     };
     this.jobs.set(job.id, job);
     return job;
@@ -303,6 +313,9 @@ export class MemStorage implements IStorage {
       ...insertCustomer,
       id: this.currentCustomerId++,
       createdAt: new Date(),
+      address: insertCustomer.address ?? null,
+      contactEmail: insertCustomer.contactEmail ?? null,
+      contactPhone: insertCustomer.contactPhone ?? null,
     };
     this.customers.set(customer.id, customer);
     return customer;
@@ -318,6 +331,7 @@ export class MemStorage implements IStorage {
       ...insertMaterial,
       id: this.currentMaterialId++,
       createdAt: new Date(),
+      pricePerLoad: insertMaterial.pricePerLoad ?? null,
     };
     this.materials.set(material.id, material);
     return material;
@@ -337,6 +351,9 @@ export class MemStorage implements IStorage {
       ...insertLocation,
       id: this.currentLocationId++,
       createdAt: new Date(),
+      address: insertLocation.address ?? null,
+      latitude: insertLocation.latitude ?? null,
+      longitude: insertLocation.longitude ?? null,
     };
     this.locations.set(location.id, location);
     return location;
