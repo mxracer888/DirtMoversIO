@@ -1,0 +1,165 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { storage } from "./storage";
+import { loginSchema, insertWorkDaySchema, insertActivitySchema } from "@shared/schema";
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = loginSchema.parse(req.body);
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user || user.password !== password) {
+        return res.status(401).json({ error: "Invalid email or password" });
+      }
+
+      // Simple session (in production, use proper JWT or session management)
+      req.session = { userId: user.id };
+      
+      const { password: _, ...userWithoutPassword } = user;
+      res.json({ user: userWithoutPassword });
+    } catch (error) {
+      res.status(400).json({ error: "Invalid request data" });
+    }
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    req.session = null;
+    res.json({ success: true });
+  });
+
+  app.get("/api/auth/me", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const user = await storage.getUser(req.session.userId);
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
+    const { password: _, ...userWithoutPassword } = user;
+    res.json({ user: userWithoutPassword });
+  });
+
+  // Setup data endpoints
+  app.get("/api/trucks", async (req, res) => {
+    const trucks = await storage.getTrucks();
+    res.json(trucks);
+  });
+
+  app.get("/api/jobs", async (req, res) => {
+    const jobs = await storage.getActiveJobs();
+    res.json(jobs);
+  });
+
+  app.get("/api/customers", async (req, res) => {
+    const customers = await storage.getCustomers();
+    res.json(customers);
+  });
+
+  app.get("/api/materials", async (req, res) => {
+    const materials = await storage.getMaterials();
+    res.json(materials);
+  });
+
+  app.get("/api/locations", async (req, res) => {
+    const type = req.query.type as string;
+    const locations = type 
+      ? await storage.getLocationsByType(type)
+      : await storage.getLocations();
+    res.json(locations);
+  });
+
+  // Work day management
+  app.post("/api/work-days", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const workDayData = insertWorkDaySchema.parse({
+        ...req.body,
+        driverId: req.session.userId,
+        startTime: new Date(),
+        status: "active",
+      });
+
+      const workDay = await storage.createWorkDay(workDayData);
+      res.json(workDay);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid work day data" });
+    }
+  });
+
+  app.get("/api/work-days/active", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+
+    const workDay = await storage.getActiveWorkDayByDriver(req.session.userId);
+    res.json(workDay);
+  });
+
+  app.patch("/api/work-days/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      
+      const workDay = await storage.updateWorkDay(id, updates);
+      if (!workDay) {
+        return res.status(404).json({ error: "Work day not found" });
+      }
+      
+      res.json(workDay);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid update data" });
+    }
+  });
+
+  // Activity logging
+  app.post("/api/activities", async (req, res) => {
+    try {
+      const activityData = insertActivitySchema.parse(req.body);
+      const activity = await storage.createActivity(activityData);
+      res.json(activity);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid activity data" });
+    }
+  });
+
+  app.get("/api/activities/work-day/:workDayId", async (req, res) => {
+    const workDayId = parseInt(req.params.workDayId);
+    const activities = await storage.getActivitiesByWorkDay(workDayId);
+    res.json(activities);
+  });
+
+  app.get("/api/activities/recent", async (req, res) => {
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+    const activities = await storage.getRecentActivities(limit);
+    res.json(activities);
+  });
+
+  // Dashboard stats
+  app.get("/api/dashboard/stats", async (req, res) => {
+    const trucks = await storage.getTrucks();
+    const recentActivities = await storage.getRecentActivities(50);
+    
+    const activeTrucks = trucks.filter(truck => truck.isActive).length;
+    const loadsToday = recentActivities.filter(activity => 
+      activity.activityType === "dumped_material" &&
+      new Date(activity.timestamp).toDateString() === new Date().toDateString()
+    ).length;
+
+    res.json({
+      activeTrucks,
+      loadsToday,
+      avgCycleTime: "28 min", // This would be calculated from actual data
+      revenueToday: "$14,250", // This would be calculated from actual pricing
+    });
+  });
+
+  const httpServer = createServer(app);
+  return httpServer;
+}
