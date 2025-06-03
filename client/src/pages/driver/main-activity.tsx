@@ -32,6 +32,9 @@ export default function MainActivity() {
     enabled: !!workDay?.id,
   });
 
+  // Ensure activities is always an array
+  const validActivities = Array.isArray(activities) ? activities.filter(a => !a.cancelled) : [];
+
   const logActivityMutation = useMutation({
     mutationFn: async (activityType: string) => {
       if (!workDay) throw new Error("No active work day");
@@ -79,10 +82,10 @@ export default function MainActivity() {
 
   const rewindMutation = useMutation({
     mutationFn: async () => {
-      if (!workDay || !activities.length) throw new Error("No activities to rewind");
+      if (!workDay || !validActivities.length) throw new Error("No activities to rewind");
       
-      // Get the last activity
-      const lastActivity = activities[activities.length - 1];
+      // Get the last valid activity
+      const lastActivity = validActivities[validActivities.length - 1];
       
       // Mark activity as cancelled (soft delete)
       const res = await apiRequest("PATCH", `/api/activities/${lastActivity.id}`, {
@@ -124,27 +127,23 @@ export default function MainActivity() {
 
   // Calculate today's stats
   const todayStats = {
-    loads: Array.isArray(activities) ? activities.filter(a => a.activityType === "dumped_material" && !a.cancelled).length : 0,
-    lastLoadTime: Array.isArray(activities) ? activities.find(a => a.activityType === "dumped_material" && !a.cancelled)?.timestamp : null,
+    loads: validActivities.filter(a => a.activityType === "dumped_material").length,
+    lastLoadTime: validActivities.find(a => a.activityType === "dumped_material")?.timestamp || null,
     avgCycleTime: "32 min", // This would be calculated from actual cycle times
   };
 
   // Initialize state from activities and persist state
   useEffect(() => {
-    if (activities && activities.length > 0) {
-      // Get the last non-cancelled activity
-      const validActivities = activities.filter(a => !a.cancelled);
-      if (validActivities.length > 0) {
-        const lastActivity = validActivities[validActivities.length - 1];
-        const nextStep = getActivityFlow(lastActivity.activityType);
-        setCurrentStep(nextStep);
-        
-        // Set load number based on completed loads
-        const completedLoads = validActivities.filter(a => a.activityType === "dumped_material").length;
-        setLoadNumber(completedLoads + 1);
-      }
+    if (validActivities.length > 0) {
+      const lastActivity = validActivities[validActivities.length - 1];
+      const nextStep = getActivityFlow(lastActivity.activityType);
+      setCurrentStep(nextStep);
+      
+      // Set load number based on completed loads
+      const completedLoads = validActivities.filter(a => a.activityType === "dumped_material").length;
+      setLoadNumber(completedLoads + 1);
     }
-  }, [activities]);
+  }, [validActivities]);
 
   // Auto-redirect if no active work day
   useEffect(() => {
@@ -274,11 +273,11 @@ export default function MainActivity() {
           />
 
           {/* Rewind Button */}
-          {Array.isArray(activities) && activities.length > 0 && (
+          {validActivities.length > 0 && (
             <Button
               variant="outline"
               onClick={() => rewindMutation.mutate()}
-              disabled={rewindMutation.isPending || activities.length === 0}
+              disabled={rewindMutation.isPending || validActivities.length === 0}
               className="w-full py-3 border-orange-300 text-orange-600 hover:bg-orange-50"
             >
               <Undo2 className="h-5 w-5 mr-2" />
