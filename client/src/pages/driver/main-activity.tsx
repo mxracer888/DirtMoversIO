@@ -272,18 +272,25 @@ export default function MainActivity() {
             disabled={!location}
           />
 
-          {/* Rewind Button */}
-          {validActivities.length > 0 && (
-            <Button
-              variant="outline"
-              onClick={() => rewindMutation.mutate()}
-              disabled={rewindMutation.isPending || validActivities.length === 0}
-              className="w-full py-3 border-orange-300 text-orange-600 hover:bg-orange-50"
-            >
-              <Undo2 className="h-5 w-5 mr-2" />
-              {rewindMutation.isPending ? "Rewinding..." : "Rewind Last Activity"}
-            </Button>
-          )}
+          {/* Rewind Button - Always show for testing */}
+          <Button
+            variant="outline"
+            onClick={() => {
+              console.log("Undo button clicked");
+              console.log("Activities:", activities);
+              console.log("Valid activities:", validActivities);
+              if (validActivities.length > 0) {
+                rewindMutation.mutate();
+              } else {
+                alert("No activities to undo");
+              }
+            }}
+            disabled={rewindMutation.isPending}
+            className="w-full py-3 border-orange-300 text-orange-600 hover:bg-orange-50"
+          >
+            <Undo2 className="h-5 w-5 mr-2" />
+            {rewindMutation.isPending ? "Rewinding..." : `Undo Last Activity (${validActivities.length})`}
+          </Button>
 
           {/* Today's Summary */}
           <Card>
