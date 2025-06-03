@@ -123,7 +123,11 @@ export default function MainActivity() {
   // Initialize state from activities and persist state
   useEffect(() => {
     if (validActivities.length > 0) {
-      const lastActivity = validActivities[validActivities.length - 1];
+      // Sort activities by timestamp to get the actual last activity
+      const sortedActivities = [...validActivities].sort((a, b) => 
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+      const lastActivity = sortedActivities[sortedActivities.length - 1];
       const nextStep = getActivityFlow(lastActivity.activityType as any);
       setCurrentStep(nextStep);
       
