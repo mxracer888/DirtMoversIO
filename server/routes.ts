@@ -78,25 +78,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Work day management
-  app.post("/api/work-days", async (req, res) => {
-    try {
-      if (!req.session?.userId) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-
-      const workDayData = insertWorkDaySchema.parse({
-        ...req.body,
-        driverId: req.session.userId,
-        startTime: new Date(),
-        status: "active",
-      });
-
-      const workDay = await storage.createWorkDay(workDayData);
-      res.json(workDay);
-    } catch (error) {
-      res.status(400).json({ error: "Invalid work day data" });
-    }
-  });
 
   app.post("/api/work-days", async (req, res) => {
     try {
