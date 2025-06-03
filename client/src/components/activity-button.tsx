@@ -16,9 +16,9 @@ export default function ActivityButton({
   isLoading = false,
   disabled = false
 }: ActivityButtonProps) {
-  const Icon = getActivityIcon(activityType);
-  const label = getActivityLabel(activityType);
-  const color = getActivityColor(activityType);
+  const Icon = getActivityIcon(activityType as any);
+  const label = getActivityLabel(activityType as any);
+  const color = getActivityColor(activityType as any);
 
   const colorClass = color === "primary" ? "primary" : 
                     color === "secondary" ? "secondary" : "accent";

@@ -5,6 +5,7 @@
 :root {
   --background: 0 0% 100%;
   --foreground: 212 21% 13%; /* #212121 */
+  --surface: 0 0% 100%;
   --muted: 0 0% 96%; /* #F5F5F5 */
   --muted-foreground: 0 0% 46%; /* #757575 */
   --popover: 0 0% 100%;

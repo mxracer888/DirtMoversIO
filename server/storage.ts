@@ -376,6 +376,12 @@ export class MemStorage implements IStorage {
       id: this.currentWorkDayId++,
       totalLoads: 0,
       createdAt: new Date(),
+      status: insertWorkDay.status ?? null,
+      startTime: insertWorkDay.startTime ?? null,
+      endTime: insertWorkDay.endTime ?? null,
+      driverSignature: insertWorkDay.driverSignature ?? null,
+      operatorSignature: insertWorkDay.operatorSignature ?? null,
+      operatorName: insertWorkDay.operatorName ?? null,
     };
     this.workDays.set(workDay.id, workDay);
     return workDay;
@@ -402,6 +408,9 @@ export class MemStorage implements IStorage {
       ...insertActivity,
       id: this.currentActivityId++,
       createdAt: new Date(),
+      latitude: insertActivity.latitude ?? null,
+      longitude: insertActivity.longitude ?? null,
+      notes: insertActivity.notes ?? null,
     };
     this.activities.set(activity.id, activity);
     return activity;
