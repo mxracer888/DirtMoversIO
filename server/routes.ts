@@ -104,16 +104,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Not authenticated" });
       }
 
+      console.log("Received work day data:", req.body);
+      
       const workDayData = insertWorkDaySchema.parse({
         ...req.body,
         driverId: req.session.userId,
+        workDate: new Date(req.body.workDate),
       });
+      
+      console.log("Parsed work day data:", workDayData);
       
       const workDay = await storage.createWorkDay(workDayData);
       res.json(workDay);
     } catch (error) {
       console.error("Work day creation error:", error);
-      res.status(400).json({ error: "Invalid work day data" });
+      console.error("Error details:", error instanceof Error ? error.message : error);
+      res.status(400).json({ error: "Invalid work day data", details: error instanceof Error ? error.message : String(error) });
     }
   });
 
