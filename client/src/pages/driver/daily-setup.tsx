@@ -322,6 +322,19 @@ export default function DailySetup() {
               </>
             )}
           </Button>
+          
+          {/* Temporary bypass button for testing */}
+          <Button 
+            type="button"
+            variant="outline"
+            className="mt-4"
+            onClick={() => {
+              console.log("Direct navigation to main activity");
+              setLocation("/main-activity");
+            }}
+          >
+            Skip to Activity Page (Test)
+          </Button>
         </form>
       </div>
     </div>
