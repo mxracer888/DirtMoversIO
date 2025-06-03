@@ -132,7 +132,14 @@ export default function DailySetup() {
       </div>
 
       <div className="mobile-content">
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          console.log("Form validation errors:", errors);
+          toast({
+            title: "Please complete all fields",
+            description: "Make sure to select values for all dropdown fields",
+            variant: "destructive",
+          });
+        })} className="space-y-6">
           {/* Work Date */}
           <Card className="bg-primary/5">
             <CardContent className="p-4">
@@ -289,6 +296,11 @@ export default function DailySetup() {
             type="submit" 
             className="activity-button secondary"
             disabled={startDayMutation.isPending}
+            onClick={(e) => {
+              console.log("Button clicked");
+              console.log("Form state:", form.formState);
+              console.log("Form values:", form.getValues());
+            }}
           >
             {startDayMutation.isPending ? (
               <div className="flex items-center">
