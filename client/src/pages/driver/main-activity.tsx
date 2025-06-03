@@ -282,7 +282,11 @@ export default function MainActivity() {
               if (validActivities.length > 0) {
                 rewindMutation.mutate();
               } else {
-                alert("No activities to undo");
+                toast({
+                  title: "No activities to undo",
+                  description: "Log an activity first to use the undo feature",
+                  variant: "destructive",
+                });
               }
             }}
             disabled={rewindMutation.isPending}
