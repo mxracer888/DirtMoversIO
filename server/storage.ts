@@ -48,6 +48,7 @@ export interface IStorage {
   // Activities
   getActivitiesByWorkDay(workDayId: number): Promise<Activity[]>;
   createActivity(activity: InsertActivity): Promise<Activity>;
+  updateActivity(id: number, updates: Partial<Activity>): Promise<Activity | undefined>;
   getRecentActivities(limit?: number): Promise<Array<Activity & { driver: User; truck: Truck; job: Job }>>;
 }
 

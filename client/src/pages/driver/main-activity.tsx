@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Menu, History, LogOut, MapPin, Clock, TrendingUp } from "lucide-react";
+import { Menu, History, LogOut, MapPin, Clock, TrendingUp, Undo2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useGeolocation } from "@/hooks/use-geolocation";
-import { getActivityFlow, getActivityIcon, getActivityColor } from "@/lib/activity-states";
+import { getActivityFlow, getActivityIcon, getActivityColor, ACTIVITY_FLOW_SEQUENCE } from "@/lib/activity-states";
 import ActivityButton from "@/components/activity-button";
 import MenuOverlay from "@/components/menu-overlay";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -77,12 +77,74 @@ export default function MainActivity() {
     },
   });
 
+  const rewindMutation = useMutation({
+    mutationFn: async () => {
+      if (!workDay || !activities.length) throw new Error("No activities to rewind");
+      
+      // Get the last activity
+      const lastActivity = activities[activities.length - 1];
+      
+      // Mark activity as cancelled (soft delete)
+      const res = await apiRequest("PATCH", `/api/activities/${lastActivity.id}`, {
+        cancelled: true,
+        cancelledAt: new Date(),
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Activity rewound!",
+        description: "Previous activity has been cancelled",
+      });
+
+      // Get previous step in flow
+      const currentIndex = ACTIVITY_FLOW_SEQUENCE.indexOf(currentStep as any);
+      if (currentIndex > 0) {
+        const previousStep = ACTIVITY_FLOW_SEQUENCE[currentIndex - 1];
+        setCurrentStep(previousStep);
+      }
+
+      // Decrease load number if we're rewinding from dumped_material
+      if (currentStep === "arrived_at_load_site" && loadNumber > 1) {
+        setLoadNumber(prev => prev - 1);
+      }
+
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ["/api/activities/work-day", workDay?.id] });
+      queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to rewind",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Calculate today's stats
   const todayStats = {
     loads: activities.filter(a => a.activityType === "dumped_material").length,
     lastLoadTime: activities.find(a => a.activityType === "dumped_material")?.timestamp,
     avgCycleTime: "32 min", // This would be calculated from actual cycle times
   };
+
+  // Initialize state from activities and persist state
+  useEffect(() => {
+    if (activities && activities.length > 0) {
+      // Get the last non-cancelled activity
+      const validActivities = activities.filter(a => !a.cancelled);
+      if (validActivities.length > 0) {
+        const lastActivity = validActivities[validActivities.length - 1];
+        const nextStep = getActivityFlow(lastActivity.activityType);
+        setCurrentStep(nextStep);
+        
+        // Set load number based on completed loads
+        const completedLoads = validActivities.filter(a => a.activityType === "dumped_material").length;
+        setLoadNumber(completedLoads + 1);
+      }
+    }
+  }, [activities]);
 
   // Auto-redirect if no active work day
   useEffect(() => {
@@ -210,6 +272,19 @@ export default function MainActivity() {
             isLoading={logActivityMutation.isPending}
             disabled={!location}
           />
+
+          {/* Rewind Button */}
+          {activities && activities.length > 0 && (
+            <Button
+              variant="outline"
+              onClick={() => rewindMutation.mutate()}
+              disabled={rewindMutation.isPending || !activities.length}
+              className="w-full py-3 border-orange-300 text-orange-600 hover:bg-orange-50"
+            >
+              <Undo2 className="h-5 w-5 mr-2" />
+              {rewindMutation.isPending ? "Rewinding..." : "Rewind Last Activity"}
+            </Button>
+          )}
 
           {/* Today's Summary */}
           <Card>

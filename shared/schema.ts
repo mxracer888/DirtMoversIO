@@ -96,6 +96,8 @@ export const activities = pgTable("activities", {
   latitude: decimal("latitude", { precision: 10, scale: 7 }),
   longitude: decimal("longitude", { precision: 10, scale: 7 }),
   notes: text("notes"),
+  cancelled: boolean("cancelled").default(false),
+  cancelledAt: timestamp("cancelled_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

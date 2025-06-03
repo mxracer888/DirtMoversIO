@@ -31,8 +31,8 @@ export default function ActivityButton({
         className={`activity-button ${colorClass}`}
       >
         <Icon className="h-8 w-8 mb-2" />
-        <div className="text-center px-2">
-          <div className="text-lg font-bold leading-tight break-words">{label}</div>
+        <div className="text-center px-3">
+          <div className="text-base font-bold leading-tight break-words whitespace-normal">{label}</div>
           <div className="text-sm opacity-90 mt-1">Load #{loadNumber}</div>
         </div>
       </Button>

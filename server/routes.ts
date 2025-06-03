@@ -156,8 +156,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         loadNumber: parseInt(loadNumber),
         activityType: activityType,
         timestamp: new Date(timestamp),
-        latitude: latitude ? parseFloat(latitude) : null,
-        longitude: longitude ? parseFloat(longitude) : null,
+        latitude: latitude ? latitude.toString() : null,
+        longitude: longitude ? longitude.toString() : null,
         notes: notes || null,
       };
       
@@ -167,6 +167,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Activity creation error:", error);
       res.status(400).json({ 
         error: "Failed to create activity", 
+        details: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  app.patch("/api/activities/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+      
+      // Simple update for cancellation
+      const activity = await storage.updateActivity(id, updates);
+      if (!activity) {
+        return res.status(404).json({ error: "Activity not found" });
+      }
+      
+      res.json(activity);
+    } catch (error) {
+      console.error("Activity update error:", error);
+      res.status(400).json({ 
+        error: "Failed to update activity", 
         details: error instanceof Error ? error.message : String(error)
       });
     }
