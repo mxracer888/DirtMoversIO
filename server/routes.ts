@@ -67,9 +67,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
               startTime: new Date().toISOString(),
               endTime: null,
               signature: null,
-              notes: null
+              notes: null,
+              status: "active"
             });
             console.log("Created work day for development:", workDay.id);
+            
+            // Create sample activities for testing undo functionality
+            await storage.createActivity({
+              workDayId: workDay.id,
+              loadNumber: 1,
+              activityType: "arrived_at_load_site",
+              timestamp: new Date(Date.now() - 60 * 60 * 1000),
+              latitude: "40.7128",
+              longitude: "-74.0060",
+              cancelled: false
+            });
+            
+            await storage.createActivity({
+              workDayId: workDay.id,
+              loadNumber: 1,
+              activityType: "loaded_with_material",
+              timestamp: new Date(Date.now() - 30 * 60 * 1000),
+              latitude: "40.7128",
+              longitude: "-74.0060",
+              cancelled: false
+            });
+            
+            console.log("Created sample activities for undo testing");
           }
         }
       }
