@@ -167,6 +167,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(workDay);
   });
 
+  // Get activities by work day
+  app.get("/api/activities/work-day/:workDayId", async (req, res) => {
+    try {
+      const workDayId = parseInt(req.params.workDayId);
+      const activities = await storage.getActivitiesByWorkDay(workDayId);
+      res.json(activities);
+    } catch (error) {
+      console.error("Get activities error:", error);
+      res.status(500).json({ error: "Failed to get activities" });
+    }
+  });
+
   app.patch("/api/work-days/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
