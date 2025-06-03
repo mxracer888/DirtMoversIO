@@ -100,9 +100,10 @@ export default function MainActivity() {
         description: "Previous activity has been cancelled",
       });
 
-      // Invalidate queries to refresh data - this will trigger the useEffect to recalculate state
-      queryClient.invalidateQueries({ queryKey: ["/api/activities/work-day", workDay?.id] });
+      // Force refetch and invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ["/api/activities/work-day"] });
       queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
+      queryClient.refetchQueries({ queryKey: ["/api/activities/work-day", workDay?.id] });
     },
     onError: (error: any) => {
       toast({
@@ -114,16 +115,34 @@ export default function MainActivity() {
   });
 
   // Calculate today's stats
+  const calculateAvgCycleTime = () => {
+    const completedLoads = validActivities.filter(a => a.activityType === "dumped_material");
+    if (completedLoads.length === 0) return "-- min";
+    
+    // Simple cycle time estimation based on activity timestamps
+    let totalMinutes = 0;
+    let cycleCount = 0;
+    
+    for (let i = 0; i < completedLoads.length; i++) {
+      const loadStart = validActivities.find(a => a.loadNumber === completedLoads[i].loadNumber && a.activityType === "arrived_at_load_site");
+      if (loadStart) {
+        const timeDiff = new Date(completedLoads[i].timestamp).getTime() - new Date(loadStart.timestamp).getTime();
+        totalMinutes += timeDiff / (1000 * 60);
+        cycleCount++;
+      }
+    }
+    
+    return cycleCount > 0 ? `${Math.round(totalMinutes / cycleCount)} min` : "-- min";
+  };
+
   const todayStats = {
     loads: validActivities.filter(a => a.activityType === "dumped_material").length,
     lastLoadTime: validActivities.find(a => a.activityType === "dumped_material")?.timestamp || null,
-    avgCycleTime: "32 min", // This would be calculated from actual cycle times
+    avgCycleTime: calculateAvgCycleTime(),
   };
 
   // Initialize state from activities and persist state
   useEffect(() => {
-    console.log("Recalculating state from activities:", validActivities);
-    
     if (validActivities.length > 0) {
       // Sort activities by timestamp to get the actual last activity
       const sortedActivities = [...validActivities].sort((a, b) => 
@@ -131,10 +150,6 @@ export default function MainActivity() {
       );
       const lastActivity = sortedActivities[sortedActivities.length - 1];
       const nextStep = getActivityFlow(lastActivity.activityType as any);
-      
-      console.log("Last activity:", lastActivity);
-      console.log("Next step calculated:", nextStep);
-      
       setCurrentStep(nextStep);
       
       // Set load number based on completed loads
@@ -142,7 +157,6 @@ export default function MainActivity() {
       setLoadNumber(completedLoads + 1);
     } else {
       // Reset to first step if no activities
-      console.log("No activities found, resetting to first step");
       setCurrentStep("arrived_at_load_site");
       setLoadNumber(1);
     }
