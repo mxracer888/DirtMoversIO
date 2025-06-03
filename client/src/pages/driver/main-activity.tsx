@@ -61,16 +61,7 @@ export default function MainActivity() {
         description: `Successfully logged: ${activityType.replace(/_/g, ' ')}`,
       });
 
-      // Update activity flow
-      const nextStep = getActivityFlow(activityType);
-      setCurrentStep(nextStep);
-
-      // Increment load number when completing a cycle
-      if (activityType === "dumped_material") {
-        setLoadNumber(prev => prev + 1);
-      }
-
-      // Invalidate queries to refresh data
+      // Invalidate queries to refresh data - this will trigger the useEffect to recalculate state
       queryClient.invalidateQueries({ queryKey: ["/api/activities/work-day", workDay?.id] });
       queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
     },
@@ -109,19 +100,7 @@ export default function MainActivity() {
         description: "Previous activity has been cancelled",
       });
 
-      // Get previous step in flow
-      const currentIndex = ACTIVITY_FLOW_SEQUENCE.indexOf(currentStep as any);
-      if (currentIndex > 0) {
-        const previousStep = ACTIVITY_FLOW_SEQUENCE[currentIndex - 1];
-        setCurrentStep(previousStep);
-      }
-
-      // Decrease load number if we're rewinding from dumped_material
-      if (currentStep === "arrived_at_load_site" && loadNumber > 1) {
-        setLoadNumber(prev => prev - 1);
-      }
-
-      // Invalidate queries to refresh data
+      // Invalidate queries to refresh data - this will trigger the useEffect to recalculate state
       queryClient.invalidateQueries({ queryKey: ["/api/activities/work-day", workDay?.id] });
       queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
     },
@@ -145,12 +124,16 @@ export default function MainActivity() {
   useEffect(() => {
     if (validActivities.length > 0) {
       const lastActivity = validActivities[validActivities.length - 1];
-      const nextStep = getActivityFlow(lastActivity.activityType);
+      const nextStep = getActivityFlow(lastActivity.activityType as any);
       setCurrentStep(nextStep);
       
       // Set load number based on completed loads
       const completedLoads = validActivities.filter(a => a.activityType === "dumped_material").length;
       setLoadNumber(completedLoads + 1);
+    } else {
+      // Reset to first step if no activities
+      setCurrentStep("arrived_at_load_site");
+      setLoadNumber(1);
     }
   }, [validActivities]);
 
