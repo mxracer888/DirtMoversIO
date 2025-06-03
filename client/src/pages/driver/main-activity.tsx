@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Menu, History, LogOut, MapPin, Clock, TrendingUp, Undo2 } from "lucide-react";
@@ -17,6 +17,8 @@ export default function MainActivity() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState("arrived_at_load_site");
   const [loadNumber, setLoadNumber] = useState(1);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const lastClickTimeRef = useRef(0);
   const { toast } = useToast();
   const { user } = useCurrentUser();
   const { location, error: gpsError } = useGeolocation();
@@ -61,11 +63,17 @@ export default function MainActivity() {
         description: `Successfully logged: ${activityType.replace(/_/g, ' ')}`,
       });
 
+      // Re-enable button after successful submission
+      setIsButtonDisabled(false);
+
       // Invalidate queries to refresh data - this will trigger the useEffect to recalculate state
       queryClient.invalidateQueries({ queryKey: ["/api/activities/work-day", workDay?.id] });
       queryClient.invalidateQueries({ queryKey: ["/api/activities/recent"] });
     },
     onError: (error: any) => {
+      // Re-enable button on error
+      setIsButtonDisabled(false);
+      
       toast({
         title: "Failed to log activity",
         description: error.message || "Please try again",
@@ -181,7 +189,23 @@ export default function MainActivity() {
     return null; // Will redirect in useEffect
   }
 
-  const handleLogActivity = () => {
+  const handleLogActivity = useCallback(() => {
+    if (isButtonDisabled) return;
+
+    // Rate limiting: minimum 2 seconds between clicks
+    const now = Date.now();
+    const timeSinceLastClick = now - lastClickTimeRef.current;
+    const MIN_CLICK_INTERVAL = 2000; // 2 seconds
+
+    if (timeSinceLastClick < MIN_CLICK_INTERVAL) {
+      toast({
+        title: "Please wait",
+        description: `Wait ${Math.ceil((MIN_CLICK_INTERVAL - timeSinceLastClick) / 1000)} seconds before logging another activity`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (gpsError) {
       toast({
         title: "GPS Error",
@@ -191,8 +215,12 @@ export default function MainActivity() {
       return;
     }
 
+    // Disable button temporarily
+    setIsButtonDisabled(true);
+    lastClickTimeRef.current = now;
+
     logActivityMutation.mutate(currentStep);
-  };
+  }, [isButtonDisabled, gpsError, currentStep, logActivityMutation, toast]);
 
   return (
     <>
