@@ -1,0 +1,38 @@
+Form errors: Object
+index-QdE7Ta4B.js:268 Sending work day data: Object
+index-QdE7Ta4B.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-QdE7Ta4B.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:53:58.072Z', endTime: null, …}
+index-QdE7Ta4B.js:268 Sending activity data: {workDayId: 1, loadNumber: 3, activityType: 'arrived_at_load_site', timestamp: Mon Jun 02 2025 23:55:12 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-QdE7Ta4B.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-QdE7Ta4B.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:53:58.072Z', endTime: null, …}
+index-QdE7Ta4B.js:268 Sending activity data: {workDayId: 1, loadNumber: 3, activityType: 'loaded_with_material', timestamp: Mon Jun 02 2025 23:55:15 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-QdE7Ta4B.js:268 Undo button clicked
+index-QdE7Ta4B.js:268 Activities: (31) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Valid activities: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:53:58.072Z', endTime: null, …}
+index-QdE7Ta4B.js:268 Rewind attempt - All activities: (31) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Valid activities: (10) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Valid activities length: 10
+index-QdE7Ta4B.js:268 Rewind attempt - Last activity to cancel: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_load_site', timestamp: '2025-06-03T05:54:28.705Z', latitude: '40.435712', …}
+index-QdE7Ta4B.js:268 Undo button clicked
+index-QdE7Ta4B.js:268 Activities: (31) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Valid activities: (9) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:53:58.072Z', endTime: null, …}
+index-QdE7Ta4B.js:268 Rewind attempt - All activities: (31) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Valid activities: (9) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Valid activities length: 9
+index-QdE7Ta4B.js:268 Rewind attempt - Last activity to cancel: {workDayId: 1, loadNumber: 1, activityType: 'loaded_with_material', timestamp: '2025-06-03T05:54:30.138Z', latitude: '40.435712', …}
+index-QdE7Ta4B.js:268 Undo button clicked
+index-QdE7Ta4B.js:268 Activities: (31) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Valid activities: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:53:58.072Z', endTime: null, …}
+index-QdE7Ta4B.js:268 Rewind attempt - All activities: (31) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Valid activities: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-QdE7Ta4B.js:268 Rewind attempt - Valid activities length: 8
+index-QdE7Ta4B.js:268 Rewind attempt - Last activity to cancel: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_dump_site', timestamp: '2025-06-03T05:54:30.318Z', latitude: '40.435712', …}
+index-QdE7Ta4B.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-QdE7Ta4B.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:53:58.072Z', endTime: null, …}
+index-QdE7Ta4B.js:268 Sending activity data: {workDayId: 1, loadNumber: 3, activityType: 'arrived_at_dump_site', timestamp: Mon Jun 02 2025 23:55:25 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-QdE7Ta4B.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-QdE7Ta4B.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:53:58.072Z', endTime: null, …}
+index-QdE7Ta4B.js:268 Sending activity data: {workDayId: 1, loadNumber: 3, activityType: 'dumped_material', timestamp: Mon Jun 02 2025 23:55:26 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}

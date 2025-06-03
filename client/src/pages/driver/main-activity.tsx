@@ -76,16 +76,13 @@ export default function MainActivity() {
 
   const rewindMutation = useMutation({
     mutationFn: async () => {
-      console.log("Rewind attempt - Work day:", workDay);
-      console.log("Rewind attempt - All activities:", activities);
-      console.log("Rewind attempt - Valid activities:", validActivities);
-      console.log("Rewind attempt - Valid activities length:", validActivities.length);
-      
       if (!workDay || !validActivities.length) throw new Error("No activities to rewind");
       
-      // Get the last valid activity
-      const lastActivity = validActivities[validActivities.length - 1];
-      console.log("Rewind attempt - Last activity to cancel:", lastActivity);
+      // Sort activities by timestamp to get the actual most recent activity
+      const sortedActivities = [...validActivities].sort((a, b) => 
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
+      const lastActivity = sortedActivities[0]; // Most recent activity
       
       // Mark activity as cancelled (soft delete)
       const res = await apiRequest("PATCH", `/api/activities/${lastActivity.id}`, {
