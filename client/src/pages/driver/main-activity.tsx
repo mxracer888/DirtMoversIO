@@ -32,6 +32,9 @@ export default function MainActivity() {
     enabled: !!workDay?.id,
   });
 
+  console.log("Current work day ID:", workDay?.id);
+  console.log("Fetched activities:", activities);
+
   // Ensure activities is always an array
   const validActivities = Array.isArray(activities) ? activities.filter(a => !a.cancelled) : [];
 
