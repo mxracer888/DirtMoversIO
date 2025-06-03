@@ -122,6 +122,8 @@ export default function MainActivity() {
 
   // Initialize state from activities and persist state
   useEffect(() => {
+    console.log("Recalculating state from activities:", validActivities);
+    
     if (validActivities.length > 0) {
       // Sort activities by timestamp to get the actual last activity
       const sortedActivities = [...validActivities].sort((a, b) => 
@@ -129,6 +131,10 @@ export default function MainActivity() {
       );
       const lastActivity = sortedActivities[sortedActivities.length - 1];
       const nextStep = getActivityFlow(lastActivity.activityType as any);
+      
+      console.log("Last activity:", lastActivity);
+      console.log("Next step calculated:", nextStep);
+      
       setCurrentStep(nextStep);
       
       // Set load number based on completed loads
@@ -136,6 +142,7 @@ export default function MainActivity() {
       setLoadNumber(completedLoads + 1);
     } else {
       // Reset to first step if no activities
+      console.log("No activities found, resetting to first step");
       setCurrentStep("arrived_at_load_site");
       setLoadNumber(1);
     }
