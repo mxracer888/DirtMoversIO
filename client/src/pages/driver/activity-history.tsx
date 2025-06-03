@@ -104,7 +104,7 @@ export default function ActivityHistory() {
       </div>
 
       <div className="mobile-content">
-        {activities.length === 0 ? (
+        {validActivities.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
               <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
