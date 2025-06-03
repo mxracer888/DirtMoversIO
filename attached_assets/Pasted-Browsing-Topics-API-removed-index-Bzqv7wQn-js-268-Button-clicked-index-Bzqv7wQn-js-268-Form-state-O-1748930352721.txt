@@ -1,0 +1,103 @@
+Browsing Topics API removed
+index-Bzqv7wQn.js:268 Button clicked
+index-Bzqv7wQn.js:268 Form state: Object
+index-Bzqv7wQn.js:268 Form values: Object
+index-Bzqv7wQn.js:268 Form data: Object
+index-Bzqv7wQn.js:268 Form errors: Object
+index-Bzqv7wQn.js:268 Sending work day data: Object
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_load_site', timestamp: Mon Jun 02 2025 23:58:18 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: [{…}]
+index-Bzqv7wQn.js:268 Valid activities: [{…}]
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_load_site', timestamp: Mon Jun 02 2025 23:58:22 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'loaded_with_material', timestamp: Mon Jun 02 2025 23:58:23 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (3) [{…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (2) [{…}, {…}]
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (3) [{…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: [{…}]
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_load_site', timestamp: Mon Jun 02 2025 23:58:27 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'loaded_with_material', timestamp: Mon Jun 02 2025 23:58:27 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_dump_site', timestamp: Mon Jun 02 2025 23:58:28 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (3) [{…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_dump_site', timestamp: Mon Jun 02 2025 23:58:31 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'dumped_material', timestamp: Mon Jun 02 2025 23:58:32 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (4) [{…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (3) [{…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_dump_site', timestamp: Mon Jun 02 2025 23:58:35 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'dumped_material', timestamp: Mon Jun 02 2025 23:58:36 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 2, activityType: 'arrived_at_load_site', timestamp: Mon Jun 02 2025 23:58:36 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 2, activityType: 'loaded_with_material', timestamp: Mon Jun 02 2025 23:58:37 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (5) [{…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (4) [{…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (12) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (3) [{…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_dump_site', timestamp: Mon Jun 02 2025 23:58:40 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'dumped_material', timestamp: Mon Jun 02 2025 23:58:41 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 2, activityType: 'arrived_at_load_site', timestamp: Mon Jun 02 2025 23:58:42 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 2, activityType: 'loaded_with_material', timestamp: Mon Jun 02 2025 23:58:42 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 2, activityType: 'arrived_at_dump_site', timestamp: Mon Jun 02 2025 23:58:43 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 2, activityType: 'dumped_material', timestamp: Mon Jun 02 2025 23:58:44 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Logging activity - GPS location: {latitude: 40.435712, longitude: -111.7749248, accuracy: 1461.94982096005, altitude: undefined, altitudeAccuracy: undefined, …}
+index-Bzqv7wQn.js:268 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-03T05:57:58.276Z', endTime: null, …}
+index-Bzqv7wQn.js:268 Sending activity data: {workDayId: 1, loadNumber: 3, activityType: 'arrived_at_load_site', timestamp: Mon Jun 02 2025 23:58:44 GMT-0600 (Mountain Daylight Time), latitude: '40.435712', …}
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (19) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (9) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (19) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (8) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Undo button clicked
+index-Bzqv7wQn.js:268 Activities: (19) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+index-Bzqv7wQn.js:268 Valid activities: (7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
