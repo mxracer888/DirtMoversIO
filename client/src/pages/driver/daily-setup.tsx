@@ -15,6 +15,21 @@ import { z } from "zod";
 
 const setupSchema = insertWorkDaySchema.extend({
   workDate: z.string(),
+}).refine((data) => data.truckId > 0, {
+  message: "Please select a truck",
+  path: ["truckId"],
+}).refine((data) => data.jobId > 0, {
+  message: "Please select a job",
+  path: ["jobId"],
+}).refine((data) => data.materialId > 0, {
+  message: "Please select a material",
+  path: ["materialId"],
+}).refine((data) => data.sourceLocationId > 0, {
+  message: "Please select a source location",
+  path: ["sourceLocationId"],
+}).refine((data) => data.destinationLocationId > 0, {
+  message: "Please select a destination location",
+  path: ["destinationLocationId"],
 });
 
 type SetupFormData = z.infer<typeof setupSchema>;
@@ -87,6 +102,8 @@ export default function DailySetup() {
   });
 
   const onSubmit = (data: SetupFormData) => {
+    console.log("Form data:", data);
+    console.log("Form errors:", form.formState.errors);
     startDayMutation.mutate(data);
   };
 
