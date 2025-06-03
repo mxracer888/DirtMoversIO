@@ -412,9 +412,26 @@ export class MemStorage implements IStorage {
       latitude: insertActivity.latitude ?? null,
       longitude: insertActivity.longitude ?? null,
       notes: insertActivity.notes ?? null,
+      cancelled: false,
+      cancelledAt: null,
     };
     this.activities.set(activity.id, activity);
     return activity;
+  }
+
+  async updateActivity(id: number, updates: Partial<Activity>): Promise<Activity | undefined> {
+    const activity = this.activities.get(id);
+    if (!activity) {
+      return undefined;
+    }
+
+    const updatedActivity: Activity = {
+      ...activity,
+      ...updates,
+    };
+    
+    this.activities.set(id, updatedActivity);
+    return updatedActivity;
   }
 
   async getRecentActivities(limit = 10): Promise<Array<Activity & { driver: User; truck: Truck; job: Job }>> {
