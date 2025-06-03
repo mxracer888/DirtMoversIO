@@ -38,17 +38,20 @@ export default function MainActivity() {
   const logActivityMutation = useMutation({
     mutationFn: async (activityType: string) => {
       if (!workDay) throw new Error("No active work day");
-      if (!location) throw new Error("GPS location not available");
+      
+      console.log("Logging activity - GPS location:", location);
+      console.log("Logging activity - Work day:", workDay);
 
       const activityData = {
         workDayId: workDay.id,
         loadNumber,
         activityType,
         timestamp: new Date(),
-        latitude: location.latitude.toString(),
-        longitude: location.longitude.toString(),
+        latitude: location ? location.latitude.toString() : "0",
+        longitude: location ? location.longitude.toString() : "0",
       };
 
+      console.log("Sending activity data:", activityData);
       const res = await apiRequest("POST", "/api/activities", activityData);
       return res.json();
     },
@@ -269,7 +272,7 @@ export default function MainActivity() {
             loadNumber={loadNumber}
             onAction={handleLogActivity}
             isLoading={logActivityMutation.isPending}
-            disabled={!location}
+            disabled={false}
           />
 
           {/* Rewind Button - Always show for testing */}
