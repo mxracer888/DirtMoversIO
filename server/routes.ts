@@ -157,6 +157,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Activity logging
   app.post("/api/activities", async (req, res) => {
     try {
+      console.log("Creating activity with request body:", req.body);
       const { workDayId, loadNumber, activityType, timestamp, latitude, longitude, notes } = req.body;
       
       if (!workDayId || !loadNumber || !activityType || !timestamp) {
@@ -173,7 +174,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notes: notes || null,
       };
       
+      console.log("Creating activity with data:", activityData);
       const activity = await storage.createActivity(activityData);
+      console.log("Created activity:", activity);
       res.json(activity);
     } catch (error) {
       console.error("Activity creation error:", error);
@@ -207,7 +210,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/activities/work-day/:workDayId", async (req, res) => {
     const workDayId = parseInt(req.params.workDayId);
+    console.log("Fetching activities for work day:", workDayId);
     const activities = await storage.getActivitiesByWorkDay(workDayId);
+    console.log("Found activities:", activities.length);
     res.json(activities);
   });
 
