@@ -145,11 +145,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Activity logging
   app.post("/api/activities", async (req, res) => {
     try {
-      const activityData = insertActivitySchema.parse(req.body);
+      const { workDayId, loadNumber, activityType, timestamp, latitude, longitude, notes } = req.body;
+      
+      if (!workDayId || !loadNumber || !activityType || !timestamp) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const activityData = {
+        workDayId: parseInt(workDayId),
+        loadNumber: parseInt(loadNumber),
+        activityType: activityType,
+        timestamp: new Date(timestamp),
+        latitude: latitude ? parseFloat(latitude) : null,
+        longitude: longitude ? parseFloat(longitude) : null,
+        notes: notes || null,
+      };
+      
       const activity = await storage.createActivity(activityData);
       res.json(activity);
     } catch (error) {
-      res.status(400).json({ error: "Invalid activity data" });
+      console.error("Activity creation error:", error);
+      res.status(400).json({ 
+        error: "Failed to create activity", 
+        details: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
