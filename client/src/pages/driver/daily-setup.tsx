@@ -80,9 +80,15 @@ export default function DailySetup() {
   const startDayMutation = useMutation({
     mutationFn: async (data: SetupFormData) => {
       const workDayData = {
-        ...data,
-        workDate: new Date(data.workDate),
+        truckId: data.truckId,
+        jobId: data.jobId,
+        materialId: data.materialId,
+        sourceLocationId: data.sourceLocationId,
+        destinationLocationId: data.destinationLocationId,
+        workDate: data.workDate, // Send as string, server will parse
+        status: "active",
       };
+      console.log("Sending work day data:", workDayData);
       const res = await apiRequest("POST", "/api/work-days", workDayData);
       return res.json();
     },
