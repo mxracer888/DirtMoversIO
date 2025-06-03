@@ -174,21 +174,6 @@ export default function MainActivity() {
     }
   }, [workDay, isLoading, setLocation]);
 
-  if (isLoading) {
-    return (
-      <div className="mobile-container flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-text-secondary">Loading work day...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!workDay) {
-    return null; // Will redirect in useEffect
-  }
-
   const handleLogActivity = useCallback(() => {
     if (isButtonDisabled) return;
 
@@ -221,6 +206,21 @@ export default function MainActivity() {
 
     logActivityMutation.mutate(currentStep);
   }, [isButtonDisabled, gpsError, currentStep, logActivityMutation, toast]);
+
+  if (isLoading) {
+    return (
+      <div className="mobile-container flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-text-secondary">Loading work day...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!workDay) {
+    return null; // Will redirect in useEffect
+  }
 
   return (
     <>
