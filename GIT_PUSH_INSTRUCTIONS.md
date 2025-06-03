@@ -1,24 +1,29 @@
 # Manual Git Push Instructions
 
-Your Dirt Movers application is complete and ready to be pushed to GitHub. Due to git lock files in the Replit environment, you'll need to push manually.
+Your Dirt Movers application is complete and ready to be pushed to your existing DirtMoversIO repository. Due to git lock files in the Replit environment, you'll need to push manually.
 
-## Option 1: Use Replit's Git Integration
+## Option 1: Use Replit's Shell
 1. Open the Shell tab in Replit
 2. Run these commands one by one:
    ```bash
+   rm -f .git/index.lock .git/config.lock
+   git remote add origin https://github.com/mxracer888/DirtMoversIO.git
    git add .
    git commit -m "Complete dump truck logistics management system with activity tracking and undo functionality"
-   git push origin main
+   git push -u origin main
    ```
 
 ## Option 2: Download and Push from Local Machine
 1. Download your entire Replit project
 2. On your local machine, navigate to the project folder
-3. Initialize git if needed: `git init`
-4. Add remote: `git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git`
-5. Add files: `git add .`
-6. Commit: `git commit -m "Complete dump truck logistics management system"`
-7. Push: `git push -u origin main`
+3. Run these commands:
+   ```bash
+   git init
+   git remote add origin https://github.com/mxracer888/DirtMoversIO.git
+   git add .
+   git commit -m "Complete dump truck logistics management system"
+   git push -u origin main
+   ```
 
 ## What's Included in This Commit:
 - Complete four-stage activity workflow (arrive → loaded → dump → material dumped)
