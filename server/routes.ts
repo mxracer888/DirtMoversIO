@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { loginSchema, insertWorkDaySchema, insertActivitySchema } from "@shared/schema";
+import "./types";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication
@@ -15,7 +16,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Simple session (in production, use proper JWT or session management)
-      req.session = { userId: user.id };
+      req.session.userId = user.id;
       
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
@@ -25,8 +26,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.post("/api/auth/logout", (req, res) => {
-    req.session = null;
-    res.json({ success: true });
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: "Could not log out" });
+      }
+      res.json({ success: true });
+    });
   });
 
   app.get("/api/auth/me", async (req, res) => {

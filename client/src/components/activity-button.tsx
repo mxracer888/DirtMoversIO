@@ -39,7 +39,7 @@ export default function ActivityButton({
       
       {/* Loading state overlay */}
       {isLoading && (
-        <div className={`absolute inset-0 bg-${color} rounded-2xl flex items-center justify-center`}>
+        <div className={`absolute inset-0 ${color === 'primary' ? 'bg-primary' : color === 'secondary' ? 'bg-secondary' : 'bg-accent'} rounded-2xl flex items-center justify-center`}>
           <div className="text-white text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
             <p className="text-lg font-medium">Logging GPS...</p>
