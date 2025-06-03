@@ -19,15 +19,16 @@ export default function ActivityHistory() {
     enabled: !!workDay?.id,
   });
 
-  // Group activities by load number
-  const groupedActivities = activities.reduce((acc, activity) => {
+  // Filter out cancelled activities and group by load number
+  const validActivities = Array.isArray(activities) ? activities.filter(a => !a.cancelled) : [];
+  const groupedActivities = validActivities.reduce((acc, activity) => {
     const loadNum = activity.loadNumber;
     if (!acc[loadNum]) {
       acc[loadNum] = [];
     }
     acc[loadNum].push(activity);
     return acc;
-  }, {} as Record<number, typeof activities>);
+  }, {} as Record<number, typeof validActivities>);
 
   // Sort load numbers in descending order (newest first)
   const sortedLoadNumbers = Object.keys(groupedActivities)

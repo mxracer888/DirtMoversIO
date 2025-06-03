@@ -40,6 +40,8 @@ export default function SignaturePad({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    e.preventDefault(); // Prevent page scrolling on mobile
+    
     setIsDrawing(true);
     setIsEmpty(false);
     canvas.classList.add("signing");
@@ -115,7 +117,7 @@ export default function SignaturePad({
       <div className="relative">
         <canvas
           ref={canvasRef}
-          className="signature-pad w-full h-32 rounded-lg border-2 border-dashed border-gray-300 bg-white"
+          className="signature-pad w-full h-40 md:h-32 rounded-lg border-2 border-dashed border-gray-300 bg-white touch-none"
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
@@ -123,6 +125,7 @@ export default function SignaturePad({
           onTouchStart={startDrawing}
           onTouchMove={draw}
           onTouchEnd={stopDrawing}
+          style={{ touchAction: 'none' }}
         />
         {isEmpty && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

@@ -124,8 +124,8 @@ export default function MainActivity() {
 
   // Calculate today's stats
   const todayStats = {
-    loads: activities.filter(a => a.activityType === "dumped_material").length,
-    lastLoadTime: activities.find(a => a.activityType === "dumped_material")?.timestamp,
+    loads: Array.isArray(activities) ? activities.filter(a => a.activityType === "dumped_material" && !a.cancelled).length : 0,
+    lastLoadTime: Array.isArray(activities) ? activities.find(a => a.activityType === "dumped_material" && !a.cancelled)?.timestamp : null,
     avgCycleTime: "32 min", // This would be calculated from actual cycle times
   };
 
@@ -274,11 +274,11 @@ export default function MainActivity() {
           />
 
           {/* Rewind Button */}
-          {activities && activities.length > 0 && (
+          {Array.isArray(activities) && activities.length > 0 && (
             <Button
               variant="outline"
               onClick={() => rewindMutation.mutate()}
-              disabled={rewindMutation.isPending || !activities.length}
+              disabled={rewindMutation.isPending || activities.length === 0}
               className="w-full py-3 border-orange-300 text-orange-600 hover:bg-orange-50"
             >
               <Undo2 className="h-5 w-5 mr-2" />
