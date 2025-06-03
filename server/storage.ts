@@ -101,7 +101,7 @@ export class MemStorage implements IStorage {
       },
       {
         id: this.currentUserId++,
-        email: "john.smith@terrafirma.com",
+        email: "john.smith@dirtmovers.io",
         password: "password123",
         name: "John Smith",
         role: "broker",

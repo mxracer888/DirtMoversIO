@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { loginSchema, type LoginRequest } from "@shared/schema";
 
 export default function Login() {
@@ -31,6 +31,9 @@ export default function Login() {
       return res.json();
     },
     onSuccess: (data) => {
+      // Invalidate the current user query to refetch authentication state
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      
       toast({
         title: "Welcome back!",
         description: `Logged in as ${data.user.name}`,
@@ -59,7 +62,7 @@ export default function Login() {
   const handleDemoLogin = (role: "driver" | "broker") => {
     const demoCredentials = {
       driver: { email: "mike.johnson@company.com", password: "password123" },
-      broker: { email: "john.smith@terrafirma.com", password: "password123" },
+      broker: { email: "john.smith@dirtmovers.io", password: "password123" },
     };
     
     form.setValue("email", demoCredentials[role].email);
@@ -76,7 +79,7 @@ export default function Login() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-4">
               <Truck className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">TerraFirma</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Dirt Movers</h1>
             <p className="text-gray-600 mt-1">Dump Truck Logistics</p>
           </div>
 
