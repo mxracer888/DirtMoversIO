@@ -1,14 +1,17 @@
-interface DumpTruckLoadedProps {
-  className?: string;
-}
+import { forwardRef } from "react";
+import type { LucideProps } from "lucide-react";
 
-export default function DumpTruckLoaded({ className = "h-6 w-6" }: DumpTruckLoadedProps) {
-  return (
+const DumpTruckLoaded = forwardRef<SVGSVGElement, LucideProps>(
+  ({ className, size, ...props }, ref) => (
     <svg 
+      ref={ref}
       viewBox="0 0 24 24" 
       fill="none" 
       className={className}
       xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      {...props}
     >
       {/* Truck cab */}
       <path 
@@ -48,5 +51,9 @@ export default function DumpTruckLoaded({ className = "h-6 w-6" }: DumpTruckLoad
       {/* Ground line */}
       <line x1="1" y1="21" x2="20" y2="21" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
     </svg>
-  );
-}
+  )
+);
+
+DumpTruckLoaded.displayName = "DumpTruckLoaded";
+
+export default DumpTruckLoaded;
