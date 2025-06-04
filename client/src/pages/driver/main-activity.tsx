@@ -534,7 +534,7 @@ export default function MainActivity() {
             <Button
               variant="outline"
               className="quick-action"
-              onClick={() => setLocation("/end-of-day")}
+              onClick={() => setLocation("/driver/end-of-day")}
             >
               <LogOut className="h-6 w-6 text-accent mb-2" />
               <span className="text-sm font-medium">End Day</span>
