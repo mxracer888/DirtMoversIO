@@ -36,10 +36,10 @@ function AppContent() {
     <>
       <Switch>
         <Route path="/" component={user.role === "driver" ? DailySetup : BrokerDashboard} />
-        <Route path="/daily-setup" component={DailySetup} />
-        <Route path="/main-activity" component={MainActivity} />
-        <Route path="/activity-history" component={ActivityHistory} />
-        <Route path="/end-of-day" component={EndOfDay} />
+        <Route path="/driver/start-day" component={DailySetup} />
+        <Route path="/driver/main-activity" component={MainActivity} />
+        <Route path="/driver/activity-history" component={ActivityHistory} />
+        <Route path="/driver/end-of-day" component={EndOfDay} />
         <Route path="/broker/dashboard" component={BrokerDashboard} />
         <Route>
           <div className="min-h-screen flex items-center justify-center bg-gray-50">

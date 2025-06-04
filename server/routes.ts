@@ -45,36 +45,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/auth/me", async (req, res) => {
     console.log("Auth check - Session ID:", req.sessionID);
     console.log("Auth check - User ID in session:", req.session?.userId);
-    
-    // Development bypass - auto-login as driver for testing
-    if (!req.session?.userId) {
-      const defaultUser = await storage.getUserByEmail("mike.johnson@company.com");
-      if (defaultUser) {
-        req.session.userId = defaultUser.id;
-        console.log("Auto-logged in as driver for development");
-        
-        // Ensure the driver has an active work day
-        const existingWorkDay = await storage.getActiveWorkDayByDriver(defaultUser.id);
-        if (!existingWorkDay) {
-          const trucks = await storage.getTrucks();
-          const jobs = await storage.getActiveJobs();
-          
-          if (trucks.length > 0 && jobs.length > 0) {
-            const workDay = await storage.createWorkDay({
-              driverId: defaultUser.id,
-              truckId: trucks[0].id,
-              jobId: jobs[0].id,
-              startTime: new Date().toISOString(),
-              endTime: null,
-              signature: null,
-              notes: null,
-              status: "active"
-            });
-            console.log("Created work day for development:", workDay.id);
-          }
-        }
-      }
-    }
 
     if (!req.session?.userId) {
       return res.status(401).json({ error: "Not authenticated" });

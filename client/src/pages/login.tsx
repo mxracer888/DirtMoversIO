@@ -1,179 +1,272 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Truck, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Truck, BarChart3, User, Lock, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { loginSchema, type LoginRequest } from "@shared/schema";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const [showPassword, setShowPassword] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<"driver" | "broker" | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { toast } = useToast();
 
-  const form = useForm<LoginRequest>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
   const loginMutation = useMutation({
-    mutationFn: async (data: LoginRequest) => {
-      const res = await apiRequest("POST", "/api/auth/login", data);
-      return res.json();
+    mutationFn: async (data: { email: string; password: string }) => {
+      return apiRequest("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
     },
     onSuccess: (data) => {
-      // Invalidate the current user query to refetch authentication state
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
-      
-      toast({
-        title: "Welcome back!",
-        description: `Logged in as ${data.user.name}`,
-      });
-      
-      // Redirect based on user role
-      if (data.user.role === "driver") {
-        setLocation("/daily-setup");
-      } else {
-        setLocation("/broker/dashboard");
+      if (data.user) {
+        // Redirect based on user role
+        if (data.user.role === "broker" || data.user.role === "admin") {
+          setLocation("/broker/dashboard");
+        } else {
+          setLocation("/driver/start-day");
+        }
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${data.user.email}`,
+        });
       }
     },
     onError: (error: any) => {
       toast({
         title: "Login failed",
-        description: error.message || "Invalid email or password",
+        description: error.message || "Invalid credentials",
         variant: "destructive",
       });
     },
   });
 
-  const onSubmit = (data: LoginRequest) => {
-    loginMutation.mutate(data);
+  const handleRoleSelect = (role: "driver" | "broker") => {
+    setSelectedRole(role);
+    
+    // Pre-fill demo credentials based on role
+    if (role === "driver") {
+      setEmail("mike.johnson@company.com");
+      setPassword("password123");
+    } else {
+      setEmail("sarah.broker@company.com");
+      setPassword("broker123");
+    }
   };
 
-  const handleDemoLogin = (role: "driver" | "broker") => {
-    const demoCredentials = {
-      driver: { email: "mike.johnson@company.com", password: "password123" },
-      broker: { email: "john.smith@dirtmovers.io", password: "password123" },
-    };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast({
+        title: "Missing information",
+        description: "Please enter both email and password",
+        variant: "destructive",
+      });
+      return;
+    }
+    loginMutation.mutate({ email, password });
+  };
+
+  const handleDemoLogin = () => {
+    if (!selectedRole) return;
     
-    form.setValue("email", demoCredentials[role].email);
-    form.setValue("password", demoCredentials[role].password);
-    onSubmit(demoCredentials[role]);
+    if (selectedRole === "driver") {
+      loginMutation.mutate({ 
+        email: "mike.johnson@company.com", 
+        password: "password123" 
+      });
+    } else {
+      loginMutation.mutate({ 
+        email: "sarah.broker@company.com", 
+        password: "broker123" 
+      });
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl">
-        <CardContent className="p-8">
-          {/* Logo Section */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-4">
-              <Truck className="h-8 w-8 text-primary" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900">Dirt Movers</h1>
-            <p className="text-gray-600 mt-1">Dump Truck Logistics</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <Truck className="h-10 w-10 text-primary mr-3" />
+            <h1 className="text-4xl font-bold text-gray-900">TerraFirma</h1>
           </div>
+          <p className="text-lg text-gray-600">
+            Comprehensive dump truck logistics management platform
+          </p>
+        </div>
 
-          {/* Login Form */}
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <div className="relative">
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="driver@company.com"
-                  className="pl-10 text-lg h-12"
-                  {...form.register("email")}
-                />
-                <Mail className="absolute left-3 top-3 h-6 w-6 text-gray-400" />
-              </div>
-              {form.formState.errors.email && (
-                <p className="text-sm text-red-600">{form.formState.errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  className="pl-10 pr-10 text-lg h-12"
-                  {...form.register("password")}
-                />
-                <Lock className="absolute left-3 top-3 h-6 w-6 text-gray-400" />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 h-6 w-6 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff /> : <Eye />}
-                </button>
-              </div>
-              {form.formState.errors.password && (
-                <p className="text-sm text-red-600">{form.formState.errors.password.message}</p>
-              )}
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full h-12 text-lg font-semibold"
-              disabled={loginMutation.isPending}
+        {!selectedRole ? (
+          /* Role Selection */
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Card 
+              className="cursor-pointer hover:shadow-lg transition-all duration-200 border-2 hover:border-primary"
+              onClick={() => handleRoleSelect("driver")}
             >
-              {loginMutation.isPending ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Logging in...
+              <CardHeader className="text-center pb-4">
+                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                  <Truck className="h-8 w-8 text-primary" />
                 </div>
-              ) : (
-                "LOG IN"
-              )}
-            </Button>
-          </form>
+                <CardTitle className="text-2xl">Driver Portal</CardTitle>
+                <p className="text-gray-600">
+                  Access your daily operations, log activities, and manage loads
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <MapPin className="h-4 w-4 mr-2 text-green-600" />
+                    Activity tracking and GPS logging
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <User className="h-4 w-4 mr-2 text-blue-600" />
+                    Load management and history
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <BarChart3 className="h-4 w-4 mr-2 text-purple-600" />
+                    Performance tracking
+                  </div>
+                </div>
+                <Button className="w-full mt-6" size="lg">
+                  Continue as Driver
+                </Button>
+              </CardContent>
+            </Card>
 
-          <div className="text-center mt-6">
-            <a href="#" className="text-primary hover:text-primary/80 text-sm font-medium">
-              Forgot your password?
-            </a>
+            <Card 
+              className="cursor-pointer hover:shadow-lg transition-all duration-200 border-2 hover:border-primary"
+              onClick={() => handleRoleSelect("broker")}
+            >
+              <CardHeader className="text-center pb-4">
+                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                  <BarChart3 className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-2xl">Broker Dashboard</CardTitle>
+                <p className="text-gray-600">
+                  Monitor fleet operations, analytics, and real-time insights
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <BarChart3 className="h-4 w-4 mr-2 text-green-600" />
+                    Real-time fleet monitoring
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                    Job and location management
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <User className="h-4 w-4 mr-2 text-purple-600" />
+                    Driver performance analytics
+                  </div>
+                </div>
+                <Button className="w-full mt-6" size="lg">
+                  Continue as Broker
+                </Button>
+              </CardContent>
+            </Card>
           </div>
+        ) : (
+          /* Login Form */
+          <Card className="max-w-md mx-auto">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                {selectedRole === "driver" ? (
+                  <Truck className="h-6 w-6 text-primary" />
+                ) : (
+                  <BarChart3 className="h-6 w-6 text-primary" />
+                )}
+              </div>
+              <CardTitle className="text-xl">
+                {selectedRole === "driver" ? "Driver Login" : "Broker Login"}
+              </CardTitle>
+              <div className="flex justify-center">
+                <Badge variant="secondary" className="mt-2">
+                  {selectedRole === "driver" ? "Driver Portal" : "Broker Dashboard"}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10"
+                      required
+                    />
+                  </div>
+                </div>
 
-          {/* Demo Mode */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-sm text-gray-600 text-center mb-4">Demo Mode</p>
-            <div className="flex space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
-                onClick={() => handleDemoLogin("driver")}
-                disabled={loginMutation.isPending}
-              >
-                Driver View
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1"
-                onClick={() => handleDemoLogin("broker")}
-                disabled={loginMutation.isPending}
-              >
-                Broker View
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                <div className="space-y-3 pt-4">
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    disabled={loginMutation.isPending}
+                  >
+                    {loginMutation.isPending ? "Signing in..." : "Sign In"}
+                  </Button>
+                  
+                  <Button 
+                    type="button"
+                    variant="outline" 
+                    className="w-full" 
+                    onClick={handleDemoLogin}
+                    disabled={loginMutation.isPending}
+                  >
+                    Demo Login ({selectedRole === "driver" ? "Driver" : "Broker"})
+                  </Button>
+                </div>
+              </form>
+
+              <div className="mt-6 pt-4 border-t text-center">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setSelectedRole(null)}
+                  className="text-sm"
+                >
+                  ← Choose Different Role
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Footer */}
+        <div className="text-center mt-8 text-sm text-gray-500">
+          <p>Secure logistics management for the construction industry</p>
+        </div>
+      </div>
     </div>
   );
 }
