@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   Truck, TrendingUp, Clock, DollarSign, Bell, ChevronDown,
   Menu, Users, MapPin, BarChart3, Activity, Loader2, AlertCircle,
@@ -18,6 +18,7 @@ export default function BrokerDashboard() {
   const [, setLocation] = useLocation();
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [selectedJobId, setSelectedJobId] = useState<string>("all");
+  const queryClient = useQueryClient();
   const { user } = useCurrentUser();
 
   // Get dashboard statistics with auto-refresh and job filtering
