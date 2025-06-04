@@ -371,29 +371,41 @@ export default function MainActivity() {
             disabled={isButtonDisabled || logActivityMutation.isPending}
           />
 
-          {/* Rewind Button - Always show for testing */}
-          <Button
-            variant="outline"
-            onClick={() => {
-              console.log("Undo button clicked");
-              console.log("Activities:", activities);
-              console.log("Valid activities:", validActivities);
-              if (validActivities.length > 0) {
-                rewindMutation.mutate();
-              } else {
-                toast({
-                  title: "No activities to undo",
-                  description: "Log an activity first to use the undo feature",
-                  variant: "destructive",
-                });
-              }
-            }}
-            disabled={rewindMutation.isPending}
-            className="w-full py-3 border-orange-300 text-orange-600 hover:bg-orange-50"
-          >
-            <Undo2 className="h-5 w-5 mr-2" />
-            {rewindMutation.isPending ? "Rewinding..." : `Undo Last Activity (${validActivities.length})`}
-          </Button>
+          {/* Split Button Layout: Undo (top half) and Break Controls (bottom half) */}
+          <div className="space-y-2">
+            {/* Undo Button - Top Half */}
+            <Button
+              variant="outline"
+              onClick={() => {
+                console.log("Undo button clicked");
+                console.log("Activities:", activities);
+                console.log("Valid activities:", validActivities);
+                if (validActivities.length > 0) {
+                  rewindMutation.mutate();
+                } else {
+                  toast({
+                    title: "No activities to undo",
+                    description: "Log an activity first to use the undo feature",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              disabled={rewindMutation.isPending}
+              className="w-full py-2 border-orange-300 text-orange-600 hover:bg-orange-50"
+            >
+              <Undo2 className="h-4 w-4 mr-2" />
+              {rewindMutation.isPending ? "Rewinding..." : `Undo Last Activity (${validActivities.length})`}
+            </Button>
+
+            {/* Break Controls - Bottom Half */}
+            <BreakControls
+              onBreak={handleBreak}
+              onBreakdown={handleBreakdown}
+              onStartDriving={handleStartDriving}
+              currentBreakState={currentBreakState}
+              isLoading={logActivityMutation.isPending}
+            />
+          </div>
 
           {/* Today's Summary */}
           <Card>
@@ -479,6 +491,14 @@ export default function MainActivity() {
         isOpen={isMenuOpen} 
         onClose={() => setIsMenuOpen(false)}
         userRole="driver"
+      />
+
+      {/* Load Data Popup */}
+      <LoadDataPopup
+        isOpen={showLoadDataPopup}
+        onClose={() => setShowLoadDataPopup(false)}
+        onSubmit={handleLoadDataSubmit}
+        materialType={workDay?.material?.name}
       />
     </>
   );

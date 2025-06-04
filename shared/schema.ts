@@ -97,7 +97,7 @@ export const activities = pgTable("activities", {
   longitude: decimal("longitude", { precision: 10, scale: 7 }),
   notes: text("notes"),
   ticketNumber: text("ticket_number"), // For load data
-  netWeight: decimal("net_weight", { precision: 10, scale: 2 }), // For load data in tons
+  netWeight: text("net_weight"), // For load data in tons (stored as text for flexibility)
   cancelled: boolean("cancelled").default(false).notNull(),
   cancelledAt: timestamp("cancelled_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
