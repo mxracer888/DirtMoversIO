@@ -404,33 +404,69 @@ export default function BrokerDashboard() {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Real-time Activity</CardTitle>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Activity className="h-5 w-5 mr-2" />
+                    Live Activity Feed
+                  </div>
+                  <div className="flex items-center text-sm text-gray-500">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                    Real-time
+                  </div>
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {recentActivities.slice(0, 6).map((activity) => (
-                    <div key={activity.id} className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg">
-                      <div className={`w-2 h-2 rounded-full ${getActivityStatusColor(activity.activityType)}`}></div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-gray-900">
-                            {activity.driver?.name} ({activity.truck?.number})
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {formatTime(activity.timestamp)}
-                          </span>
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {recentActivities.slice(0, 12).map((activity: any) => {
+                    const ActivityIcon = getActivityIcon(activity.activityType);
+                    return (
+                      <div key={activity.id} className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div className={`p-1.5 rounded-full ${getActivityStatusColor(activity.activityType)}`}>
+                          <ActivityIcon className="h-3 w-3 text-white" />
                         </div>
-                        <p className="text-sm text-gray-600">
-                          {getActivityLabel(activity.activityType)} at {activity.job?.name}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium text-gray-900 text-sm">
+                                {activity.driver?.email?.split('@')[0] || 'Unknown'}
+                              </span>
+                              <Badge variant="outline" className="text-xs">
+                                {activity.truck?.number || 'N/A'}
+                              </Badge>
+                            </div>
+                            <span className="text-xs text-gray-500">{formatTimeAgo(activity.timestamp)}</span>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1">{getActivityLabel(activity.activityType)}</p>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-xs text-gray-500">
+                              {activity.job?.name || 'No job assigned'}
+                            </span>
+                            {activity.loadNumber && (
+                              <span className="text-xs text-blue-600">Load #{activity.loadNumber}</span>
+                            )}
+                          </div>
+                          {activity.netWeight && (
+                            <div className="text-xs text-green-600 mt-1">
+                              Weight: {activity.netWeight} tons
+                            </div>
+                          )}
+                          {activity.ticketNumber && (
+                            <div className="text-xs text-purple-600 mt-1">
+                              Ticket: {activity.ticketNumber}
+                            </div>
+                          )}
+                        </div>
                       </div>
+                    );
+                  })}
+                  {recentActivities.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <Activity className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p>No recent activities</p>
+                      <p className="text-sm">Driver activities will appear here in real-time</p>
                     </div>
-                  ))}
+                  )}
                 </div>
-                
-                <Button variant="outline" className="w-full mt-4">
-                  View All Activity
-                </Button>
               </CardContent>
             </Card>
           </div>
