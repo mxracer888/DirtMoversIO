@@ -121,12 +121,31 @@ export default function ActivityHistory() {
               );
               const isComplete = isLoadComplete(loadActivities);
               const cycleTime = getLoadCycleTime(loadActivities);
+              
+              // Get ticket number and weight from "loaded_with_material" activity
+              const loadedActivity = loadActivities.find(a => a.activityType === "loaded_with_material");
+              const ticketNumber = loadedActivity?.ticketNumber;
+              const netWeight = loadedActivity?.netWeight;
 
               return (
                 <Card key={loadNumber}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-gray-900">Load #{loadNumber}</h3>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <span className="font-semibold text-gray-900">Load #{loadNumber}</span>
+                        {ticketNumber && (
+                          <>
+                            <span className="text-gray-400">|</span>
+                            <span className="text-gray-600">Ticket # {ticketNumber}</span>
+                          </>
+                        )}
+                        {netWeight && (
+                          <>
+                            <span className="text-gray-400">|</span>
+                            <span className="text-gray-600">Weight: {netWeight} tons</span>
+                          </>
+                        )}
+                      </div>
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                         isComplete 
                           ? "bg-secondary/10 text-secondary" 

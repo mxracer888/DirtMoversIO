@@ -362,13 +362,13 @@ export default function MainActivity() {
             </CardContent>
           </Card>
 
-          {/* Main Action Button */}
+          {/* Main Action Button - Disabled when in break/breakdown mode */}
           <ActivityButton
             activityType={currentStep}
             loadNumber={loadNumber}
             onAction={handleLogActivity}
             isLoading={logActivityMutation.isPending}
-            disabled={isButtonDisabled || logActivityMutation.isPending}
+            disabled={isButtonDisabled || logActivityMutation.isPending || currentBreakState !== null}
           />
 
           {/* Split Button Layout: Undo (top half) and Break Controls (bottom half) */}
