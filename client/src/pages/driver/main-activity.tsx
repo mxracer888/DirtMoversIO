@@ -161,6 +161,21 @@ export default function MainActivity() {
         new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       );
       const lastActivity = sortedActivities[sortedActivities.length - 1];
+      
+      // Check if we're resuming from a break/breakdown
+      if (lastActivity.activityType === "driving" && preBreakActivity) {
+        // Don't update currentStep - it should already be restored by handleStartDriving
+        return;
+      }
+      
+      // Check if last activity is break/breakdown related
+      if (lastActivity.activityType === "break" || lastActivity.activityType === "breakdown") {
+        setCurrentBreakState(lastActivity.activityType);
+        // Don't change currentStep when in break mode
+        return;
+      }
+      
+      // Normal flow - set next step based on last activity
       const nextStep = getActivityFlow(lastActivity.activityType as any);
       setCurrentStep(nextStep);
       
@@ -172,7 +187,7 @@ export default function MainActivity() {
       setCurrentStep("arrived_at_load_site");
       setLoadNumber(1);
     }
-  }, [validActivities]);
+  }, [validActivities, preBreakActivity]);
 
   // Auto-redirect if no active work day
   useEffect(() => {
