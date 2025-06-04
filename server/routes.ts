@@ -238,65 +238,169 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Dashboard stats
   app.get("/api/dashboard/stats", async (req, res) => {
+    const jobId = req.query.jobId ? parseInt(req.query.jobId as string) : null;
     const trucks = await storage.getTrucks();
-    const recentActivities = await storage.getRecentActivities(100);
+    const workDays = await storage.getActiveWorkDays(); // We'll need to add this method
+    const recentActivities = await storage.getRecentActivities(500);
     const today = new Date().toDateString();
     
+    // Filter activities by job if specified
+    const filteredActivities = jobId 
+      ? recentActivities.filter(activity => activity.job?.id === jobId)
+      : recentActivities;
+    
     // Calculate today's activities
-    const todayActivities = recentActivities.filter(activity => 
+    const todayActivities = filteredActivities.filter(activity => 
       new Date(activity.timestamp).toDateString() === today
     );
     
     // Active trucks (trucks with activity in last 2 hours)
     const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
     const activeTrucks = new Set(
-      recentActivities
+      filteredActivities
         .filter(activity => new Date(activity.timestamp) > twoHoursAgo)
         .map(activity => activity.truck.id)
     ).size;
     
-    // Loads completed today
-    const loadsToday = todayActivities.filter(activity => activity.activityType === "dumped_material").length;
+    // Calculate loads and tonnage in transit vs delivered
+    const loadGroups = todayActivities.reduce((acc, activity) => {
+      const key = `${activity.driver.id}-${activity.loadNumber}`;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(activity);
+      return acc;
+    }, {} as Record<string, typeof todayActivities>);
+    
+    let loadsInTransit = 0;
+    let loadsDelivered = 0;
+    let tonsInTransit = 0;
+    let tonsDelivered = 0;
+    
+    Object.values(loadGroups).forEach(loadActivities => {
+      const hasLoaded = loadActivities.some(a => a.activityType === "loaded_with_material");
+      const hasDelivered = loadActivities.some(a => a.activityType === "dumped_material");
+      
+      if (hasLoaded) {
+        const loadedActivity = loadActivities.find(a => a.activityType === "loaded_with_material");
+        const weight = parseFloat(loadedActivity?.netWeight || "0") || 0;
+        
+        if (hasDelivered) {
+          loadsDelivered++;
+          tonsDelivered += weight;
+        } else {
+          loadsInTransit++;
+          tonsInTransit += weight;
+        }
+      }
+    });
     
     // Calculate average cycle time from actual data
     let avgCycleTime = "--";
-    const completedLoads = todayActivities.filter(activity => activity.activityType === "dumped_material");
+    const completedLoads = Object.values(loadGroups)
+      .filter(loadActivities => loadActivities.some(a => a.activityType === "dumped_material"));
+    
     if (completedLoads.length > 0) {
-      // Group activities by driver and load number
-      const loadGroups = todayActivities.reduce((acc, activity) => {
-        const key = `${activity.driver.id}-${activity.loadNumber}`;
-        if (!acc[key]) acc[key] = [];
-        acc[key].push(activity);
-        return acc;
-      }, {} as Record<string, typeof todayActivities>);
+      const cycleTimes = completedLoads.map(loadActivities => {
+        const sorted = loadActivities.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+        const start = sorted[0];
+        const end = sorted[sorted.length - 1];
+        return (new Date(end.timestamp).getTime() - new Date(start.timestamp).getTime()) / (1000 * 60);
+      });
       
-      const cycleTimes = Object.values(loadGroups)
-        .filter(loadActivities => loadActivities.some(a => a.activityType === "dumped_material"))
-        .map(loadActivities => {
-          const sorted = loadActivities.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-          const start = sorted[0];
-          const end = sorted[sorted.length - 1];
-          return (new Date(end.timestamp).getTime() - new Date(start.timestamp).getTime()) / (1000 * 60);
-        });
-      
-      if (cycleTimes.length > 0) {
-        const avgMinutes = cycleTimes.reduce((sum, time) => sum + time, 0) / cycleTimes.length;
-        avgCycleTime = `${Math.round(avgMinutes)} min`;
-      }
+      const avgMinutes = cycleTimes.reduce((sum, time) => sum + time, 0) / cycleTimes.length;
+      avgCycleTime = `${Math.round(avgMinutes)} min`;
     }
     
-    // Calculate total dirt moved today
-    const dirtMovedToday = todayActivities
-      .filter(activity => activity.activityType === "loaded_with_material" && activity.netWeight)
-      .reduce((sum, activity) => sum + (parseFloat(activity.netWeight || "0") || 0), 0);
+    // Get work day statuses (for EOD tracking)
+    const eodTrucks = workDays.filter((wd: any) => wd.status === "completed").length;
 
     res.json({
       activeTrucks,
-      loadsToday,
+      loadsInTransit,
+      loadsDelivered,
+      tonsInTransit: Math.round(tonsInTransit * 100) / 100,
+      tonsDelivered: Math.round(tonsDelivered * 100) / 100,
       avgCycleTime,
-      dirtMovedToday: Math.round(dirtMovedToday * 100) / 100,
       totalActivities: todayActivities.length,
-      driversActive: new Set(todayActivities.map(activity => activity.driver.id)).size
+      driversActive: new Set(todayActivities.map(activity => activity.driver.id)).size,
+      eodTrucks
+    });
+  });
+
+  // Truck status tracking endpoint
+  app.get("/api/dashboard/truck-status", async (req, res) => {
+    const jobId = req.query.jobId ? parseInt(req.query.jobId as string) : null;
+    const recentActivities = await storage.getRecentActivities(500);
+    const workDays = await storage.getActiveWorkDays();
+    const today = new Date().toDateString();
+    
+    // Filter activities by job and today
+    const filteredActivities = recentActivities.filter(activity => {
+      const isToday = new Date(activity.timestamp).toDateString() === today;
+      const matchesJob = jobId ? activity.job?.id === jobId : true;
+      return isToday && matchesJob;
+    });
+    
+    // Group activities by truck
+    const truckGroups = filteredActivities.reduce((acc, activity) => {
+      const truckId = activity.truck.id;
+      if (!acc[truckId]) {
+        acc[truckId] = {
+          truck: activity.truck,
+          driver: activity.driver,
+          activities: []
+        };
+      }
+      acc[truckId].activities.push(activity);
+      return acc;
+    }, {} as Record<number, any>);
+    
+    // Calculate status for each truck
+    const truckStatuses = Object.values(truckGroups).map((group: any) => {
+      const latestActivity = group.activities.sort((a: any, b: any) => 
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      )[0];
+      
+      // Check if truck has completed EOD
+      const workDay = workDays.find((wd: any) => wd.driverId === group.driver.id);
+      const isEOD = workDay?.status === "completed";
+      
+      if (isEOD) {
+        return {
+          truckId: group.truck.id,
+          truckNumber: group.truck.truckNumber,
+          driver: group.driver.name,
+          status: "end_of_day",
+          lastActivity: latestActivity?.activityType,
+          timestamp: workDay.endTime || latestActivity?.timestamp,
+          location: `${latestActivity?.latitude}, ${latestActivity?.longitude}`
+        };
+      }
+      
+      return {
+        truckId: group.truck.id,
+        truckNumber: group.truck.truckNumber,
+        driver: group.driver.name,
+        status: latestActivity?.activityType || "inactive",
+        lastActivity: latestActivity?.activityType,
+        timestamp: latestActivity?.timestamp,
+        location: latestActivity ? `${latestActivity.latitude}, ${latestActivity.longitude}` : null
+      };
+    });
+    
+    // Calculate status counts and timing
+    const statusCounts = {
+      at_load_site: truckStatuses.filter(t => t.status === "arrived_at_load_site").length,
+      loaded_in_transit: truckStatuses.filter(t => t.status === "loaded_with_material").length,
+      at_dump_site: truckStatuses.filter(t => t.status === "arrived_at_dump_site").length,
+      dumping: truckStatuses.filter(t => t.status === "dumped_material").length,
+      returning: truckStatuses.filter(t => t.status === "driving").length,
+      end_of_day: truckStatuses.filter(t => t.status === "end_of_day").length
+    };
+    
+    res.json({
+      truckStatuses,
+      statusCounts,
+      totalTrucks: truckStatuses.length
     });
   });
 

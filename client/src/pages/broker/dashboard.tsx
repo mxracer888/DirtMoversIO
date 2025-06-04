@@ -4,17 +4,19 @@ import { useQuery } from "@tanstack/react-query";
 import { 
   Truck, TrendingUp, Clock, DollarSign, Bell, ChevronDown,
   Menu, Users, MapPin, BarChart3, Activity, Loader2, AlertCircle,
-  Play, Pause, Package, Calendar, RefreshCw
+  Play, Pause, Package, Calendar, RefreshCw, Filter, Target
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getActivityLabel, getActivityColor, getActivityIcon } from "@/lib/activity-states";
 
 export default function BrokerDashboard() {
   const [, setLocation] = useLocation();
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [selectedJobId, setSelectedJobId] = useState<string>("all");
   const { user } = useCurrentUser();
 
   // Get dashboard statistics with auto-refresh

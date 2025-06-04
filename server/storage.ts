@@ -42,6 +42,7 @@ export interface IStorage {
   // Work Days
   getWorkDay(id: number): Promise<WorkDay | undefined>;
   getActiveWorkDayByDriver(driverId: number): Promise<WorkDay | undefined>;
+  getActiveWorkDays(): Promise<WorkDay[]>;
   createWorkDay(workDay: InsertWorkDay): Promise<WorkDay>;
   updateWorkDay(id: number, updates: Partial<WorkDay>): Promise<WorkDay | undefined>;
   
@@ -368,6 +369,12 @@ export class MemStorage implements IStorage {
   async getActiveWorkDayByDriver(driverId: number): Promise<WorkDay | undefined> {
     return Array.from(this.workDays.values()).find(
       workDay => workDay.driverId === driverId && workDay.status === "active"
+    );
+  }
+
+  async getActiveWorkDays(): Promise<WorkDay[]> {
+    return Array.from(this.workDays.values()).filter(
+      workDay => workDay.status === "active" || workDay.status === "completed"
     );
   }
 
