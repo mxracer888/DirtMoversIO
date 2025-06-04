@@ -22,6 +22,7 @@ export default function MainActivity() {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [showLoadDataPopup, setShowLoadDataPopup] = useState(false);
   const [currentBreakState, setCurrentBreakState] = useState<"break" | "breakdown" | null>(null);
+  const [preBreakActivity, setPreBreakActivity] = useState<string | null>(null);
   const lastClickTimeRef = useRef(0);
   const { toast } = useToast();
   const { user } = useCurrentUser();
@@ -241,28 +242,37 @@ export default function MainActivity() {
 
   // Break functionality handlers
   const handleBreak = useCallback(() => {
+    // Save current activity state before entering break
+    setPreBreakActivity(currentStep);
     setCurrentBreakState("break");
     logActivityMutation.mutate({
       activityType: "break",
       loadData: null
     });
-  }, [logActivityMutation]);
+  }, [logActivityMutation, currentStep]);
 
   const handleBreakdown = useCallback(() => {
+    // Save current activity state before entering breakdown
+    setPreBreakActivity(currentStep);
     setCurrentBreakState("breakdown");
     logActivityMutation.mutate({
       activityType: "breakdown",
       loadData: null
     });
-  }, [logActivityMutation]);
+  }, [logActivityMutation, currentStep]);
 
   const handleStartDriving = useCallback(() => {
     setCurrentBreakState(null);
+    // Restore previous activity state if available
+    if (preBreakActivity) {
+      setCurrentStep(preBreakActivity);
+      setPreBreakActivity(null);
+    }
     logActivityMutation.mutate({
       activityType: "driving",
       loadData: null
     });
-  }, [logActivityMutation]);
+  }, [logActivityMutation, preBreakActivity]);
 
   if (isLoading) {
     return (
