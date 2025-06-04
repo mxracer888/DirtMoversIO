@@ -78,6 +78,19 @@ export default function EndOfDay() {
     return Math.round(hours * 10) / 10; // Round to 1 decimal place
   };
 
+  const getTotalDirtMoved = () => {
+    const loadedActivities = activities.filter(activity => 
+      activity.activityType === "loaded_with_material" && activity.netWeight
+    );
+    
+    const totalWeight = loadedActivities.reduce((sum, activity) => {
+      const weight = parseFloat(activity.netWeight || "0");
+      return sum + (isNaN(weight) ? 0 : weight);
+    }, 0);
+    
+    return Math.round(totalWeight * 100) / 100; // Round to 2 decimal places
+  };
+
   const getAverageCycleTime = () => {
     const completedLoads = activities.filter(a => a.activityType === "dumped_material");
     if (completedLoads.length === 0) return "--";
@@ -136,14 +149,18 @@ export default function EndOfDay() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">{getTotalLoads()}</div>
-                <div className="text-sm text-gray-600">Total Loads</div>
+                <div className="text-2xl font-bold text-primary">{getTotalLoads()}</div>
+                <div className="text-xs text-gray-600">Total Loads</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-secondary">{getTotalHours()}</div>
-                <div className="text-sm text-gray-600">Total Hours</div>
+                <div className="text-2xl font-bold text-secondary">{getTotalHours()}</div>
+                <div className="text-xs text-gray-600">Total Hours</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-accent">{getTotalDirtMoved()}</div>
+                <div className="text-xs text-gray-600">Total Dirt Moved (tons)</div>
               </div>
             </div>
 
