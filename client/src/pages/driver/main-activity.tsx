@@ -23,6 +23,7 @@ export default function MainActivity() {
   const [showLoadDataPopup, setShowLoadDataPopup] = useState(false);
   const [currentBreakState, setCurrentBreakState] = useState<"break" | "breakdown" | null>(null);
   const [preBreakActivity, setPreBreakActivity] = useState<string | null>(null);
+  const [isRestoringFromBreak, setIsRestoringFromBreak] = useState(false);
   const lastClickTimeRef = useRef(0);
   const { toast } = useToast();
   const { user } = useCurrentUser();
@@ -155,6 +156,12 @@ export default function MainActivity() {
 
   // Initialize state from activities and persist state
   useEffect(() => {
+    // Don't override state when restoring from break
+    if (isRestoringFromBreak) {
+      console.log("Skipping state update - restoring from break");
+      return;
+    }
+
     if (validActivities.length > 0) {
       // Sort activities by timestamp to get the actual last activity
       const sortedActivities = [...validActivities].sort((a, b) => 
@@ -162,17 +169,32 @@ export default function MainActivity() {
       );
       const lastActivity = sortedActivities[sortedActivities.length - 1];
       
-      // Check if we're resuming from a break/breakdown
-      if (lastActivity.activityType === "driving" && preBreakActivity) {
-        // Don't update currentStep - it should already be restored by handleStartDriving
-        return;
-      }
+      console.log("Last activity:", lastActivity.activityType);
       
       // Check if last activity is break/breakdown related
       if (lastActivity.activityType === "break" || lastActivity.activityType === "breakdown") {
         setCurrentBreakState(lastActivity.activityType);
         // Don't change currentStep when in break mode
         return;
+      }
+      
+      // Check if we just finished driving after a break - skip one update cycle
+      if (lastActivity.activityType === "driving") {
+        // Find the activity before the most recent break/breakdown
+        const breakIndex = sortedActivities.findLastIndex(a => 
+          a.activityType === "break" || a.activityType === "breakdown"
+        );
+        if (breakIndex > 0) {
+          // There was a recent break, look at the activity before it
+          const preBreakIndex = breakIndex - 1;
+          if (preBreakIndex >= 0) {
+            const preBreakActivity = sortedActivities[preBreakIndex];
+            const nextStep = getActivityFlow(preBreakActivity.activityType as any);
+            console.log("Resuming from break - setting step to:", nextStep);
+            setCurrentStep(nextStep);
+            return;
+          }
+        }
       }
       
       // Normal flow - set next step based on last activity
@@ -187,7 +209,7 @@ export default function MainActivity() {
       setCurrentStep("arrived_at_load_site");
       setLoadNumber(1);
     }
-  }, [validActivities, preBreakActivity]);
+  }, [validActivities, isRestoringFromBreak]);
 
   // Auto-redirect if no active work day
   useEffect(() => {
@@ -258,6 +280,7 @@ export default function MainActivity() {
   // Break functionality handlers
   const handleBreak = useCallback(() => {
     // Save current activity state before entering break
+    console.log("Taking break - saving current step:", currentStep);
     setPreBreakActivity(currentStep);
     setCurrentBreakState("break");
     logActivityMutation.mutate({
@@ -277,15 +300,19 @@ export default function MainActivity() {
   }, [logActivityMutation, currentStep]);
 
   const handleStartDriving = useCallback(() => {
+    console.log("Starting driving - preBreakActivity:", preBreakActivity);
     setCurrentBreakState(null);
-    // Restore previous activity state if available
-    if (preBreakActivity) {
-      setCurrentStep(preBreakActivity);
-      setPreBreakActivity(null);
-    }
+    setIsRestoringFromBreak(true);
+    
     logActivityMutation.mutate({
       activityType: "driving",
       loadData: null
+    }, {
+      onSuccess: () => {
+        // The useEffect will handle the restoration based on activity history
+        setIsRestoringFromBreak(false);
+        setPreBreakActivity(null);
+      }
     });
   }, [logActivityMutation, preBreakActivity]);
 

@@ -1,0 +1,27 @@
+Logging activity - GPS location: {latitude: 40.4324352, longitude: -111.771648, accuracy: 6513.727073668101, altitude: undefined, altitudeAccuracy: undefined, …}
+index-BQFsS0AR.js:287 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-04T03:25:48.106Z', endTime: null, …}
+index-BQFsS0AR.js:287 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_load_site', timestamp: Tue Jun 03 2025 21:27:26 GMT-0600 (Mountain Daylight Time), latitude: '40.4324352', …}
+index-BQFsS0AR.js:287 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-BQFsS0AR.js:287
+tu @ index-BQFsS0AR.js:40
+Ai @ index-BQFsS0AR.js:40
+CP @ index-BQFsS0AR.js:40
+Ss @ index-BQFsS0AR.js:40
+Hm @ index-BQFsS0AR.js:40
+ms @ index-BQFsS0AR.js:38
+(anonymous) @ index-BQFsS0AR.js:40Understand this warning
+index-BQFsS0AR.js:287 Logging activity - GPS location: {latitude: 40.4324352, longitude: -111.771648, accuracy: 6513.727073668101, altitude: undefined, altitudeAccuracy: undefined, …}
+index-BQFsS0AR.js:287 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-04T03:25:48.106Z', endTime: null, …}createdAt: "2025-06-04T03:25:48.106Z"driverId: 1driverSignature: nullendTime: nullid: 1jobId: 1notes: nulloperatorName: nulloperatorSignature: nullsignature: nullstartTime: "2025-06-04T03:25:48.106Z"status: "active"totalLoads: 0truckId: 1[[Prototype]]: Object
+index-BQFsS0AR.js:287 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'loaded_with_material', timestamp: Tue Jun 03 2025 21:27:37 GMT-0600 (Mountain Daylight Time), latitude: '40.4324352', …}
+index-BQFsS0AR.js:287 Logging activity - GPS location: {latitude: 40.4324352, longitude: -111.771648, accuracy: 6513.727073668101, altitude: undefined, altitudeAccuracy: undefined, …}
+index-BQFsS0AR.js:287 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-04T03:25:48.106Z', endTime: null, …}
+index-BQFsS0AR.js:287 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'break', timestamp: Tue Jun 03 2025 21:27:54 GMT-0600 (Mountain Daylight Time), latitude: '40.4324352', …}
+index-BQFsS0AR.js:287 Logging activity - GPS location: {latitude: 40.4324352, longitude: -111.771648, accuracy: 6513.727073668101, altitude: undefined, altitudeAccuracy: undefined, …}
+index-BQFsS0AR.js:287 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-04T03:25:48.106Z', endTime: null, …}
+index-BQFsS0AR.js:287 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'driving', timestamp: Tue Jun 03 2025 21:28:09 GMT-0600 (Mountain Daylight Time), latitude: '40.4324352', …}
+index-BQFsS0AR.js:287 Logging activity - GPS location: {latitude: 40.4324352, longitude: -111.771648, accuracy: 6513.727073668101, altitude: undefined, altitudeAccuracy: undefined, …}
+index-BQFsS0AR.js:287 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-04T03:25:48.106Z', endTime: null, …}
+index-BQFsS0AR.js:287 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'driving', timestamp: Tue Jun 03 2025 21:28:13 GMT-0600 (Mountain Daylight Time), latitude: '40.4324352', …}
+index-BQFsS0AR.js:287 Logging activity - GPS location: {latitude: 40.4324352, longitude: -111.771648, accuracy: 6513.727073668101, altitude: undefined, altitudeAccuracy: undefined, …}
+index-BQFsS0AR.js:287 Logging activity - Work day: {driverId: 1, truckId: 1, jobId: 1, startTime: '2025-06-04T03:25:48.106Z', endTime: null, …}
+index-BQFsS0AR.js:287 Sending activity data: {workDayId: 1, loadNumber: 1, activityType: 'arrived_at_load_site', timestamp: Tue Jun 03 2025 21:28:15 GMT-0600 (Mountain Daylight Time), latitude: '40.4324352', …}
