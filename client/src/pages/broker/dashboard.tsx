@@ -3,30 +3,40 @@ import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { 
   Truck, TrendingUp, Clock, DollarSign, Bell, ChevronDown,
-  Menu, Users, MapPin, BarChart3
+  Menu, Users, MapPin, BarChart3, Activity, Loader2, AlertCircle,
+  Play, Pause, Package, Calendar, RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { getActivityLabel, getActivityColor } from "@/lib/activity-states";
+import { getActivityLabel, getActivityColor, getActivityIcon } from "@/lib/activity-states";
 
 export default function BrokerDashboard() {
   const [, setLocation] = useLocation();
+  const [autoRefresh, setAutoRefresh] = useState(true);
   const { user } = useCurrentUser();
 
-  // Get dashboard statistics
-  const { data: stats } = useQuery({
+  // Get dashboard statistics with auto-refresh
+  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useQuery({
     queryKey: ["/api/dashboard/stats"],
+    refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
   });
 
-  // Get recent activities
-  const { data: recentActivities = [] } = useQuery({
+  // Get recent activities with auto-refresh
+  const { data: recentActivities = [], isLoading: activitiesLoading, refetch: refetchActivities } = useQuery({
     queryKey: ["/api/activities/recent"],
+    refetchInterval: autoRefresh ? 15000 : false, // Refresh every 15 seconds
   });
 
   // Get active jobs
   const { data: activeJobs = [] } = useQuery({
     queryKey: ["/api/jobs"],
+  });
+
+  // Get all trucks for status monitoring
+  const { data: trucks = [] } = useQuery({
+    queryKey: ["/api/trucks"],
   });
 
   const formatTime = (timestamp: string) => {
