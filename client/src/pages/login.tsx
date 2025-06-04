@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Truck, BarChart3, User, Lock, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -19,13 +19,26 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
-      return apiRequest("/api/auth/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Login failed");
+      }
+      
+      return response.json();
     },
     onSuccess: (data) => {
       if (data.user) {
+        // Invalidate auth queries to refresh user state
+        queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+        
         // Redirect based on user role
         if (data.user.role === "broker" || data.user.role === "admin") {
           setLocation("/broker/dashboard");
