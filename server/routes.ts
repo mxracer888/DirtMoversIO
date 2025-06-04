@@ -382,23 +382,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         if (!latestActivity) return;
         
+        // Check if work day is completed (has end_of_day activity)
+        const hasEndOfDay = group.activities.some((activity: any) => 
+          activity.activityType === "end_of_day"
+        );
+        
         // Determine current status based on latest activity
         let currentStatus = "returning"; // default
         
-        switch (latestActivity.activityType) {
-          case "arrived_at_load_site":
-            currentStatus = "at_load_site";
-            break;
-          case "loaded_with_material":
-            currentStatus = "in_transit";
-            break;
-          case "arrived_at_dump_site":
-            currentStatus = "at_dump_site";
-            break;
-          case "dumped_material":
-          case "driving":
-            currentStatus = "returning";
-            break;
+        if (hasEndOfDay) {
+          currentStatus = "completed";
+        } else {
+          switch (latestActivity.activityType) {
+            case "arrived_at_load_site":
+              currentStatus = "at_load_site";
+              break;
+            case "loaded_with_material":
+              currentStatus = "in_transit";
+              break;
+            case "arrived_at_dump_site":
+              currentStatus = "at_dump_site";
+              break;
+            case "dumped_material":
+            case "driving":
+              currentStatus = "returning";
+              break;
+          }
         }
         
         // Add truck to appropriate status

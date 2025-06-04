@@ -202,7 +202,14 @@ export default function BrokerDashboard() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">Active Trucks</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats?.trucksActive || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900">{
+                      truckStatus ? 
+                        (truckStatus.at_load_site?.count || 0) + 
+                        (truckStatus.in_transit?.count || 0) + 
+                        (truckStatus.at_dump_site?.count || 0) + 
+                        (truckStatus.returning?.count || 0)
+                        : (stats?.trucksActive || 0)
+                    }</p>
                   </div>
                 </div>
               </div>
@@ -282,7 +289,7 @@ export default function BrokerDashboard() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600">EOD Complete</p>
-                    <p className="text-2xl font-bold text-gray-900">{stats?.trucksEOD || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900">{truckStatus?.completed?.count || 0}</p>
                   </div>
                 </div>
               </div>
