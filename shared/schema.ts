@@ -91,11 +91,13 @@ export const activities = pgTable("activities", {
   id: serial("id").primaryKey(),
   workDayId: integer("work_day_id").notNull(),
   loadNumber: integer("load_number").notNull(),
-  activityType: text("activity_type").notNull(), // arrived_at_load_site, loaded_with_material, arrived_at_dump_site, dumped_material
+  activityType: text("activity_type").notNull(), // arrived_at_load_site, loaded_with_material, arrived_at_dump_site, dumped_material, break, breakdown, driving
   timestamp: timestamp("timestamp").notNull(),
   latitude: decimal("latitude", { precision: 10, scale: 7 }),
   longitude: decimal("longitude", { precision: 10, scale: 7 }),
   notes: text("notes"),
+  ticketNumber: text("ticket_number"), // For load data
+  netWeight: decimal("net_weight", { precision: 10, scale: 2 }), // For load data in tons
   cancelled: boolean("cancelled").default(false).notNull(),
   cancelledAt: timestamp("cancelled_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

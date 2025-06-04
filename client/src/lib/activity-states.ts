@@ -2,7 +2,10 @@ import {
   MapPin, 
   Truck, 
   Package, 
-  CheckCircle 
+  CheckCircle,
+  Coffee,
+  AlertTriangle,
+  Play
 } from "lucide-react";
 import DumpTruckLoaded from "@/components/icons/dump-truck-loaded";
 import DumpTruckDumping from "@/components/icons/dump-truck-dumping";
@@ -15,7 +18,10 @@ export type ActivityType =
   | "arrived_at_load_site" 
   | "loaded_with_material" 
   | "arrived_at_dump_site" 
-  | "dumped_material";
+  | "dumped_material"
+  | "break"
+  | "breakdown" 
+  | "driving";
 
 export interface ActivityState {
   key: ActivityType;
@@ -66,6 +72,30 @@ export const ACTIVITY_STATES: Record<ActivityType, ActivityState> = {
     color: "secondary",
     description: "Material has been successfully dumped and load is complete",
     nextState: "arrived_at_load_site",
+  },
+  break: {
+    key: "break",
+    label: "On Break",
+    shortLabel: "Break",
+    icon: Coffee,
+    color: "accent",
+    description: "Driver is taking a break",
+  },
+  breakdown: {
+    key: "breakdown",
+    label: "Breakdown",
+    shortLabel: "Breakdown",
+    icon: AlertTriangle,
+    color: "secondary",
+    description: "Vehicle breakdown or mechanical issue",
+  },
+  driving: {
+    key: "driving",
+    label: "Driving",
+    shortLabel: "Driving",
+    icon: Play,
+    color: "primary",
+    description: "Driver is back to work and driving",
   },
 };
 
