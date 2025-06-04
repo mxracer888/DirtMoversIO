@@ -403,7 +403,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Add truck to appropriate status
         if (statusData[currentStatus as keyof typeof statusData]) {
           statusData[currentStatus as keyof typeof statusData].count++;
-          statusData[currentStatus as keyof typeof statusData].trucks.push({
+          (statusData[currentStatus as keyof typeof statusData].trucks as any[]).push({
             id: group.truck.id,
             number: group.truck.number,
             driver: group.driver?.name || group.driver?.email?.split('@')[0],

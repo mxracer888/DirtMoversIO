@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getActivityLabel, getActivityColor, getActivityIcon } from "@/lib/activity-states";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function BrokerDashboard() {
   const [, setLocation] = useLocation();
@@ -184,6 +185,9 @@ export default function BrokerDashboard() {
             <Button variant="outline" size="sm" onClick={handleManualRefresh}>
               <RefreshCw className="h-4 w-4" />
             </Button>
+
+            {/* Theme toggle */}
+            <ThemeToggle />
           </div>
         </div>
 
