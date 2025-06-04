@@ -48,17 +48,17 @@ export default function MenuOverlay({ isOpen, onClose, userRole }: MenuOverlayPr
     {
       icon: Home,
       label: "Main Activity",
-      path: "/main-activity",
+      path: "/driver/main-activity",
     },
     {
       icon: History,
       label: "Activity History",
-      path: "/activity-history",
+      path: "/driver/activity-history",
     },
     {
       icon: FileText,
       label: "End of Day",
-      path: "/end-of-day",
+      path: "/driver/end-of-day",
     },
     {
       icon: Settings,

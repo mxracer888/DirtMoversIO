@@ -55,7 +55,7 @@ export default function EndOfDay() {
         description: "Your freight ticket has been processed successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/work-days/active"] });
-      setLocation("/daily-setup");
+      setLocation("/driver/start-day");
     },
     onError: (error: any) => {
       toast({
@@ -112,7 +112,7 @@ export default function EndOfDay() {
           <CardContent className="p-6 text-center">
             <h2 className="text-xl font-semibold mb-4">No Active Work Day</h2>
             <p className="text-gray-600 mb-6">You need to start a work day first.</p>
-            <Button onClick={() => setLocation("/daily-setup")}>
+            <Button onClick={() => setLocation("/driver/start-day")}>
               Start Work Day
             </Button>
           </CardContent>
@@ -129,7 +129,7 @@ export default function EndOfDay() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setLocation("/main-activity")}
+            onClick={() => setLocation("/driver/main-activity")}
             className="p-2 -ml-2"
           >
             <ArrowLeft className="h-5 w-5" />

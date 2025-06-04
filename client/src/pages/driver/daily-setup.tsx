@@ -86,7 +86,7 @@ export default function DailySetup() {
         description: "You can now begin logging activities.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/work-days/active"] });
-      setLocation("/main-activity");
+      setLocation("/driver/main-activity");
     },
     onError: (error: any) => {
       toast({
