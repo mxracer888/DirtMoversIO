@@ -13,6 +13,7 @@ import MenuOverlay from "@/components/menu-overlay";
 import LoadDataPopup from "@/components/load-data-popup";
 import BreakControls from "@/components/break-controls";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function MainActivity() {
   const [, setLocation] = useLocation();
@@ -371,14 +372,17 @@ export default function MainActivity() {
               <h1 className="text-lg font-semibold">Job Site</h1>
               <p className="text-sm text-gray-600">{user?.name}</p>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLocation("/driver/activity-history")}
-              className="p-2 -mr-2"
-            >
-              <History className="h-5 w-5" />
-            </Button>
+            <div className="flex items-center space-x-1">
+              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLocation("/driver/activity-history")}
+                className="p-2"
+              >
+                <History className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
 

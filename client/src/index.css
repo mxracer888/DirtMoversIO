@@ -75,7 +75,7 @@
   }
 
   body {
-    @apply font-sans antialiased bg-surface text-text-primary;
+    @apply font-sans antialiased bg-background dark:bg-background text-foreground dark:text-foreground;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 

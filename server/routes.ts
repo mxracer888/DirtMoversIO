@@ -354,7 +354,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         at_load_site: { count: 0, trucks: [], averageWaitTime: 0 },
         in_transit: { count: 0, trucks: [], averageWaitTime: 0 },
         at_dump_site: { count: 0, trucks: [], averageWaitTime: 0 },
-        returning: { count: 0, trucks: [], averageWaitTime: 0 }
+        returning: { count: 0, trucks: [], averageWaitTime: 0 },
+        completed: { count: 0, trucks: [], averageWaitTime: 0 }
       };
       
       // Group activities by truck and calculate status

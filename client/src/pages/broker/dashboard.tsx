@@ -142,13 +142,13 @@ export default function BrokerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background dark:bg-background">
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Operations Dashboard</h1>
-            <p className="text-gray-600">Real-time fleet monitoring and performance analytics</p>
+            <h1 className="text-3xl font-bold text-foreground dark:text-foreground mb-2">Operations Dashboard</h1>
+            <p className="text-muted-foreground dark:text-muted-foreground">Real-time fleet monitoring and performance analytics</p>
           </div>
           
           <div className="flex items-center space-x-4 mt-4 sm:mt-0">
