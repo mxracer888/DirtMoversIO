@@ -4,6 +4,8 @@ import {
   Package, 
   CheckCircle 
 } from "lucide-react";
+import DumpTruckLoaded from "@/components/icons/dump-truck-loaded";
+import DumpTruckDumping from "@/components/icons/dump-truck-dumping";
 
 /**
  * Activity state management for dump truck operations
@@ -42,7 +44,7 @@ export const ACTIVITY_STATES: Record<ActivityType, ActivityState> = {
     key: "loaded_with_material",
     label: "Loaded with Material",
     shortLabel: "Loaded",
-    icon: Package,
+    icon: DumpTruckLoaded,
     color: "accent",
     description: "Truck has been loaded with material and is ready to transport",
     nextState: "arrived_at_dump_site",
@@ -60,7 +62,7 @@ export const ACTIVITY_STATES: Record<ActivityType, ActivityState> = {
     key: "dumped_material",
     label: "Dumped Material",
     shortLabel: "Dumped",
-    icon: CheckCircle,
+    icon: DumpTruckDumping,
     color: "secondary",
     description: "Material has been successfully dumped and load is complete",
     nextState: "arrived_at_load_site",
