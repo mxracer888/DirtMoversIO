@@ -14,15 +14,15 @@
   --card-foreground: 212 21% 13%;
   --border: 0 0% 90%;
   --input: 0 0% 90%;
-  --primary: 207 90% 54%; /* #1976D2 */
-  --primary-foreground: 211 100% 99%;
-  --secondary: 122 39% 49%; /* #388E3C */
+  --primary: 27 98% 54%; /* Truck Orange #FF6B35 */
+  --primary-foreground: 0 0% 98%;
+  --secondary: 122 39% 49%; /* Forest Green #388E3C */
   --secondary-foreground: 0 0% 98%;
-  --accent: 36 100% 50%; /* #FF9800 */
-  --accent-foreground: 0 0% 98%;
+  --accent: 45 100% 51%; /* Construction Yellow #FFD60A */
+  --accent-foreground: 212 21% 13%;
   --destructive: 0 74% 50%; /* #D32F2F */
   --destructive-foreground: 60 9.1% 97.8%;
-  --ring: 207 90% 54%;
+  --ring: 27 98% 54%;
   --radius: 0.75rem;
   --surface: 0 0% 98%; /* #FAFAFA */
   --surface-variant: 0 0% 96%; /* #F5F5F5 */
@@ -31,29 +31,42 @@
   --success: 122 39% 49%; /* #388E3C */
   --warning: 36 100% 48%; /* #F57C00 */
   --error: 0 74% 50%; /* #D32F2F */
+  --truck-steel: 210 11% 71%; /* Steel Blue #9DB2BF */
+  --truck-chrome: 0 0% 88%; /* Chrome Silver #E0E0E0 */
+  --truck-rubber: 0 0% 13%; /* Tire Black #212121 */
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --primary: 207 90% 54%;
-  --primary-foreground: 211 100% 99%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --accent: 240 3.7% 15.9%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
+  --background: 222 13% 7%; /* Dark Asphalt #111827 */
+  --foreground: 0 0% 95%; /* Off White #F3F4F6 */
+  --surface: 220 13% 9%; /* Darker Asphalt #1F2937 */
+  --muted: 217 19% 15%; /* Dark Steel #1E293B */
+  --muted-foreground: 215 20% 65%; /* Light Steel #94A3B8 */
+  --popover: 222 13% 7%;
+  --popover-foreground: 0 0% 95%;
+  --card: 220 13% 9%;
+  --card-foreground: 0 0% 95%;
+  --border: 217 19% 15%;
+  --input: 217 19% 15%;
+  --primary: 27 98% 58%; /* Bright Truck Orange #FF7849 */
+  --primary-foreground: 222 13% 7%;
+  --secondary: 122 39% 55%; /* Bright Forest Green #4CAF50 */
+  --secondary-foreground: 222 13% 7%;
+  --accent: 45 100% 60%; /* Bright Construction Yellow #FFEB3B */
+  --accent-foreground: 222 13% 7%;
+  --destructive: 0 74% 60%; /* Bright Red #EF4444 */
   --destructive-foreground: 0 0% 98%;
-  --ring: 240 4.9% 83.9%;
+  --ring: 27 98% 58%;
   --radius: 0.75rem;
+  --surface-variant: 217 19% 12%; /* Dark Variant #0F172A */
+  --text-primary: 0 0% 95%; /* #F3F4F6 */
+  --text-secondary: 215 20% 65%; /* #94A3B8 */
+  --success: 122 39% 55%; /* #4CAF50 */
+  --warning: 36 100% 55%; /* #FFA726 */
+  --error: 0 74% 60%; /* #EF4444 */
+  --truck-steel: 210 11% 40%; /* Dark Steel #475569 */
+  --truck-chrome: 0 0% 25%; /* Dark Chrome #404040 */
+  --truck-rubber: 0 0% 7%; /* Deep Black #121212 */
 }
 
 @layer base {

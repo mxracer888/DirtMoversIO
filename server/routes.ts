@@ -238,29 +238,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Dashboard stats
   app.get("/api/dashboard/stats", async (req, res) => {
-    const jobId = req.query.jobId ? parseInt(req.query.jobId as string) : null;
-    const trucks = await storage.getTrucks();
-    const workDays = await storage.getActiveWorkDays(); // We'll need to add this method
-    const recentActivities = await storage.getRecentActivities(500);
-    const today = new Date().toDateString();
-    
-    // Filter activities by job if specified
-    const filteredActivities = jobId 
-      ? recentActivities.filter(activity => activity.job?.id === jobId)
-      : recentActivities;
-    
-    // Calculate today's activities
-    const todayActivities = filteredActivities.filter(activity => 
-      new Date(activity.timestamp).toDateString() === today
-    );
-    
-    // Active trucks (trucks with activity in last 2 hours)
-    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-    const activeTrucks = new Set(
-      filteredActivities
-        .filter(activity => new Date(activity.timestamp) > twoHoursAgo)
-        .map(activity => activity.truck.id)
-    ).size;
+    try {
+      const jobId = req.query.jobId ? parseInt(req.query.jobId as string) : null;
+      const trucks = await storage.getTrucks();
+      const workDays = await storage.getActiveWorkDays();
+      const recentActivities = await storage.getRecentActivities(500);
+      const today = new Date().toDateString();
+      
+      // Filter activities by job if specified
+      const filteredActivities = jobId 
+        ? recentActivities.filter(activity => activity.job?.id === jobId)
+        : recentActivities;
+      
+      // Calculate today's activities
+      const todayActivities = filteredActivities.filter(activity => 
+        new Date(activity.timestamp).toDateString() === today
+      );
+      
+      // Active trucks (trucks with activity in last 2 hours)
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+      const activeTrucksSet = new Set(
+        todayActivities
+          .filter(activity => new Date(activity.timestamp) > twoHoursAgo)
+          .map(activity => activity.truck?.id)
+          .filter(id => id !== undefined)
+      );
+      const trucksActive = activeTrucksSet.size;
     
     // Calculate loads and tonnage in transit vs delivered
     const loadGroups = todayActivities.reduce((acc, activity) => {
@@ -313,95 +316,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Get work day statuses (for EOD tracking)
     const eodTrucks = workDays.filter((wd: any) => wd.status === "completed").length;
 
-    res.json({
-      activeTrucks,
-      loadsInTransit,
-      loadsDelivered,
-      tonsInTransit: Math.round(tonsInTransit * 100) / 100,
-      tonsDelivered: Math.round(tonsDelivered * 100) / 100,
-      avgCycleTime,
-      totalActivities: todayActivities.length,
-      driversActive: new Set(todayActivities.map(activity => activity.driver.id)).size,
-      eodTrucks
-    });
+      res.json({
+        trucksActive: trucksActive,
+        loadsInTransit,
+        loadsDelivered,
+        tonsInTransit: Math.round(tonsInTransit * 100) / 100,
+        tonsDelivered: Math.round(tonsDelivered * 100) / 100,
+        avgCycleTime,
+        totalActivities: todayActivities.length,
+        driversActive: new Set(todayActivities.map(activity => activity.driver.id)).size,
+        trucksEOD: eodTrucks
+      });
+    } catch (error) {
+      console.error("Dashboard stats error:", error);
+      res.status(500).json({ error: "Failed to get dashboard stats" });
+    }
   });
 
   // Truck status tracking endpoint
   app.get("/api/dashboard/truck-status", async (req, res) => {
-    const jobId = req.query.jobId ? parseInt(req.query.jobId as string) : null;
-    const recentActivities = await storage.getRecentActivities(500);
-    const workDays = await storage.getActiveWorkDays();
-    const today = new Date().toDateString();
-    
-    // Filter activities by job and today
-    const filteredActivities = recentActivities.filter(activity => {
-      const isToday = new Date(activity.timestamp).toDateString() === today;
-      const matchesJob = jobId ? activity.job?.id === jobId : true;
-      return isToday && matchesJob;
-    });
-    
-    // Group activities by truck
-    const truckGroups = filteredActivities.reduce((acc, activity) => {
-      const truckId = activity.truck.id;
-      if (!acc[truckId]) {
-        acc[truckId] = {
-          truck: activity.truck,
-          driver: activity.driver,
-          activities: []
-        };
-      }
-      acc[truckId].activities.push(activity);
-      return acc;
-    }, {} as Record<number, any>);
-    
-    // Calculate status for each truck
-    const truckStatuses = Object.values(truckGroups).map((group: any) => {
-      const latestActivity = group.activities.sort((a: any, b: any) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      )[0];
+    try {
+      const jobId = req.query.jobId ? parseInt(req.query.jobId as string) : null;
+      const recentActivities = await storage.getRecentActivities(500);
+      const workDays = await storage.getActiveWorkDays();
+      const trucks = await storage.getTrucks();
+      const today = new Date().toDateString();
       
-      // Check if truck has completed EOD
-      const workDay = workDays.find((wd: any) => wd.driverId === group.driver.id);
-      const isEOD = workDay?.status === "completed";
+      // Filter activities by job and today
+      const filteredActivities = recentActivities.filter(activity => {
+        const isToday = new Date(activity.timestamp).toDateString() === today;
+        const matchesJob = jobId ? activity.job?.id === jobId : true;
+        return isToday && matchesJob;
+      });
       
-      if (isEOD) {
-        return {
-          truckId: group.truck.id,
-          truckNumber: group.truck.truckNumber,
-          driver: group.driver.name,
-          status: "end_of_day",
-          lastActivity: latestActivity?.activityType,
-          timestamp: workDay.endTime || latestActivity?.timestamp,
-          location: `${latestActivity?.latitude}, ${latestActivity?.longitude}`
-        };
-      }
-      
-      return {
-        truckId: group.truck.id,
-        truckNumber: group.truck.truckNumber,
-        driver: group.driver.name,
-        status: latestActivity?.activityType || "inactive",
-        lastActivity: latestActivity?.activityType,
-        timestamp: latestActivity?.timestamp,
-        location: latestActivity ? `${latestActivity.latitude}, ${latestActivity.longitude}` : null
+      // Create status object with proper structure
+      const statusData = {
+        at_load_site: { count: 0, trucks: [], averageWaitTime: 0 },
+        in_transit: { count: 0, trucks: [], averageWaitTime: 0 },
+        at_dump_site: { count: 0, trucks: [], averageWaitTime: 0 },
+        returning: { count: 0, trucks: [], averageWaitTime: 0 }
       };
-    });
-    
-    // Calculate status counts and timing
-    const statusCounts = {
-      at_load_site: truckStatuses.filter(t => t.status === "arrived_at_load_site").length,
-      loaded_in_transit: truckStatuses.filter(t => t.status === "loaded_with_material").length,
-      at_dump_site: truckStatuses.filter(t => t.status === "arrived_at_dump_site").length,
-      dumping: truckStatuses.filter(t => t.status === "dumped_material").length,
-      returning: truckStatuses.filter(t => t.status === "driving").length,
-      end_of_day: truckStatuses.filter(t => t.status === "end_of_day").length
-    };
-    
-    res.json({
-      truckStatuses,
-      statusCounts,
-      totalTrucks: truckStatuses.length
-    });
+      
+      // Group activities by truck and calculate status
+      const truckActivities = filteredActivities.reduce((acc, activity) => {
+        const truckId = activity.truck?.id;
+        if (!truckId) return acc;
+        
+        if (!acc[truckId]) {
+          acc[truckId] = {
+            truck: activity.truck,
+            driver: activity.driver,
+            activities: []
+          };
+        }
+        acc[truckId].activities.push(activity);
+        return acc;
+      }, {} as Record<number, any>);
+      
+      // Analyze each truck's current status
+      Object.values(truckActivities).forEach((group: any) => {
+        const latestActivity = group.activities.sort((a: any, b: any) => 
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        )[0];
+        
+        if (!latestActivity) return;
+        
+        // Determine current status based on latest activity
+        let currentStatus = "returning"; // default
+        
+        switch (latestActivity.activityType) {
+          case "arrived_at_load_site":
+            currentStatus = "at_load_site";
+            break;
+          case "loaded_with_material":
+            currentStatus = "in_transit";
+            break;
+          case "arrived_at_dump_site":
+            currentStatus = "at_dump_site";
+            break;
+          case "dumped_material":
+          case "driving":
+            currentStatus = "returning";
+            break;
+        }
+        
+        // Add truck to appropriate status
+        if (statusData[currentStatus as keyof typeof statusData]) {
+          statusData[currentStatus as keyof typeof statusData].count++;
+          statusData[currentStatus as keyof typeof statusData].trucks.push({
+            id: group.truck.id,
+            number: group.truck.number,
+            driver: group.driver?.name || group.driver?.email?.split('@')[0],
+            lastActivity: latestActivity.timestamp
+          });
+        }
+      });
+      
+      res.json(statusData);
+    } catch (error) {
+      console.error("Truck status tracking error:", error);
+      res.status(500).json({ error: "Failed to get truck status data" });
+    }
   });
 
   const httpServer = createServer(app);
