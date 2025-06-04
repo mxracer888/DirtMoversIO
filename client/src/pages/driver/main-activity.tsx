@@ -23,7 +23,6 @@ export default function MainActivity() {
   const [showLoadDataPopup, setShowLoadDataPopup] = useState(false);
   const [currentBreakState, setCurrentBreakState] = useState<"break" | "breakdown" | null>(null);
   const [preBreakActivity, setPreBreakActivity] = useState<string | null>(null);
-  const [isRestoringFromBreak, setIsRestoringFromBreak] = useState(false);
   const lastClickTimeRef = useRef(0);
   const { toast } = useToast();
   const { user } = useCurrentUser();
@@ -156,12 +155,6 @@ export default function MainActivity() {
 
   // Initialize state from activities and persist state
   useEffect(() => {
-    // Don't override state when restoring from break
-    if (isRestoringFromBreak) {
-      console.log("Skipping state update - restoring from break");
-      return;
-    }
-
     if (validActivities.length > 0) {
       // Sort activities by timestamp to get the actual last activity
       const sortedActivities = [...validActivities].sort((a, b) => 
@@ -178,13 +171,13 @@ export default function MainActivity() {
         return;
       }
       
-      // Check if we just finished driving after a break - skip one update cycle
+      // Check if we just finished driving after a break
       if (lastActivity.activityType === "driving") {
         // Find the activity before the most recent break/breakdown
         const breakIndex = sortedActivities.findLastIndex(a => 
           a.activityType === "break" || a.activityType === "breakdown"
         );
-        if (breakIndex > 0) {
+        if (breakIndex >= 0) {
           // There was a recent break, look at the activity before it
           const preBreakIndex = breakIndex - 1;
           if (preBreakIndex >= 0) {
@@ -192,12 +185,13 @@ export default function MainActivity() {
             const nextStep = getActivityFlow(preBreakActivity.activityType as any);
             console.log("Resuming from break - setting step to:", nextStep);
             setCurrentStep(nextStep);
+            setCurrentBreakState(null); // Clear break state
             return;
           }
         }
       }
       
-      // Normal flow - set next step based on last activity
+      // Normal flow - set next step based on last activity  
       const nextStep = getActivityFlow(lastActivity.activityType as any);
       setCurrentStep(nextStep);
       
@@ -209,7 +203,7 @@ export default function MainActivity() {
       setCurrentStep("arrived_at_load_site");
       setLoadNumber(1);
     }
-  }, [validActivities, isRestoringFromBreak]);
+  }, [validActivities]);
 
   // Auto-redirect if no active work day
   useEffect(() => {
@@ -302,17 +296,10 @@ export default function MainActivity() {
   const handleStartDriving = useCallback(() => {
     console.log("Starting driving - preBreakActivity:", preBreakActivity);
     setCurrentBreakState(null);
-    setIsRestoringFromBreak(true);
     
     logActivityMutation.mutate({
       activityType: "driving",
       loadData: null
-    }, {
-      onSuccess: () => {
-        // The useEffect will handle the restoration based on activity history
-        setIsRestoringFromBreak(false);
-        setPreBreakActivity(null);
-      }
     });
   }, [logActivityMutation, preBreakActivity]);
 
