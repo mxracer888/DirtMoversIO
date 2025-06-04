@@ -49,9 +49,29 @@ export default function MainActivity() {
       console.log("Logging activity - GPS location:", location);
       console.log("Logging activity - Work day:", workDay);
 
+      // Determine the correct load number based on activity type
+      let assignedLoadNumber = loadNumber;
+      
+      // For break/breakdown/driving activities, use the current active load number
+      if (["break", "breakdown", "driving"].includes(data.activityType)) {
+        // Find the highest load number from existing load activities
+        const loadActivities = validActivities.filter(a => 
+          ["arrived_at_load_site", "loaded_with_material", "arrived_at_dump_site", "dumped_material"].includes(a.activityType)
+        );
+        
+        if (loadActivities.length > 0) {
+          const maxLoadNumber = Math.max(...loadActivities.map(a => a.loadNumber || 1));
+          // Check if current load cycle is complete
+          const currentLoadComplete = loadActivities.some(a => 
+            a.loadNumber === maxLoadNumber && a.activityType === "dumped_material"
+          );
+          assignedLoadNumber = currentLoadComplete ? maxLoadNumber + 1 : maxLoadNumber;
+        }
+      }
+
       const activityData = {
         workDayId: workDay.id,
-        loadNumber,
+        loadNumber: assignedLoadNumber,
         activityType: data.activityType,
         timestamp: new Date(),
         latitude: location ? location.latitude.toString() : "0",
@@ -195,9 +215,24 @@ export default function MainActivity() {
       const nextStep = getActivityFlow(lastActivity.activityType as any);
       setCurrentStep(nextStep);
       
-      // Set load number based on completed loads
-      const completedLoads = validActivities.filter(a => a.activityType === "dumped_material").length;
-      setLoadNumber(completedLoads + 1);
+      // Set load number based on load cycle logic
+      const loadActivities = validActivities.filter(a => 
+        ["arrived_at_load_site", "loaded_with_material", "arrived_at_dump_site", "dumped_material"].includes(a.activityType)
+      );
+      
+      if (loadActivities.length === 0) {
+        setLoadNumber(1);
+      } else {
+        // Find the highest load number from existing activities
+        const maxLoadNumber = Math.max(...loadActivities.map(a => a.loadNumber || 1));
+        
+        // Check if current load cycle is complete (has dumped_material)
+        const currentLoadComplete = loadActivities.some(a => 
+          a.loadNumber === maxLoadNumber && a.activityType === "dumped_material"
+        );
+        
+        setLoadNumber(currentLoadComplete ? maxLoadNumber + 1 : maxLoadNumber);
+      }
     } else {
       // Reset to first step if no activities
       setCurrentStep("arrived_at_load_site");
