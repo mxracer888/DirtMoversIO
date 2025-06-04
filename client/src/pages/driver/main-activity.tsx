@@ -10,6 +10,8 @@ import { useGeolocation } from "@/hooks/use-geolocation";
 import { getActivityFlow, getActivityIcon, getActivityColor, ACTIVITY_FLOW_SEQUENCE } from "@/lib/activity-states";
 import ActivityButton from "@/components/activity-button";
 import MenuOverlay from "@/components/menu-overlay";
+import LoadDataPopup from "@/components/load-data-popup";
+import BreakControls from "@/components/break-controls";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 export default function MainActivity() {
@@ -18,6 +20,8 @@ export default function MainActivity() {
   const [currentStep, setCurrentStep] = useState("arrived_at_load_site");
   const [loadNumber, setLoadNumber] = useState(1);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [showLoadDataPopup, setShowLoadDataPopup] = useState(false);
+  const [currentBreakState, setCurrentBreakState] = useState<"break" | "breakdown" | null>(null);
   const lastClickTimeRef = useRef(0);
   const { toast } = useToast();
   const { user } = useCurrentUser();
@@ -38,7 +42,7 @@ export default function MainActivity() {
   const validActivities = Array.isArray(activities) ? activities.filter(a => !a.cancelled) : [];
 
   const logActivityMutation = useMutation({
-    mutationFn: async (activityType: string) => {
+    mutationFn: async (data: { activityType: string; loadData: { ticketNumber: string | null; netWeight: number | null } | null }) => {
       if (!workDay) throw new Error("No active work day");
       
       console.log("Logging activity - GPS location:", location);
@@ -47,20 +51,22 @@ export default function MainActivity() {
       const activityData = {
         workDayId: workDay.id,
         loadNumber,
-        activityType,
+        activityType: data.activityType,
         timestamp: new Date(),
         latitude: location ? location.latitude.toString() : "0",
         longitude: location ? location.longitude.toString() : "0",
+        ticketNumber: data.loadData?.ticketNumber || null,
+        netWeight: data.loadData?.netWeight || null,
       };
 
       console.log("Sending activity data:", activityData);
       const res = await apiRequest("POST", "/api/activities", activityData);
       return res.json();
     },
-    onSuccess: (_, activityType) => {
+    onSuccess: (_, data) => {
       toast({
         title: "Activity logged!",
-        description: `Successfully logged: ${activityType.replace(/_/g, ' ')}`,
+        description: `Successfully logged: ${data.activityType.replace(/_/g, ' ')}`,
       });
 
       // Re-enable button after successful submission
@@ -200,12 +206,63 @@ export default function MainActivity() {
       return;
     }
 
+    // Check if this is a "loaded_with_material" activity
+    if (currentStep === "loaded_with_material") {
+      // Check if material is export type - bypass popup for export materials
+      const materialType = workDay?.material?.name || "";
+      const isExportMaterial = materialType.toLowerCase().includes("export");
+      
+      if (!isExportMaterial) {
+        setShowLoadDataPopup(true);
+        return;
+      }
+    }
+
     // Disable button temporarily
     setIsButtonDisabled(true);
     lastClickTimeRef.current = now;
 
-    logActivityMutation.mutate(currentStep);
-  }, [isButtonDisabled, gpsError, currentStep, logActivityMutation, toast]);
+    logActivityMutation.mutate({
+      activityType: currentStep,
+      loadData: null
+    });
+  }, [isButtonDisabled, gpsError, currentStep, workDay, toast]);
+
+  // Handle load data submission
+  const handleLoadDataSubmit = useCallback((loadData: { ticketNumber: string | null; netWeight: number | null }) => {
+    setIsButtonDisabled(true);
+    lastClickTimeRef.current = Date.now();
+
+    logActivityMutation.mutate({
+      activityType: currentStep,
+      loadData
+    });
+  }, [currentStep, logActivityMutation]);
+
+  // Break functionality handlers
+  const handleBreak = useCallback(() => {
+    setCurrentBreakState("break");
+    logActivityMutation.mutate({
+      activityType: "break",
+      loadData: null
+    });
+  }, [logActivityMutation]);
+
+  const handleBreakdown = useCallback(() => {
+    setCurrentBreakState("breakdown");
+    logActivityMutation.mutate({
+      activityType: "breakdown",
+      loadData: null
+    });
+  }, [logActivityMutation]);
+
+  const handleStartDriving = useCallback(() => {
+    setCurrentBreakState(null);
+    logActivityMutation.mutate({
+      activityType: "driving",
+      loadData: null
+    });
+  }, [logActivityMutation]);
 
   if (isLoading) {
     return (
