@@ -387,6 +387,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           activity.activityType === "end_of_day"
         );
         
+        // Debug logging
+        if (hasEndOfDay) {
+          console.log(`Truck ${group.truck.number} has EOD activity - marking as completed`);
+        }
+        
         // Determine current status based on latest activity
         let currentStatus = "returning"; // default
         

@@ -43,7 +43,7 @@ export default function BrokerDashboard() {
   });
 
   // Get truck status tracking with job filtering
-  const { data: truckStatus, isLoading: truckStatusLoading } = useQuery({
+  const { data: truckStatus, isLoading: truckStatusLoading, refetch: refetchTruckStatus } = useQuery({
     queryKey: ["/api/dashboard/truck-status", selectedJobId],
     queryFn: async () => {
       const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
@@ -61,6 +61,7 @@ export default function BrokerDashboard() {
   const handleManualRefresh = () => {
     refetchStats();
     refetchActivities();
+    refetchTruckStatus();
   };
 
   // Helper functions
@@ -155,7 +156,11 @@ export default function BrokerDashboard() {
             {/* Job Filter */}
             <div className="flex items-center space-x-2">
               <Filter className="h-4 w-4 text-gray-500" />
-              <Select value={selectedJobId} onValueChange={setSelectedJobId}>
+              <Select value={selectedJobId} onValueChange={(value) => {
+                setSelectedJobId(value);
+                // Invalidate truck status cache to ensure fresh data
+                queryClient.invalidateQueries({ queryKey: ["/api/dashboard/truck-status"] });
+              }}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Filter by job" />
                 </SelectTrigger>
