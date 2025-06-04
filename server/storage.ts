@@ -418,6 +418,8 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       latitude: insertActivity.latitude ?? null,
       longitude: insertActivity.longitude ?? null,
+      ticketNumber: insertActivity.ticketNumber ?? null,
+      netWeight: insertActivity.netWeight ?? null,
       notes: insertActivity.notes ?? null,
       cancelled: false,
       cancelledAt: null,
