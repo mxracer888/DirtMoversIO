@@ -19,9 +19,14 @@ export default function BrokerDashboard() {
   const [selectedJobId, setSelectedJobId] = useState<string>("all");
   const { user } = useCurrentUser();
 
-  // Get dashboard statistics with auto-refresh
+  // Get dashboard statistics with auto-refresh and job filtering
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useQuery({
-    queryKey: ["/api/dashboard/stats"],
+    queryKey: ["/api/dashboard/stats", selectedJobId],
+    queryFn: async () => {
+      const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
+      const response = await fetch(`/api/dashboard/stats${params}`);
+      return response.json();
+    },
     refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
   });
 
@@ -34,6 +39,17 @@ export default function BrokerDashboard() {
   // Get active jobs
   const { data: activeJobs = [] } = useQuery({
     queryKey: ["/api/jobs"],
+  });
+
+  // Get truck status tracking with job filtering
+  const { data: truckStatus, isLoading: truckStatusLoading } = useQuery({
+    queryKey: ["/api/dashboard/truck-status", selectedJobId],
+    queryFn: async () => {
+      const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
+      const response = await fetch(`/api/dashboard/truck-status${params}`);
+      return response.json();
+    },
+    refetchInterval: autoRefresh ? 20000 : false, // Refresh every 20 seconds
   });
 
   // Get all trucks for status monitoring
@@ -158,6 +174,25 @@ export default function BrokerDashboard() {
               day: 'numeric' 
             })}</p>
           </div>
+          <div className="flex items-center space-x-4">
+            {/* Job Filter */}
+            <div className="flex items-center space-x-2">
+              <Filter className="h-4 w-4 text-gray-600" />
+              <Select value={selectedJobId} onValueChange={setSelectedJobId}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filter by job" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Jobs</SelectItem>
+                  {Array.isArray(activeJobs) && activeJobs.map((job: any) => (
+                    <SelectItem key={job.id} value={job.id.toString()}>
+                      {job.name} - {job.customer?.name || 'Unknown Customer'}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div className="flex items-center space-x-3">
             <Button
               variant="outline"
@@ -184,7 +219,7 @@ export default function BrokerDashboard() {
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
@@ -202,12 +237,26 @@ export default function BrokerDashboard() {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
+                <div className="p-2 bg-yellow-100 rounded-lg">
+                  <Package className="h-6 w-6 text-yellow-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Loads In Transit</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats?.loadsInTransit || 0}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
                 <div className="p-2 bg-green-100 rounded-lg">
                   <TrendingUp className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Loads Today</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats?.loadsToday || 0}</p>
+                  <p className="text-sm font-medium text-gray-600">Loads Delivered</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats?.loadsDelivered || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -217,25 +266,11 @@ export default function BrokerDashboard() {
             <CardContent className="p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-orange-100 rounded-lg">
-                  <Clock className="h-6 w-6 text-orange-600" />
+                  <Package className="h-6 w-6 text-orange-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Avg Cycle Time</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats?.avgCycleTime || "--"}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Package className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Tons Moved</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats?.dirtMovedToday || 0}</p>
+                  <p className="text-sm font-medium text-gray-600">Tons In Transit</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats?.tonsInTransit || 0}</p>
                 </div>
               </div>
             </CardContent>
@@ -244,60 +279,158 @@ export default function BrokerDashboard() {
           <Card>
             <CardContent className="p-6">
               <div className="flex items-center">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Users className="h-6 w-6 text-purple-600" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Target className="h-6 w-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Active Drivers</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats?.driversActive || 0}</p>
+                  <p className="text-sm font-medium text-gray-600">Tons Delivered</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats?.tonsDelivered || 0}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <Clock className="h-6 w-6 text-red-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Trucks EOD</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats?.eodTrucks || 0}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Real-time Fleet Status */}
+        {/* Truck Status Tracking */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Live Driver Status */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Users className="h-5 w-5 mr-2" />
-                  Live Driver Status
-                </div>
-                <div className="flex items-center text-sm text-gray-500">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                  Live
-                </div>
+              <CardTitle className="flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2" />
+                Truck Status Overview
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 max-h-64 overflow-y-auto">
-                {trucks.map((truck: any) => {
-                  const driverActivities = recentActivities.filter((activity: any) => 
-                    activity.truck?.id === truck.id && 
-                    new Date(activity.timestamp).toDateString() === new Date().toDateString()
-                  );
-                  
-                  const lastActivity = driverActivities
+              {truckStatusLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-yellow-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-yellow-800">At Load Site</p>
+                      <p className="text-2xl font-bold text-yellow-900">{truckStatus?.statusCounts?.at_load_site || 0}</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-blue-800">Loaded in Transit</p>
+                      <p className="text-2xl font-bold text-blue-900">{truckStatus?.statusCounts?.loaded_in_transit || 0}</p>
+                    </div>
+                    <div className="bg-orange-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-orange-800">At Dump Site</p>
+                      <p className="text-2xl font-bold text-orange-900">{truckStatus?.statusCounts?.at_dump_site || 0}</p>
+                    </div>
+                    <div className="bg-green-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-green-800">Returning</p>
+                      <p className="text-2xl font-bold text-green-900">{truckStatus?.statusCounts?.returning || 0}</p>
+                    </div>
+                    <div className="bg-red-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium text-red-800">End of Day</p>
+                      <p className="text-2xl font-bold text-red-900">{truckStatus?.statusCounts?.end_of_day || 0}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Truck className="h-5 w-5 mr-2" />
+                Individual Truck Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {truckStatusLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {truckStatus?.truckStatuses?.map((truck: any) => (
+                    <div key={truck.truckId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium">{truck.truckNumber}</p>
+                        <p className="text-sm text-gray-600">{truck.driver}</p>
+                      </div>
+                      <div className="text-right">
+                        <Badge variant={truck.status === "end_of_day" ? "destructive" : "secondary"}>
+                          {truck.status.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                        </Badge>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {truck.timestamp ? formatTime(truck.timestamp) : "No activity"}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {(!truckStatus?.truckStatuses || truckStatus.truckStatuses.length === 0) && (
+                    <div className="text-center py-8 text-gray-500">
+                      No truck activity today
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Fleet Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Truck className="h-5 w-5 mr-2" />
+                Fleet Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {Array.isArray(trucks) && trucks.map((truck: any) => {
+                  const lastActivity = Array.isArray(recentActivities) && recentActivities
+                    .filter((activity: any) => activity.truck?.id === truck.id)
                     .sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
                   
-                  const status = lastActivity ? getDriverStatus(lastActivity.driver?.id) : { status: "Inactive", color: "bg-gray-500" };
-                  
                   return (
-                    <div key={truck.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div key={truck.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center">
-                        <div className={`w-3 h-3 rounded-full mr-3 ${status.color}`}></div>
+                        <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                          <Truck className="h-5 w-5 text-blue-600" />
+                        </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{truck.number}</p>
-                          <p className="text-xs text-gray-500">{lastActivity?.driver?.email?.split('@')[0] || 'No driver'}</p>
+                          <p className="font-semibold">{truck.truckNumber}</p>
+                          <p className="text-sm text-gray-600">{truck.make} {truck.model}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-gray-900">{status.status}</p>
-                        {lastActivity && (
-                          <p className="text-xs text-gray-500">{formatTimeAgo(lastActivity.timestamp)}</p>
+                        {lastActivity ? (
+                          <>
+                            <Badge 
+                              variant={getActivityColor(lastActivity.activityType) === "primary" ? "default" : "secondary"}
+                            >
+                              {getActivityLabel(lastActivity.activityType)}
+                            </Badge>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {formatTimeAgo(lastActivity.timestamp)}
+                            </p>
+                          </>
+                        ) : (
+                          <Badge variant="outline">No Activity</Badge>
                         )}
                       </div>
                     </div>
@@ -306,21 +439,58 @@ export default function BrokerDashboard() {
               </div>
             </CardContent>
           </Card>
+        </div>
 
-          {/* Load Distribution Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <BarChart3 className="h-5 w-5 mr-2" />
-                Today's Load Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 flex items-center justify-center">
-                {(() => {
-                  const hourlyLoads = Array.from({ length: 10 }, (_, i) => {
-                    const hour = i + 7; // 7 AM to 4 PM
-                    const hourStart = new Date();
+        {/* Recent Activity Feed */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Activity className="h-5 w-5 mr-2" />
+              Recent Activity Feed
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {Array.isArray(recentActivities) && recentActivities.map((activity: any) => {
+                const Icon = getActivityIcon(activity.activityType);
+                return (
+                  <div key={activity.id} className="flex items-center justify-between p-3 border-l-4 border-l-blue-500 bg-gray-50 rounded-r-lg">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                        <Icon className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {activity.driver?.name} - {getActivityLabel(activity.activityType)}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Truck {activity.truck?.truckNumber} • Load #{activity.loadNumber}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge variant={getActivityColor(activity.activityType) === "primary" ? "default" : "secondary"}>
+                        {formatTime(activity.timestamp)}
+                      </Badge>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formatTimeAgo(activity.timestamp)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+              {(!Array.isArray(recentActivities) || recentActivities.length === 0) && (
+                <div className="text-center py-8 text-gray-500">
+                  No recent activities
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
                     hourStart.setHours(hour, 0, 0, 0);
                     const hourEnd = new Date();
                     hourEnd.setHours(hour + 1, 0, 0, 0);
