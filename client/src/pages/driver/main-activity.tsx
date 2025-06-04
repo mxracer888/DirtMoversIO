@@ -374,7 +374,7 @@ export default function MainActivity() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setLocation("/activity-history")}
+              onClick={() => setLocation("/driver/activity-history")}
               className="p-2 -mr-2"
             >
               <History className="h-5 w-5" />
@@ -525,7 +525,7 @@ export default function MainActivity() {
             <Button
               variant="outline"
               className="quick-action"
-              onClick={() => setLocation("/activity-history")}
+              onClick={() => setLocation("/driver/activity-history")}
             >
               <History className="h-6 w-6 text-primary mb-2" />
               <span className="text-sm font-medium">View History</span>
