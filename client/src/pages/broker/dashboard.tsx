@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { 
   Truck, TrendingUp, Clock, DollarSign, Bell, ChevronDown,
   Menu, Users, MapPin, BarChart3, Activity, Loader2, AlertCircle,
-  Play, Pause, Package, Calendar, RefreshCw, Filter, Target
+  Play, Pause, Package, Calendar, RefreshCw, Filter, Target, UserCog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -172,6 +172,18 @@ export default function BrokerDashboard() {
               <Calendar className="h-4 w-4" />
               <span>Dispatches</span>
             </Button>
+
+            {/* Navigation to Employee Management */}
+            {user?.permissions?.includes("admin") && (
+              <Button
+                variant="outline"
+                onClick={() => setLocation("/broker/employees")}
+                className="flex items-center space-x-2"
+              >
+                <UserCog className="h-4 w-4" />
+                <span>Employees</span>
+              </Button>
+            )}
 
             {/* Job Filter */}
             <div className="flex items-center space-x-2">

@@ -616,6 +616,128 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Employee management routes
+  app.get("/api/employees/:companyId", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const companyId = parseInt(req.params.companyId);
+      const user = await storage.getUser(req.session.userId);
+      
+      // Check permissions - user must be admin of the company or system admin
+      if (!user || (user.companyId !== companyId && user.role !== "admin")) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const employees = await storage.getEmployeesByCompany(companyId);
+      res.json(employees);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      res.status(500).json({ error: "Failed to fetch employees" });
+    }
+  });
+
+  app.post("/api/employees", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      // Only company admins or system admins can create employees
+      if (!user || (!user.permissions?.includes("admin") && user.role !== "admin")) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const validation = insertUserSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res.status(400).json({ error: "Invalid data", details: validation.error.errors });
+      }
+
+      const employee = await storage.createEmployee(validation.data);
+      res.json(employee);
+    } catch (error) {
+      console.error("Error creating employee:", error);
+      res.status(500).json({ error: "Failed to create employee" });
+    }
+  });
+
+  app.patch("/api/employees/:id", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const employeeId = parseInt(req.params.id);
+      const user = await storage.getUser(req.session.userId);
+      const targetEmployee = await storage.getUser(employeeId);
+
+      // Check permissions - user must be admin of the same company or system admin
+      if (!user || !targetEmployee || 
+          (user.companyId !== targetEmployee.companyId && user.role !== "admin") ||
+          (!user.permissions?.includes("admin") && user.role !== "admin")) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const updatedEmployee = await storage.updateEmployee(employeeId, req.body);
+      if (!updatedEmployee) {
+        return res.status(404).json({ error: "Employee not found" });
+      }
+
+      res.json(updatedEmployee);
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      res.status(500).json({ error: "Failed to update employee" });
+    }
+  });
+
+  app.delete("/api/employees/:id", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const employeeId = parseInt(req.params.id);
+      const user = await storage.getUser(req.session.userId);
+      const targetEmployee = await storage.getUser(employeeId);
+
+      // Check permissions - user must be admin of the same company or system admin
+      if (!user || !targetEmployee || 
+          (user.companyId !== targetEmployee.companyId && user.role !== "admin") ||
+          (!user.permissions?.includes("admin") && user.role !== "admin")) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const deactivatedEmployee = await storage.deactivateEmployee(employeeId);
+      if (!deactivatedEmployee) {
+        return res.status(404).json({ error: "Employee not found" });
+      }
+
+      res.json(deactivatedEmployee);
+    } catch (error) {
+      console.error("Error deactivating employee:", error);
+      res.status(500).json({ error: "Failed to deactivate employee" });
+    }
+  });
+
+  // Company management routes
+  app.get("/api/companies/:type", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const type = req.params.type;
+      const companies = await storage.getCompaniesByType(type);
+      res.json(companies);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      res.status(500).json({ error: "Failed to fetch companies" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
