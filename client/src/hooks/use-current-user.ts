@@ -16,11 +16,15 @@ export function useCurrentUser() {
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    gcTime: 5 * 60 * 1000, // 5 minutes garbage collection
   });
+
+  // Prevent infinite loading states
+  const safeIsLoading = isLoading && !error;
 
   return {
     user: data?.user || null,
-    isLoading,
+    isLoading: safeIsLoading,
     error,
     isAuthenticated: !!data?.user,
     refetch,
