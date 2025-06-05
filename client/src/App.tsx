@@ -10,6 +10,7 @@ import MainActivity from "@/pages/driver/main-activity";
 import ActivityHistory from "@/pages/driver/activity-history";
 import EndOfDay from "@/pages/driver/end-of-day";
 import BrokerDashboard from "@/pages/broker/dashboard";
+import DispatchesPage from "@/pages/broker/dispatches";
 import MenuOverlay from "@/components/menu-overlay";
 import { useState } from "react";
 
@@ -41,6 +42,7 @@ function AppContent() {
         <Route path="/driver/activity-history" component={ActivityHistory} />
         <Route path="/driver/end-of-day" component={EndOfDay} />
         <Route path="/broker/dashboard" component={BrokerDashboard} />
+        <Route path="/broker/dispatches" component={DispatchesPage} />
         <Route>
           <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">

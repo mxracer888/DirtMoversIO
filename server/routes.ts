@@ -1,7 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { loginSchema, insertWorkDaySchema, insertActivitySchema } from "@shared/schema";
+import { 
+  loginSchema, insertWorkDaySchema, insertActivitySchema,
+  insertDispatchSchema, insertDispatchAssignmentSchema, 
+  insertReusableDataSchema, insertBrokerLeasorRelationshipSchema
+} from "@shared/schema";
 import "./types";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -431,6 +435,183 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Truck status tracking error:", error);
       res.status(500).json({ error: "Failed to get truck status data" });
+    }
+  });
+
+  // Dispatches API Routes
+  app.get("/api/dispatches", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Role-based access control
+      let dispatches = [];
+      if (user.role === 'broker') {
+        dispatches = await storage.getDispatches(user.id);
+      } else if (user.role === 'customer') {
+        const customerDispatches = await storage.getDispatchesByCustomer(user.companyId!);
+        dispatches = customerDispatches;
+      } else if (user.role === 'leasor') {
+        const assignments = await storage.getDispatchAssignmentsByLeasor(user.companyId!);
+        dispatches = assignments.map(a => a.dispatch);
+      } else if (user.role === 'driver') {
+        const assignments = await storage.getDispatchAssignments(undefined, user.id);
+        const dispatchPromises = assignments.map(a => storage.getDispatch(a.dispatchId));
+        const dispatchResults = await Promise.all(dispatchPromises);
+        dispatches = dispatchResults.filter(d => d !== undefined);
+      }
+
+      res.json(dispatches);
+    } catch (error) {
+      console.error("Get dispatches error:", error);
+      res.status(500).json({ error: "Failed to get dispatches" });
+    }
+  });
+
+  app.post("/api/dispatches", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'broker') {
+        return res.status(403).json({ error: "Only brokers can create dispatches" });
+      }
+
+      const dispatchData = insertDispatchSchema.parse({
+        ...req.body,
+        brokerId: user.id
+      });
+
+      const dispatch = await storage.createDispatch(dispatchData);
+
+      // Save reusable data
+      const reusableFields = [
+        { type: 'job_name', value: dispatch.jobName },
+        { type: 'material_type', value: dispatch.materialType },
+        { type: 'location', value: dispatch.materialFrom },
+        { type: 'location', value: dispatch.deliveredTo }
+      ];
+
+      for (const field of reusableFields) {
+        const existing = await storage.getReusableData(field.type, user.id);
+        const existingItem = existing.find(item => item.value === field.value);
+        
+        if (existingItem) {
+          await storage.updateReusableDataUsage(existingItem.id);
+        } else {
+          await storage.createReusableData({
+            type: field.type,
+            value: field.value,
+            brokerId: user.id
+          });
+        }
+      }
+
+      res.json(dispatch);
+    } catch (error) {
+      console.error("Create dispatch error:", error);
+      res.status(400).json({ error: "Failed to create dispatch" });
+    }
+  });
+
+  app.post("/api/dispatches/:id/assign", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'broker') {
+        return res.status(403).json({ error: "Only brokers can assign dispatches" });
+      }
+
+      const dispatchId = parseInt(req.params.id);
+      const { truckAssignments } = req.body; // Array of { truckId, driverId? }
+
+      const assignments = [];
+      for (const assignment of truckAssignments) {
+        const dispatchAssignment = await storage.createDispatchAssignment({
+          dispatchId,
+          truckId: assignment.truckId,
+          driverId: assignment.driverId || null,
+          assignedBy: user.id
+        });
+        assignments.push(dispatchAssignment);
+      }
+
+      // Update dispatch status
+      await storage.updateDispatch(dispatchId, { status: 'assigned' });
+
+      res.json(assignments);
+    } catch (error) {
+      console.error("Assign dispatch error:", error);
+      res.status(400).json({ error: "Failed to assign dispatch" });
+    }
+  });
+
+  app.get("/api/reusable-data/:type", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'broker') {
+        return res.status(403).json({ error: "Only brokers can access reusable data" });
+      }
+
+      const type = req.params.type;
+      const data = await storage.getReusableData(type, user.id);
+      res.json(data);
+    } catch (error) {
+      console.error("Get reusable data error:", error);
+      res.status(500).json({ error: "Failed to get reusable data" });
+    }
+  });
+
+  app.get("/api/broker/trucks", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'broker') {
+        return res.status(403).json({ error: "Only brokers can access this endpoint" });
+      }
+
+      const trucks = await storage.getTrucksByBroker(user.id);
+      res.json(trucks);
+    } catch (error) {
+      console.error("Get broker trucks error:", error);
+      res.status(500).json({ error: "Failed to get trucks" });
+    }
+  });
+
+  app.get("/api/broker/customers", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'broker') {
+        return res.status(403).json({ error: "Only brokers can access this endpoint" });
+      }
+
+      const customers = await storage.getCustomersByBroker(user.id);
+      res.json(customers);
+    } catch (error) {
+      console.error("Get broker customers error:", error);
+      res.status(500).json({ error: "Failed to get customers" });
     }
   });
 

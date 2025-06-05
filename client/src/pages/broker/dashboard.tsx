@@ -163,6 +163,16 @@ export default function BrokerDashboard() {
           </div>
           
           <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+            {/* Navigation to Dispatches */}
+            <Button
+              variant="outline"
+              onClick={() => setLocation("/broker/dispatches")}
+              className="flex items-center space-x-2"
+            >
+              <Calendar className="h-4 w-4" />
+              <span>Dispatches</span>
+            </Button>
+
             {/* Job Filter */}
             <div className="flex items-center space-x-2">
               <Filter className="h-4 w-4 text-gray-500" />
