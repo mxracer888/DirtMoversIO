@@ -21,7 +21,8 @@ export type ActivityType =
   | "dumped_material"
   | "break"
   | "breakdown" 
-  | "driving";
+  | "driving"
+  | "end_of_day";
 
 export interface ActivityState {
   key: ActivityType;
@@ -97,6 +98,14 @@ export const ACTIVITY_STATES: Record<ActivityType, ActivityState> = {
     color: "primary",
     description: "Driver is back to work and driving",
   },
+  end_of_day: {
+    key: "end_of_day",
+    label: "End of Day",
+    shortLabel: "EOD",
+    icon: CheckCircle,
+    color: "secondary",
+    description: "Work day has been completed",
+  },
 };
 
 /**
@@ -128,28 +137,32 @@ export function getActivityState(activityType: ActivityType): ActivityState {
  * Get activity icon component
  */
 export function getActivityIcon(activityType: ActivityType) {
-  return ACTIVITY_STATES[activityType].icon;
+  const state = ACTIVITY_STATES[activityType];
+  return state ? state.icon : CheckCircle; // Fallback to CheckCircle for unknown activities
 }
 
 /**
  * Get activity label for display
  */
 export function getActivityLabel(activityType: ActivityType): string {
-  return ACTIVITY_STATES[activityType].label;
+  const state = ACTIVITY_STATES[activityType];
+  return state ? state.label : "Unknown Activity";
 }
 
 /**
  * Get activity short label for compact display
  */
 export function getActivityShortLabel(activityType: ActivityType): string {
-  return ACTIVITY_STATES[activityType].shortLabel;
+  const state = ACTIVITY_STATES[activityType];
+  return state ? state.shortLabel : "Unknown";
 }
 
 /**
  * Get activity color theme
  */
 export function getActivityColor(activityType: ActivityType): "primary" | "secondary" | "accent" {
-  return ACTIVITY_STATES[activityType].color;
+  const state = ACTIVITY_STATES[activityType];
+  return state ? state.color : "secondary";
 }
 
 /**
