@@ -83,6 +83,16 @@ export interface IStorage {
   getCustomersByBroker(brokerId: number): Promise<Customer[]>;
   getTrucksByBroker(brokerId: number): Promise<Array<Truck & { company: Company }>>;
   getLeasorsByBroker(brokerId: number): Promise<Company[]>;
+  
+  // Employee management
+  getEmployeesByCompany(companyId: number): Promise<User[]>;
+  createEmployee(employee: InsertUser): Promise<User>;
+  updateEmployee(id: number, updates: Partial<User>): Promise<User | undefined>;
+  deactivateEmployee(id: number): Promise<User | undefined>;
+  
+  // Company management
+  getCompaniesByType(type: string): Promise<Company[]>;
+  getCompanyById(id: number): Promise<Company | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -131,29 +141,117 @@ export class MemStorage implements IStorage {
     };
     this.companies.set(company.id, company);
 
-    // Create sample users
+    // Create sample leasor and customer companies
+    const leasorCompany: Company = {
+      id: this.currentCompanyId++,
+      name: "Mountain Trucking LLC",
+      type: "leasor",
+      contactEmail: "dispatch@mountaintrucking.com",
+      contactPhone: "(555) 234-5678",
+      address: "456 Transport Way, Salt Lake City, UT 84102",
+      createdAt: new Date(),
+    };
+    this.companies.set(leasorCompany.id, leasorCompany);
+
+    const customerCompany: Company = {
+      id: this.currentCompanyId++,
+      name: "Pivot Excavating",
+      type: "customer",
+      contactEmail: "office@pivotexcavating.com",
+      contactPhone: "(555) 345-6789",
+      address: "789 Construction Blvd, West Valley, UT 84119",
+      createdAt: new Date(),
+    };
+    this.companies.set(customerCompany.id, customerCompany);
+
+    // Create sample users with multiple employees per company
     const users: User[] = [
+      // Broker company employees
       {
         id: this.currentUserId++,
-        email: "mike.johnson@company.com",
-        password: "password123",
-        name: "Mike Johnson",
-        role: "driver",
+        email: "sarah.broker@terrafirma.com",
+        password: "broker123",
+        name: "Sarah Wilson",
+        role: "broker_admin",
         companyId: company.id,
         brokerId: null,
+        permissions: "admin",
+        isActive: true,
         createdAt: new Date(),
       },
       {
         id: this.currentUserId++,
-        email: "sarah.broker@company.com",
-        password: "broker123",
-        name: "Sarah Wilson",
-        role: "broker",
+        email: "john.dispatch@terrafirma.com",
+        password: "dispatch123",
+        name: "John Martinez",
+        role: "broker_employee",
         companyId: company.id,
         brokerId: null,
+        permissions: "basic",
+        isActive: true,
+        createdAt: new Date(),
+      },
+      // Leasor company employees
+      {
+        id: this.currentUserId++,
+        email: "mike.johnson@mountaintrucking.com",
+        password: "driver123",
+        name: "Mike Johnson",
+        role: "driver",
+        companyId: leasorCompany.id,
+        brokerId: company.id, // Linked to broker
+        permissions: "basic",
+        isActive: true,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentUserId++,
+        email: "lisa.manager@mountaintrucking.com",
+        password: "leasor123",
+        name: "Lisa Chen",
+        role: "leasor_admin",
+        companyId: leasorCompany.id,
+        brokerId: company.id, // Linked to broker
+        permissions: "admin",
+        isActive: true,
+        createdAt: new Date(),
+      },
+      // Customer company employees
+      {
+        id: this.currentUserId++,
+        email: "david.supervisor@pivotexcavating.com",
+        password: "customer123",
+        name: "David Rodriguez",
+        role: "customer_admin",
+        companyId: customerCompany.id,
+        brokerId: company.id, // Linked to broker
+        permissions: "admin",
+        isActive: true,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentUserId++,
+        email: "anna.coordinator@pivotexcavating.com",
+        password: "coord123",
+        name: "Anna Thompson",
+        role: "customer_employee",
+        companyId: customerCompany.id,
+        brokerId: company.id, // Linked to broker
+        permissions: "basic",
+        isActive: true,
         createdAt: new Date(),
       },
     ];
+    
+    // Create broker-leasor relationship
+    const brokerLeasorRel: BrokerLeasorRelationship = {
+      id: this.currentBrokerLeasorRelationshipId++,
+      brokerId: company.id,
+      leasorId: leasorCompany.id,
+      isActive: true,
+      createdAt: new Date(),
+    };
+    this.brokerLeasorRelationships.set(brokerLeasorRel.id, brokerLeasorRel);
     users.forEach(user => this.users.set(user.id, user));
 
     // Create sample customers
@@ -678,6 +776,55 @@ export class MemStorage implements IStorage {
     
     return Array.from(this.companies.values())
       .filter(c => leasorIds.includes(c.id) && c.type === 'leasor');
+  }
+
+  // Employee management
+  async getEmployeesByCompany(companyId: number): Promise<User[]> {
+    return Array.from(this.users.values())
+      .filter(u => u.companyId === companyId && u.isActive)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  async createEmployee(insertEmployee: InsertUser): Promise<User> {
+    const employee: User = {
+      id: this.currentUserId++,
+      ...insertEmployee,
+      brokerId: insertEmployee.brokerId || null,
+      permissions: insertEmployee.permissions || "basic",
+      isActive: insertEmployee.isActive !== false,
+      createdAt: new Date(),
+    };
+    this.users.set(employee.id, employee);
+    return employee;
+  }
+
+  async updateEmployee(id: number, updates: Partial<User>): Promise<User | undefined> {
+    const employee = this.users.get(id);
+    if (!employee) return undefined;
+
+    const updatedEmployee: User = { ...employee, ...updates };
+    this.users.set(id, updatedEmployee);
+    return updatedEmployee;
+  }
+
+  async deactivateEmployee(id: number): Promise<User | undefined> {
+    const employee = this.users.get(id);
+    if (!employee) return undefined;
+
+    const updatedEmployee: User = { ...employee, isActive: false };
+    this.users.set(id, updatedEmployee);
+    return updatedEmployee;
+  }
+
+  // Company management
+  async getCompaniesByType(type: string): Promise<Company[]> {
+    return Array.from(this.companies.values())
+      .filter(c => c.type === type)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  async getCompanyById(id: number): Promise<Company | undefined> {
+    return this.companies.get(id);
   }
 }
 

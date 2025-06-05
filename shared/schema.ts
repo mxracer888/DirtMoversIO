@@ -7,9 +7,11 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
   name: text("name").notNull(),
-  role: text("role").notNull().default("driver"), // driver, broker, admin, customer, leasor
-  companyId: integer("company_id"),
+  role: text("role").notNull().default("driver"), // driver, broker_admin, broker_employee, customer_admin, customer_employee, leasor_admin, leasor_employee, admin
+  companyId: integer("company_id").notNull(),
   brokerId: integer("broker_id"), // For customers and leasors to link to their broker
+  permissions: text("permissions").default("basic"), // basic, admin, full - controls what user can do within their role
+  isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

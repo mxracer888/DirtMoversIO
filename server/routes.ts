@@ -4,7 +4,8 @@ import { storage } from "./storage";
 import { 
   loginSchema, insertWorkDaySchema, insertActivitySchema,
   insertDispatchSchema, insertDispatchAssignmentSchema, 
-  insertReusableDataSchema, insertBrokerLeasorRelationshipSchema
+  insertReusableDataSchema, insertBrokerLeasorRelationshipSchema,
+  insertUserSchema
 } from "@shared/schema";
 import "./types";
 
