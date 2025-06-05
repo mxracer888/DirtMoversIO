@@ -32,11 +32,6 @@ export default function EndOfDay() {
 
   const submitEndOfDayMutation = useMutation({
     mutationFn: async () => {
-      console.log("EOD Validation - workDay:", workDay);
-      console.log("EOD Validation - driverSignature:", driverSignature);
-      console.log("EOD Validation - operatorSignature:", operatorSignature);
-      console.log("EOD Validation - operatorName:", operatorName);
-      
       if (!workDay) throw new Error("No active work day");
       if (!driverSignature) throw new Error("Driver signature required");
       if (!operatorSignature) throw new Error("Operator signature required");
@@ -54,6 +49,7 @@ export default function EndOfDay() {
       // First create an end_of_day activity for truck tracking
       await apiRequest("POST", "/api/activities", {
         workDayId: workDay.id,
+        loadNumber: 0, // EOD activity doesn't need a load number
         activityType: "end_of_day",
         timestamp: new Date(),
         latitude: location?.latitude || null,
