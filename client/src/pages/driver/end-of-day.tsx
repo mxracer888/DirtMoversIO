@@ -46,6 +46,17 @@ export default function EndOfDay() {
         totalLoads: getTotalLoads(),
       };
 
+      // First create an end_of_day activity for truck tracking
+      await apiRequest("POST", "/api/activities", {
+        workDayId: workDay.id,
+        activityType: "end_of_day",
+        timestamp: new Date(),
+        latitude: location?.latitude || null,
+        longitude: location?.longitude || null,
+        notes: `Work day completed by ${operatorName.trim()}`
+      });
+
+      // Then update the work day
       const res = await apiRequest("PATCH", `/api/work-days/${workDay.id}`, updates);
       return res.json();
     },

@@ -30,12 +30,18 @@ export default function BrokerDashboard() {
       return response.json();
     },
     refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
+    staleTime: 25000, // Data stays fresh for 25 seconds
+    retry: 3,
+    retryDelay: 1000
   });
 
   // Get recent activities with auto-refresh
   const { data: recentActivities = [], isLoading: activitiesLoading, refetch: refetchActivities } = useQuery({
     queryKey: ["/api/activities/recent"],
-    refetchInterval: autoRefresh ? 15000 : false, // Refresh every 15 seconds
+    refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
+    staleTime: 25000, // Data stays fresh for 25 seconds
+    retry: 3,
+    retryDelay: 1000
   });
 
   // Get active jobs
@@ -51,7 +57,10 @@ export default function BrokerDashboard() {
       const response = await fetch(`/api/dashboard/truck-status${params}`);
       return response.json();
     },
-    refetchInterval: autoRefresh ? 20000 : false, // Refresh every 20 seconds
+    refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
+    staleTime: 25000, // Data stays fresh for 25 seconds
+    retry: 3,
+    retryDelay: 1000
   });
 
   // Get trucks data
