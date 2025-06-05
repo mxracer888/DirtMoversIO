@@ -44,6 +44,16 @@ function AppContent() {
         <Route path="/driver/end-of-day" component={EndOfDay} />
         <Route path="/broker/dashboard" component={BrokerDashboard} />
         <Route path="/broker/dispatches" component={DispatchesPage} />
+        <Route path="/broker/employees">
+          {() => (
+            <EmployeeManagement 
+              companyId={user.companyId}
+              companyName="Company"
+              userRole={user.role}
+              userPermissions={user.permissions || "basic"}
+            />
+          )}
+        </Route>
         <Route>
           <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">

@@ -43,10 +43,7 @@ export default function EmployeeManagement({
 
   const createEmployeeMutation = useMutation({
     mutationFn: async (data: InsertUser) => {
-      return apiRequest(`/api/employees`, {
-        method: "POST",
-        body: data,
-      });
+      return apiRequest(`/api/employees`, "POST", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/employees", companyId] });
@@ -67,10 +64,7 @@ export default function EmployeeManagement({
 
   const updateEmployeeMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<User> }) => {
-      return apiRequest(`/api/employees/${id}`, {
-        method: "PATCH",
-        body: data,
-      });
+      return apiRequest(`/api/employees/${id}`, "PATCH", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/employees", companyId] });
@@ -91,9 +85,7 @@ export default function EmployeeManagement({
 
   const deactivateEmployeeMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`/api/employees/${id}`, {
-        method: "DELETE",
-      });
+      return apiRequest(`/api/employees/${id}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/employees", companyId] });
