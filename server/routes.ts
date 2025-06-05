@@ -172,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Creating activity with request body:", req.body);
       const { workDayId, loadNumber, activityType, timestamp, latitude, longitude, notes, ticketNumber, netWeight } = req.body;
       
-      if (!workDayId || !loadNumber || !activityType || !timestamp) {
+      if (!workDayId || loadNumber === undefined || loadNumber === null || !activityType || !timestamp) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
