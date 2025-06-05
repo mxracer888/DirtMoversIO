@@ -32,6 +32,11 @@ export default function EndOfDay() {
 
   const submitEndOfDayMutation = useMutation({
     mutationFn: async () => {
+      console.log("EOD Validation - workDay:", workDay);
+      console.log("EOD Validation - driverSignature:", driverSignature);
+      console.log("EOD Validation - operatorSignature:", operatorSignature);
+      console.log("EOD Validation - operatorName:", operatorName);
+      
       if (!workDay) throw new Error("No active work day");
       if (!driverSignature) throw new Error("Driver signature required");
       if (!operatorSignature) throw new Error("Operator signature required");
