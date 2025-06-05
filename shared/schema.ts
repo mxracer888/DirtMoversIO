@@ -7,14 +7,16 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
   name: text("name").notNull(),
-  role: text("role").notNull().default("driver"), // driver, broker, admin
+  role: text("role").notNull().default("driver"), // driver, broker, admin, customer, leasor
   companyId: integer("company_id"),
+  brokerId: integer("broker_id"), // For customers and leasors to link to their broker
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  type: text("type").notNull(), // broker, leasor, customer
   contactEmail: text("contact_email"),
   contactPhone: text("contact_phone"),
   address: text("address"),
@@ -103,6 +105,58 @@ export const activities = pgTable("activities", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Broker-Leasor relationships
+export const brokerLeasorRelationships = pgTable("broker_leasor_relationships", {
+  id: serial("id").primaryKey(),
+  brokerId: integer("broker_id").notNull(),
+  leasorId: integer("leasor_id").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Dispatches
+export const dispatches = pgTable("dispatches", {
+  id: serial("id").primaryKey(),
+  jobName: text("job_name").notNull(),
+  invoiceJobName: text("invoice_job_name"),
+  brokerId: integer("broker_id").notNull(),
+  customerId: integer("customer_id").notNull(),
+  date: timestamp("date").notNull(),
+  startTime: timestamp("start_time").notNull(),
+  truckType: text("truck_type").notNull(),
+  quantity: integer("quantity").notNull(),
+  materialType: text("material_type").notNull(),
+  materialFrom: text("material_from").notNull(),
+  deliveredTo: text("delivered_to").notNull(),
+  account: text("account"),
+  travelTime: integer("travel_time").notNull(), // in minutes
+  materialFromGpsPin: text("material_from_gps_pin"),
+  deliveredToGpsPin: text("delivered_to_gps_pin"),
+  status: text("status").default("created"), // created, assigned, in_progress, completed, cancelled
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Dispatch assignments to trucks/drivers
+export const dispatchAssignments = pgTable("dispatch_assignments", {
+  id: serial("id").primaryKey(),
+  dispatchId: integer("dispatch_id").notNull(),
+  truckId: integer("truck_id").notNull(),
+  driverId: integer("driver_id"),
+  assignedBy: integer("assigned_by").notNull(), // User ID who made the assignment
+  status: text("status").default("assigned"), // assigned, accepted, in_progress, completed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Reusable dropdown data
+export const reusableData = pgTable("reusable_data", {
+  id: serial("id").primaryKey(),
+  type: text("type").notNull(), // job_name, material_type, location, customer, account
+  value: text("value").notNull(),
+  brokerId: integer("broker_id").notNull(), // Scoped to broker
+  usageCount: integer("usage_count").default(1),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -150,6 +204,27 @@ export const insertActivitySchema = createInsertSchema(activities).omit({
   createdAt: true,
 });
 
+export const insertBrokerLeasorRelationshipSchema = createInsertSchema(brokerLeasorRelationships).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDispatchSchema = createInsertSchema(dispatches).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDispatchAssignmentSchema = createInsertSchema(dispatchAssignments).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertReusableDataSchema = createInsertSchema(reusableData).omit({
+  id: true,
+  createdAt: true,
+  usageCount: true,
+});
+
 // Login schema
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -175,4 +250,12 @@ export type WorkDay = typeof workDays.$inferSelect;
 export type InsertWorkDay = z.infer<typeof insertWorkDaySchema>;
 export type Activity = typeof activities.$inferSelect;
 export type InsertActivity = z.infer<typeof insertActivitySchema>;
+export type BrokerLeasorRelationship = typeof brokerLeasorRelationships.$inferSelect;
+export type InsertBrokerLeasorRelationship = z.infer<typeof insertBrokerLeasorRelationshipSchema>;
+export type Dispatch = typeof dispatches.$inferSelect;
+export type InsertDispatch = z.infer<typeof insertDispatchSchema>;
+export type DispatchAssignment = typeof dispatchAssignments.$inferSelect;
+export type InsertDispatchAssignment = z.infer<typeof insertDispatchAssignmentSchema>;
+export type ReusableData = typeof reusableData.$inferSelect;
+export type InsertReusableData = z.infer<typeof insertReusableDataSchema>;
 export type LoginRequest = z.infer<typeof loginSchema>;

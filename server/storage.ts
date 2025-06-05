@@ -1,9 +1,13 @@
 import { 
   users, trucks, jobs, customers, materials, locations, workDays, activities, companies,
+  dispatches, dispatchAssignments, brokerLeasorRelationships, reusableData,
   type User, type InsertUser, type Truck, type InsertTruck, type Job, type InsertJob,
   type Customer, type InsertCustomer, type Material, type InsertMaterial, 
   type Location, type InsertLocation, type WorkDay, type InsertWorkDay,
-  type Activity, type InsertActivity, type Company, type InsertCompany
+  type Activity, type InsertActivity, type Company, type InsertCompany,
+  type Dispatch, type InsertDispatch, type DispatchAssignment, type InsertDispatchAssignment,
+  type BrokerLeasorRelationship, type InsertBrokerLeasorRelationship,
+  type ReusableData, type InsertReusableData
 } from "@shared/schema";
 
 export interface IStorage {
