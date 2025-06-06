@@ -9,6 +9,8 @@ import {
   type BrokerLeasorRelationship, type InsertBrokerLeasorRelationship,
   type ReusableData, type InsertReusableData
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc, asc } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -828,4 +830,400 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database Storage Implementation
+export class DatabaseStorage implements IStorage {
+  // Users
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+
+  // Companies
+  async getCompany(id: number): Promise<Company | undefined> {
+    const [company] = await db.select().from(companies).where(eq(companies.id, id));
+    return company;
+  }
+
+  async createCompany(insertCompany: InsertCompany): Promise<Company> {
+    const [company] = await db.insert(companies).values(insertCompany).returning();
+    return company;
+  }
+
+  // Trucks
+  async getTrucks(): Promise<Truck[]> {
+    return await db.select().from(trucks);
+  }
+
+  async getTrucksByCompany(companyId: number): Promise<Truck[]> {
+    return await db.select().from(trucks).where(eq(trucks.companyId, companyId));
+  }
+
+  async createTruck(insertTruck: InsertTruck): Promise<Truck> {
+    const [truck] = await db.insert(trucks).values(insertTruck).returning();
+    return truck;
+  }
+
+  // Jobs
+  async getJobs(): Promise<Job[]> {
+    return await db.select().from(jobs);
+  }
+
+  async getActiveJobs(): Promise<Job[]> {
+    return await db.select().from(jobs).where(eq(jobs.isActive, true));
+  }
+
+  async createJob(insertJob: InsertJob): Promise<Job> {
+    const [job] = await db.insert(jobs).values(insertJob).returning();
+    return job;
+  }
+
+  // Customers
+  async getCustomers(): Promise<Customer[]> {
+    return await db.select().from(customers);
+  }
+
+  async createCustomer(insertCustomer: InsertCustomer): Promise<Customer> {
+    const [customer] = await db.insert(customers).values(insertCustomer).returning();
+    return customer;
+  }
+
+  // Materials
+  async getMaterials(): Promise<Material[]> {
+    return await db.select().from(materials);
+  }
+
+  async createMaterial(insertMaterial: InsertMaterial): Promise<Material> {
+    const [material] = await db.insert(materials).values(insertMaterial).returning();
+    return material;
+  }
+
+  // Locations
+  async getLocations(): Promise<Location[]> {
+    return await db.select().from(locations);
+  }
+
+  async getLocationsByType(type: string): Promise<Location[]> {
+    return await db.select().from(locations).where(eq(locations.type, type));
+  }
+
+  async createLocation(insertLocation: InsertLocation): Promise<Location> {
+    const [location] = await db.insert(locations).values(insertLocation).returning();
+    return location;
+  }
+
+  // Work Days
+  async getWorkDay(id: number): Promise<WorkDay | undefined> {
+    const [workDay] = await db.select().from(workDays).where(eq(workDays.id, id));
+    return workDay;
+  }
+
+  async getActiveWorkDayByDriver(driverId: number): Promise<WorkDay | undefined> {
+    const [workDay] = await db.select().from(workDays)
+      .where(and(eq(workDays.driverId, driverId), eq(workDays.isActive, true)));
+    return workDay;
+  }
+
+  async getActiveWorkDays(): Promise<WorkDay[]> {
+    return await db.select().from(workDays).where(eq(workDays.isActive, true));
+  }
+
+  async createWorkDay(insertWorkDay: InsertWorkDay): Promise<WorkDay> {
+    const [workDay] = await db.insert(workDays).values(insertWorkDay).returning();
+    return workDay;
+  }
+
+  async updateWorkDay(id: number, updates: Partial<WorkDay>): Promise<WorkDay | undefined> {
+    const [workDay] = await db.update(workDays)
+      .set(updates)
+      .where(eq(workDays.id, id))
+      .returning();
+    return workDay;
+  }
+
+  // Activities
+  async getActivitiesByWorkDay(workDayId: number): Promise<Activity[]> {
+    return await db.select().from(activities)
+      .where(eq(activities.workDayId, workDayId))
+      .orderBy(asc(activities.createdAt));
+  }
+
+  async createActivity(insertActivity: InsertActivity): Promise<Activity> {
+    const [activity] = await db.insert(activities).values(insertActivity).returning();
+    return activity;
+  }
+
+  async updateActivity(id: number, updates: Partial<Activity>): Promise<Activity | undefined> {
+    const [activity] = await db.update(activities)
+      .set(updates)
+      .where(eq(activities.id, id))
+      .returning();
+    return activity;
+  }
+
+  async getRecentActivities(limit = 10): Promise<Array<Activity & { driver: User; truck: Truck; job: Job }>> {
+    const result = await db.select({
+      id: activities.id,
+      workDayId: activities.workDayId,
+      type: activities.type,
+      timestamp: activities.timestamp,
+      location: activities.location,
+      notes: activities.notes,
+      createdAt: activities.createdAt,
+      driver: users,
+      truck: trucks,
+      job: jobs
+    })
+    .from(activities)
+    .innerJoin(workDays, eq(activities.workDayId, workDays.id))
+    .innerJoin(users, eq(workDays.driverId, users.id))
+    .innerJoin(trucks, eq(workDays.truckId, trucks.id))
+    .innerJoin(jobs, eq(workDays.jobId, jobs.id))
+    .orderBy(desc(activities.createdAt))
+    .limit(limit);
+
+    return result.map(row => ({
+      id: row.id,
+      workDayId: row.workDayId,
+      type: row.type,
+      timestamp: row.timestamp,
+      location: row.location,
+      notes: row.notes,
+      createdAt: row.createdAt,
+      driver: row.driver,
+      truck: row.truck,
+      job: row.job
+    }));
+  }
+
+  // Dispatches
+  async getDispatches(brokerId?: number): Promise<Dispatch[]> {
+    if (brokerId) {
+      return await db.select().from(dispatches)
+        .where(eq(dispatches.brokerId, brokerId))
+        .orderBy(desc(dispatches.createdAt));
+    }
+    return await db.select().from(dispatches).orderBy(desc(dispatches.createdAt));
+  }
+
+  async getDispatch(id: number): Promise<Dispatch | undefined> {
+    const [dispatch] = await db.select().from(dispatches).where(eq(dispatches.id, id));
+    return dispatch;
+  }
+
+  async createDispatch(insertDispatch: InsertDispatch): Promise<Dispatch> {
+    const [dispatch] = await db.insert(dispatches).values(insertDispatch).returning();
+    return dispatch;
+  }
+
+  async updateDispatch(id: number, updates: Partial<Dispatch>): Promise<Dispatch | undefined> {
+    const [dispatch] = await db.update(dispatches)
+      .set(updates)
+      .where(eq(dispatches.id, id))
+      .returning();
+    return dispatch;
+  }
+
+  async getDispatchesByCustomer(customerId: number): Promise<Dispatch[]> {
+    return await db.select().from(dispatches)
+      .where(eq(dispatches.customerId, customerId))
+      .orderBy(desc(dispatches.createdAt));
+  }
+
+  // Dispatch Assignments
+  async getDispatchAssignments(dispatchId?: number, driverId?: number): Promise<DispatchAssignment[]> {
+    let query = db.select().from(dispatchAssignments);
+    
+    if (dispatchId && driverId) {
+      query = query.where(and(eq(dispatchAssignments.dispatchId, dispatchId), eq(dispatchAssignments.driverId, driverId)));
+    } else if (dispatchId) {
+      query = query.where(eq(dispatchAssignments.dispatchId, dispatchId));
+    } else if (driverId) {
+      query = query.where(eq(dispatchAssignments.driverId, driverId));
+    }
+    
+    return await query;
+  }
+
+  async createDispatchAssignment(insertAssignment: InsertDispatchAssignment): Promise<DispatchAssignment> {
+    const [assignment] = await db.insert(dispatchAssignments).values(insertAssignment).returning();
+    return assignment;
+  }
+
+  async updateDispatchAssignment(id: number, updates: Partial<DispatchAssignment>): Promise<DispatchAssignment | undefined> {
+    const [assignment] = await db.update(dispatchAssignments)
+      .set(updates)
+      .where(eq(dispatchAssignments.id, id))
+      .returning();
+    return assignment;
+  }
+
+  async getDispatchAssignmentsByLeasor(leasorId: number): Promise<Array<DispatchAssignment & { dispatch: Dispatch; truck: Truck }>> {
+    const result = await db.select({
+      id: dispatchAssignments.id,
+      dispatchId: dispatchAssignments.dispatchId,
+      truckId: dispatchAssignments.truckId,
+      driverId: dispatchAssignments.driverId,
+      assignedBy: dispatchAssignments.assignedBy,
+      status: dispatchAssignments.status,
+      createdAt: dispatchAssignments.createdAt,
+      dispatch: dispatches,
+      truck: trucks
+    })
+    .from(dispatchAssignments)
+    .innerJoin(dispatches, eq(dispatchAssignments.dispatchId, dispatches.id))
+    .innerJoin(trucks, eq(dispatchAssignments.truckId, trucks.id))
+    .where(eq(trucks.companyId, leasorId));
+
+    return result.map(row => ({
+      id: row.id,
+      dispatchId: row.dispatchId,
+      truckId: row.truckId,
+      driverId: row.driverId,
+      assignedBy: row.assignedBy,
+      status: row.status,
+      createdAt: row.createdAt,
+      dispatch: row.dispatch,
+      truck: row.truck
+    }));
+  }
+
+  // Broker-Leasor Relationships
+  async getBrokerLeasorRelationships(brokerId?: number, leasorId?: number): Promise<BrokerLeasorRelationship[]> {
+    let query = db.select().from(brokerLeasorRelationships);
+    
+    if (brokerId && leasorId) {
+      query = query.where(and(eq(brokerLeasorRelationships.brokerId, brokerId), eq(brokerLeasorRelationships.leasorId, leasorId)));
+    } else if (brokerId) {
+      query = query.where(eq(brokerLeasorRelationships.brokerId, brokerId));
+    } else if (leasorId) {
+      query = query.where(eq(brokerLeasorRelationships.leasorId, leasorId));
+    }
+    
+    return await query;
+  }
+
+  async createBrokerLeasorRelationship(insertRelationship: InsertBrokerLeasorRelationship): Promise<BrokerLeasorRelationship> {
+    const [relationship] = await db.insert(brokerLeasorRelationships).values(insertRelationship).returning();
+    return relationship;
+  }
+
+  async updateBrokerLeasorRelationship(id: number, updates: Partial<BrokerLeasorRelationship>): Promise<BrokerLeasorRelationship | undefined> {
+    const [relationship] = await db.update(brokerLeasorRelationships)
+      .set(updates)
+      .where(eq(brokerLeasorRelationships.id, id))
+      .returning();
+    return relationship;
+  }
+
+  // Reusable Data
+  async getReusableData(type: string, brokerId: number): Promise<ReusableData[]> {
+    return await db.select().from(reusableData)
+      .where(and(eq(reusableData.type, type), eq(reusableData.brokerId, brokerId)))
+      .orderBy(desc(reusableData.usageCount));
+  }
+
+  async createReusableData(insertData: InsertReusableData): Promise<ReusableData> {
+    const [data] = await db.insert(reusableData).values(insertData).returning();
+    return data;
+  }
+
+  async updateReusableDataUsage(id: number): Promise<void> {
+    await db.update(reusableData)
+      .set({ usageCount: 1 })
+      .where(eq(reusableData.id, id));
+  }
+
+  // Role-based access helpers
+  async getCustomersByBroker(brokerId: number): Promise<Customer[]> {
+    return await db.select().from(customers).where(eq(customers.brokerId, brokerId));
+  }
+
+  async getTrucksByBroker(brokerId: number): Promise<Array<Truck & { company: Company }>> {
+    const result = await db.select({
+      id: trucks.id,
+      number: trucks.number,
+      type: trucks.type,
+      companyId: trucks.companyId,
+      capacity: trucks.capacity,
+      isActive: trucks.isActive,
+      createdAt: trucks.createdAt,
+      company: companies
+    })
+    .from(trucks)
+    .innerJoin(companies, eq(trucks.companyId, companies.id))
+    .innerJoin(brokerLeasorRelationships, eq(companies.id, brokerLeasorRelationships.leasorId))
+    .where(eq(brokerLeasorRelationships.brokerId, brokerId));
+
+    return result.map(row => ({
+      id: row.id,
+      number: row.number,
+      type: row.type,
+      companyId: row.companyId,
+      capacity: row.capacity,
+      isActive: row.isActive,
+      createdAt: row.createdAt,
+      company: row.company
+    }));
+  }
+
+  async getLeasorsByBroker(brokerId: number): Promise<Company[]> {
+    const result = await db.select({
+      company: companies
+    })
+    .from(brokerLeasorRelationships)
+    .innerJoin(companies, eq(brokerLeasorRelationships.leasorId, companies.id))
+    .where(eq(brokerLeasorRelationships.brokerId, brokerId));
+
+    return result.map(row => row.company);
+  }
+
+  // Employee management
+  async getEmployeesByCompany(companyId: number): Promise<User[]> {
+    return await db.select().from(users).where(eq(users.companyId, companyId));
+  }
+
+  async createEmployee(insertEmployee: InsertUser): Promise<User> {
+    const [employee] = await db.insert(users).values(insertEmployee).returning();
+    return employee;
+  }
+
+  async updateEmployee(id: number, updates: Partial<User>): Promise<User | undefined> {
+    const [employee] = await db.update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return employee;
+  }
+
+  async deactivateEmployee(id: number): Promise<User | undefined> {
+    const [employee] = await db.update(users)
+      .set({ isActive: false })
+      .where(eq(users.id, id))
+      .returning();
+    return employee;
+  }
+
+  // Company management
+  async getCompaniesByType(type: string): Promise<Company[]> {
+    return await db.select().from(companies)
+      .where(eq(companies.type, type))
+      .orderBy(asc(companies.name));
+  }
+
+  async getCompanyById(id: number): Promise<Company | undefined> {
+    const [company] = await db.select().from(companies).where(eq(companies.id, id));
+    return company;
+  }
+}
+
+export const storage = new DatabaseStorage();
