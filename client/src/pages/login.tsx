@@ -40,7 +40,7 @@ export default function Login() {
         queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
         
         // Redirect based on user role
-        if (data.user.role === "broker" || data.user.role === "admin") {
+        if (data.user.role.includes("broker") || data.user.role === "admin") {
           setLocation("/broker/dashboard");
         } else {
           setLocation("/driver/start-day");
@@ -65,10 +65,10 @@ export default function Login() {
     
     // Pre-fill demo credentials based on role
     if (role === "driver") {
-      setEmail("mike.johnson@company.com");
-      setPassword("password123");
+      setEmail("mike.johnson@mountaintrucking.com");
+      setPassword("driver123");
     } else {
-      setEmail("sarah.broker@company.com");
+      setEmail("sarah.broker@terrafirma.com");
       setPassword("broker123");
     }
   };
@@ -91,12 +91,12 @@ export default function Login() {
     
     if (selectedRole === "driver") {
       loginMutation.mutate({ 
-        email: "mike.johnson@company.com", 
-        password: "password123" 
+        email: "mike.johnson@mountaintrucking.com", 
+        password: "driver123" 
       });
     } else {
       loginMutation.mutate({ 
-        email: "sarah.broker@company.com", 
+        email: "sarah.broker@terrafirma.com", 
         password: "broker123" 
       });
     }
