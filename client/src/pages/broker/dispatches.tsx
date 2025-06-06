@@ -200,8 +200,51 @@ export default function DispatchesPage() {
     },
   });
 
+  // Customer creation mutation
+  const createCustomerMutation = useMutation({
+    mutationFn: async (customerData: { name: string; contactEmail: string; contactPhone: string; address: string }) => {
+      const response = await fetch("/api/customers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customerData),
+      });
+      if (!response.ok) throw new Error("Failed to create customer");
+      return response.json();
+    },
+    onSuccess: (newCustomer) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/broker/customers"] });
+      form.setValue("customerId", newCustomer.id);
+      setIsNewCustomerDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "Customer created successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create customer",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Customer creation form
+  const customerForm = useForm({
+    defaultValues: {
+      name: "",
+      contactEmail: "",
+      contactPhone: "",
+      address: "",
+    },
+  });
+
   const onSubmit = (data: DispatchFormData) => {
     createDispatchMutation.mutate(data);
+  };
+
+  const onCreateCustomer = (data: { name: string; contactEmail: string; contactPhone: string; address: string }) => {
+    createCustomerMutation.mutate(data);
   };
 
   const handleAssignDispatch = (dispatch: Dispatch) => {
@@ -328,7 +371,13 @@ export default function DispatchesPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Customer</FormLabel>
-                          <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value.toString()}>
+                          <Select onValueChange={(value) => {
+                            if (value === "add_new") {
+                              setIsNewCustomerDialogOpen(true);
+                            } else {
+                              field.onChange(parseInt(value));
+                            }
+                          }} value={field.value.toString()}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select customer" />
@@ -340,6 +389,12 @@ export default function DispatchesPage() {
                                   {customer.name}
                                 </SelectItem>
                               ))}
+                              <SelectItem value="add_new" className="text-blue-600 font-medium">
+                                <div className="flex items-center gap-2">
+                                  <UserPlus className="h-4 w-4" />
+                                  + Add New Customer
+                                </div>
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -689,6 +744,95 @@ export default function DispatchesPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Customer Creation Dialog */}
+      <Dialog open={isNewCustomerDialogOpen} onOpenChange={setIsNewCustomerDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Customer</DialogTitle>
+          </DialogHeader>
+          <Form {...customerForm}>
+            <form onSubmit={customerForm.handleSubmit(onCreateCustomer)} className="space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                <FormField
+                  control={customerForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Customer Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., ABC Construction" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={customerForm.control}
+                  name="contactEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="contact@company.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={customerForm.control}
+                  name="contactPhone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Phone</FormLabel>
+                      <FormControl>
+                        <Input placeholder="(555) 123-4567" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={customerForm.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="123 Main St, City, State 12345" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setIsNewCustomerDialogOpen(false);
+                    customerForm.reset();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={createCustomerMutation.isPending}
+                >
+                  {createCustomerMutation.isPending ? "Creating..." : "Create Customer"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
