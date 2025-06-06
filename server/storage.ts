@@ -830,6 +830,118 @@ export class MemStorage implements IStorage {
   }
 }
 
+// Initialize demo data in database on first run
+async function initializeDemoData() {
+  // Check if demo data already exists
+  const existingUsers = await db.select().from(users).limit(1);
+  if (existingUsers.length > 0) {
+    return; // Data already initialized
+  }
+
+  // Create demo companies
+  const brokerCompany = await db.insert(companies).values({
+    name: "Terra Firma Brokers",
+    type: "broker",
+    contactEmail: "info@terrafirma.com",
+    contactPhone: "(555) 123-4567",
+    address: "123 Broker St, Salt Lake City, UT 84101"
+  }).returning();
+
+  const leasorCompany = await db.insert(companies).values({
+    name: "Mountain Trucking LLC",
+    type: "leasor",
+    contactEmail: "dispatch@mountaintrucking.com",
+    contactPhone: "(555) 987-6543",
+    address: "456 Truck Ave, Provo, UT 84601"
+  }).returning();
+
+  const customerCompany = await db.insert(companies).values({
+    name: "Wasatch Construction",
+    type: "customer",
+    contactEmail: "jobs@wasatchconstruction.com",
+    contactPhone: "(555) 555-0123",
+    address: "789 Construction Blvd, West Valley City, UT 84119"
+  }).returning();
+
+  // Create demo users
+  await db.insert(users).values({
+    email: "sarah.broker@terrafirma.com",
+    password: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewTyaVz4xVJO6m/K", // broker123
+    name: "Sarah Johnson",
+    role: "broker",
+    companyId: brokerCompany[0].id,
+    brokerId: null,
+    permissions: "admin",
+    isActive: true
+  });
+
+  await db.insert(users).values({
+    email: "mike.johnson@mountaintrucking.com",
+    password: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewTyaVz4xVJO6m/K", // driver123
+    name: "Mike Johnson",
+    role: "driver",
+    companyId: leasorCompany[0].id,
+    brokerId: brokerCompany[0].id,
+    permissions: "basic",
+    isActive: true
+  });
+
+  // Create broker-leasor relationship
+  await db.insert(brokerLeasorRelationships).values({
+    brokerId: brokerCompany[0].id,
+    leasorId: leasorCompany[0].id,
+    isActive: true
+  });
+
+  // Create demo customer
+  await db.insert(customers).values({
+    name: "Wasatch Construction",
+    contactEmail: "jobs@wasatchconstruction.com",
+    contactPhone: "(555) 555-0123",
+    address: "789 Construction Blvd, West Valley City, UT 84119"
+  });
+
+  // Create demo truck
+  await db.insert(trucks).values({
+    number: "T-001",
+    type: "Tri-Axle",
+    companyId: leasorCompany[0].id
+  });
+
+  // Create demo job
+  await db.insert(jobs).values({
+    name: "Wasatch Highway Expansion",
+    description: "Road construction and material delivery",
+    companyId: brokerCompany[0].id
+  });
+
+  // Create demo materials
+  await db.insert(materials).values({
+    name: "Road Base",
+    type: "A1A",
+    pricePerLoad: "150.00"
+  });
+
+  // Create demo locations
+  await db.insert(locations).values({
+    name: "Smith Quarry",
+    address: "1234 Quarry Rd, Salt Lake City, UT",
+    type: "source",
+    latitude: "40.7608",
+    longitude: "-111.8910"
+  });
+
+  await db.insert(locations).values({
+    name: "Highway Construction Site",
+    address: "5678 Highway 15, Provo, UT",
+    type: "destination",
+    latitude: "40.2338",
+    longitude: "-111.6585"
+  });
+
+  console.log("Demo data initialized successfully");
+}
+
 // Database Storage Implementation
 export class DatabaseStorage implements IStorage {
   // Users
@@ -1226,4 +1338,4 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();
