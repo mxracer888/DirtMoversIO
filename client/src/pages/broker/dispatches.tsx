@@ -121,7 +121,7 @@ export default function DispatchesPage() {
       invoiceJobName: "",
       customerId: 0,
       date: new Date().toISOString().split('T')[0],
-      startTime: "08:00",
+      startTime: "07:00",
       truckType: "",
       quantity: 1,
       materialType: "",

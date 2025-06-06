@@ -585,11 +585,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || user.role !== 'broker') {
+      if (!user || !user.role.includes('broker')) {
         return res.status(403).json({ error: "Only brokers can access this endpoint" });
       }
 
-      const trucks = await storage.getTrucksByBroker(user.id);
+      const trucks = await storage.getTrucksByBroker(user.companyId);
       res.json(trucks);
     } catch (error) {
       console.error("Get broker trucks error:", error);
@@ -719,6 +719,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deactivating employee:", error);
       res.status(500).json({ error: "Failed to deactivate employee" });
+    }
+  });
+
+  // Customer management routes
+  app.post("/api/customers", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || !user.role.includes('broker')) {
+        return res.status(403).json({ error: "Only brokers can create customers" });
+      }
+
+      const customerData = {
+        name: req.body.name,
+        contactEmail: req.body.contactEmail,
+        contactPhone: req.body.contactPhone,
+        address: req.body.address,
+      };
+
+      const customer = await storage.createCustomer(customerData);
+      res.json(customer);
+    } catch (error) {
+      console.error("Error creating customer:", error);
+      res.status(500).json({ error: "Failed to create customer" });
     }
   });
 
