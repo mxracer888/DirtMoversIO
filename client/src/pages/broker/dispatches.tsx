@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Calendar, Clock, Truck, MapPin, Users, Plus } from "lucide-react";
+import { AlertCircle, Calendar, Clock, Truck, MapPin, Users, Plus, UserPlus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -85,6 +86,7 @@ export default function DispatchesPage() {
   const [selectedDispatch, setSelectedDispatch] = useState<Dispatch | null>(null);
   const [showAssignmentForm, setShowAssignmentForm] = useState(false);
   const [truckAssignments, setTruckAssignments] = useState<Record<number, number>>({});
+  const [isNewCustomerDialogOpen, setIsNewCustomerDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 

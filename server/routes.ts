@@ -482,13 +482,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || user.role !== 'broker') {
+      if (!user || !user.role.includes('broker')) {
         return res.status(403).json({ error: "Only brokers can create dispatches" });
       }
 
       const dispatchData = insertDispatchSchema.parse({
         ...req.body,
-        brokerId: user.id
+        brokerId: user.companyId
       });
 
       const dispatch = await storage.createDispatch(dispatchData);
@@ -502,7 +502,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ];
 
       for (const field of reusableFields) {
-        const existing = await storage.getReusableData(field.type, user.id);
+        const existing = await storage.getReusableData(field.type, user.companyId);
         const existingItem = existing.find(item => item.value === field.value);
         
         if (existingItem) {
@@ -511,7 +511,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.createReusableData({
             type: field.type,
             value: field.value,
-            brokerId: user.id
+            brokerId: user.companyId
           });
         }
       }
@@ -565,12 +565,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || user.role !== 'broker') {
+      if (!user || !user.role.includes('broker')) {
         return res.status(403).json({ error: "Only brokers can access reusable data" });
       }
 
       const type = req.params.type;
-      const data = await storage.getReusableData(type, user.id);
+      const data = await storage.getReusableData(type, user.companyId);
       res.json(data);
     } catch (error) {
       console.error("Get reusable data error:", error);
