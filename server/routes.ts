@@ -604,11 +604,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || user.role !== 'broker') {
+      if (!user || !user.role.includes('broker')) {
         return res.status(403).json({ error: "Only brokers can access this endpoint" });
       }
 
-      const customers = await storage.getCustomersByBroker(user.id);
+      const customers = await storage.getCustomers();
       res.json(customers);
     } catch (error) {
       console.error("Get broker customers error:", error);
