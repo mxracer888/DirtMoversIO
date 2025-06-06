@@ -142,11 +142,7 @@ export default function DispatchesPage() {
       const response = await fetch("/api/dispatches", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          date: new Date(data.date),
-          startTime: new Date(`${data.date}T${data.startTime}`),
-        }),
+        body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error("Failed to create dispatch");
       return response.json();
