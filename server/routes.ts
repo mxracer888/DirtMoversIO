@@ -486,13 +486,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: "Only brokers can create dispatches" });
       }
 
-      // Parse and format the data properly
-      const { date, startTime, ...otherData } = req.body;
-      
       const dispatchData = insertDispatchSchema.parse({
-        ...otherData,
-        date: typeof date === 'string' ? date : new Date(date).toISOString().split('T')[0],
-        startTime: typeof startTime === 'string' ? startTime : new Date(startTime).toTimeString().split(' ')[0],
+        ...req.body,
         brokerId: user.companyId
       });
 

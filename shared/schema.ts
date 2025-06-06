@@ -123,8 +123,8 @@ export const dispatches = pgTable("dispatches", {
   invoiceJobName: text("invoice_job_name"),
   brokerId: integer("broker_id").notNull(),
   customerId: integer("customer_id").notNull(),
-  date: timestamp("date").notNull(),
-  startTime: timestamp("start_time").notNull(),
+  date: text("date").notNull(), // Store as ISO date string
+  startTime: text("start_time").notNull(), // Store as time string (HH:MM)
   truckType: text("truck_type").notNull(),
   quantity: integer("quantity").notNull(),
   materialType: text("material_type").notNull(),
@@ -214,6 +214,9 @@ export const insertBrokerLeasorRelationshipSchema = createInsertSchema(brokerLea
 export const insertDispatchSchema = createInsertSchema(dispatches).omit({
   id: true,
   createdAt: true,
+}).extend({
+  date: z.string(),
+  startTime: z.string(),
 });
 
 export const insertDispatchAssignmentSchema = createInsertSchema(dispatchAssignments).omit({
