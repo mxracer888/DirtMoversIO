@@ -482,7 +482,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || !user.role.includes('broker')) {
+      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
         return res.status(403).json({ error: "Only brokers can create dispatches" });
       }
 
@@ -568,7 +568,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || !user.role.includes('broker')) {
+      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
         return res.status(403).json({ error: "Only brokers can access reusable data" });
       }
 
@@ -588,7 +588,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || !user.role.includes('broker')) {
+      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
         return res.status(403).json({ error: "Only brokers can access this endpoint" });
       }
 
@@ -607,7 +607,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || !user.role.includes('broker')) {
+      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
         return res.status(403).json({ error: "Only brokers can access this endpoint" });
       }
 
@@ -733,7 +733,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.getUser(req.session.userId);
-      if (!user || !user.role.includes('broker')) {
+      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
         return res.status(403).json({ error: "Only brokers can create customers" });
       }
 

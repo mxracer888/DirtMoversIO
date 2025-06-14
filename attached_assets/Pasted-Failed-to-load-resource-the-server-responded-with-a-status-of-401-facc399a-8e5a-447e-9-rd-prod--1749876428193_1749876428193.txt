@@ -1,0 +1,37 @@
+Failed to load resource: the server responded with a status of 401 ()
+facc399a-8e5a-447e-9…rd.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://facc399a-8e5a-447e-9f23-968bf71bd68f.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)
+/api/dispatches:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/broker/trucks:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/reusable-data/material_type:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/reusable-data/job_name:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/broker/customers:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/reusable-data/location:1 
+ Failed to load resource: the server responded with a status of 401 ()
+index-COEWRkno.js:342 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+/api/customers:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/customers:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/customers:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/customers:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/employees/1:1 
+ Failed to load resource: the server responded with a status of 401 ()
+index-COEWRkno.js:342 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+/api/dispatches:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/broker/trucks:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/broker/customers:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/reusable-data/job_name:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/reusable-data/material_type:1 
+ Failed to load resource: the server responded with a status of 401 ()
+/api/reusable-data/location:1 
