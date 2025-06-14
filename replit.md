@@ -98,7 +98,8 @@ The application follows a full-stack TypeScript architecture with the following 
 4. Static asset optimization and compression
 
 ## Changelog
-- June 14, 2025. Initial setup
+- June 14, 2025: Initial setup
+- June 14, 2025: Fixed dispatch persistence issue by updating role-based access control to include broker_admin role in dispatch retrieval logic
 
 ## User Preferences
 
