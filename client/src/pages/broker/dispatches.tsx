@@ -92,16 +92,16 @@ export default function DispatchesPage() {
   const queryClient = useQueryClient();
 
   // Queries
-  const { data: dispatches = [], isLoading: dispatchesLoading } = useQuery({
+  const { data: dispatches = [], isLoading: dispatchesLoading } = useQuery<Dispatch[]>({
     queryKey: ["/api/dispatches"],
     retry: false,
   });
 
-  const { data: customers = [], isLoading: customersLoading } = useQuery({
+  const { data: customers = [], isLoading: customersLoading } = useQuery<Customer[]>({
     queryKey: ["/api/broker/customers"],
   });
 
-  const { data: trucks = [], isLoading: trucksLoading } = useQuery({
+  const { data: trucks = [], isLoading: trucksLoading } = useQuery<Truck[]>({
     queryKey: ["/api/broker/trucks"],
   });
 
@@ -292,7 +292,7 @@ export default function DispatchesPage() {
     return statusColors[status as keyof typeof statusColors] || "bg-gray-100 text-gray-800";
   };
 
-  const trucksByType = (trucks as Truck[]).filter((truck: Truck) => 
+  const trucksByType = trucks.filter((truck: Truck) => 
     !form.watch("truckType") || truck.type === form.watch("truckType")
   );
 
