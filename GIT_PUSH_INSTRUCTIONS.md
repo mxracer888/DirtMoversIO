@@ -1,6 +1,6 @@
 # Manual Git Push Instructions
 
-Your Dirt Movers application is complete and ready to be pushed to your existing DirtMoversIO repository. Due to git lock files in the Replit environment, you'll need to push manually.
+Your DirtMovers application is complete and ready to be pushed to your existing DirtMoversIO repository. Due to git lock files in the Replit environment, you'll need to push manually.
 
 ## Option 1: Use Replit's Shell
 1. Open the Shell tab in Replit
@@ -9,7 +9,7 @@ Your Dirt Movers application is complete and ready to be pushed to your existing
    rm -f .git/index.lock .git/config.lock
    git remote add origin https://github.com/mxracer888/DirtMoversIO.git
    git add .
-   git commit -m "Complete dump truck logistics management system with activity tracking and undo functionality"
+   git commit -m "Complete multi-party dispatch system with broker/leasor management and enhanced activity tracking"
    git push -u origin main
    ```
 
@@ -21,20 +21,24 @@ Your Dirt Movers application is complete and ready to be pushed to your existing
    git init
    git remote add origin https://github.com/mxracer888/DirtMoversIO.git
    git add .
-   git commit -m "Complete dump truck logistics management system"
+   git commit -m "Complete multi-party dispatch system with broker/leasor management"
    git push -u origin main
    ```
 
 ## What's Included in This Commit:
-- Complete four-stage activity workflow (arrive → loaded → dump → material dumped)
+- Complete multi-party dispatch control flow (Customer → Broker → Leasor → Driver)
+- Working "+ Add New Customer" functionality with auto-selection
+- Comprehensive dispatch management with truck assignments
+- Employee management system with role-based access control
+- Four-stage activity workflow (arrive → loaded → dump → material dumped)
 - Working undo/rewind functionality with proper state management
-- Real-time GPS location tracking
-- Dynamic cycle time calculations
-- Mobile-optimized driver interface
-- Broker dashboard with activity monitoring
-- Session management and authentication
-- PostgreSQL database schema ready for production
-- All TypeScript types and validation schemas
+- Real-time GPS location tracking and cycle time calculations
+- Mobile-optimized driver interface with PWA capabilities
+- Broker dashboard with activity monitoring and dispatch oversight
+- Enhanced data persistence across app versions
+- Session management and authentication system
+- PostgreSQL database schema with comprehensive relationships
+- All TypeScript types and validation schemas with Zod validation
 
 ## Key Files:
 - `shared/schema.ts` - Database schema and types
