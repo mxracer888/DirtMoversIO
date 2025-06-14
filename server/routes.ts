@@ -488,7 +488,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const dispatchData = insertDispatchSchema.parse({
         ...req.body,
-        brokerId: user.companyId
+        brokerId: user.companyId,
+        status: "created"
       });
 
       const dispatch = await storage.createDispatch(dispatchData);

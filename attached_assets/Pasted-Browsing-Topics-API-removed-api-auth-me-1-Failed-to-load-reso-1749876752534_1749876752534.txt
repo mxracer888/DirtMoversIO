@@ -1,0 +1,77 @@
+Browsing Topics API removed
+/api/auth/me:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+4c4c4e4b-c64d-4c14-a03b-734a5ca13102.picard.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://4c4c4e4b-c64d-4c14-a03b-734a5ca13102.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+index-COEWRkno.js:40 TypeError: Cannot read properties of undefined (reading 'replace')
+    at index-COEWRkno.js:342:83134
+    at Array.map (<anonymous>)
+    at w5 (index-COEWRkno.js:342:82747)
+    at kh (index-COEWRkno.js:38:16998)
+    at qf (index-COEWRkno.js:40:3139)
+    at PS (index-COEWRkno.js:40:44804)
+    at kS (index-COEWRkno.js:40:39766)
+    at iR (index-COEWRkno.js:40:39694)
+    at Kc (index-COEWRkno.js:40:39547)
+    at ip (index-COEWRkno.js:40:35914)
+Kf @ index-COEWRkno.js:40
+n.callback @ index-COEWRkno.js:40
+Og @ index-COEWRkno.js:38
+Yg @ index-COEWRkno.js:40
+NS @ index-COEWRkno.js:40
+nR @ index-COEWRkno.js:40
+aR @ index-COEWRkno.js:40
+Us @ index-COEWRkno.js:40
+ty @ index-COEWRkno.js:40
+Ls @ index-COEWRkno.js:38
+(anonymous) @ index-COEWRkno.js:40
+setTimeout
+s @ index-COEWRkno.js:40
+a @ index-COEWRkno.js:40
+batch @ index-COEWRkno.js:40
+Cr @ index-COEWRkno.js:40
+setData @ index-COEWRkno.js:40
+onSuccess @ index-COEWRkno.js:40
+h @ index-COEWRkno.js:40
+Promise.then
+w @ index-COEWRkno.js:40
+start @ index-COEWRkno.js:40
+fetch @ index-COEWRkno.js:40
+(anonymous) @ index-COEWRkno.js:40
+(anonymous) @ index-COEWRkno.js:40
+batch @ index-COEWRkno.js:40
+refetchQueries @ index-COEWRkno.js:40
+(anonymous) @ index-COEWRkno.js:40
+batch @ index-COEWRkno.js:40
+invalidateQueries @ index-COEWRkno.js:40
+onSuccess @ index-COEWRkno.js:342
+execute @ index-COEWRkno.js:40
+await in execute
+mutate @ index-COEWRkno.js:40
+(anonymous) @ index-COEWRkno.js:40
+N @ index-COEWRkno.js:342
+(anonymous) @ index-COEWRkno.js:298
+await in (anonymous)
+jP @ index-COEWRkno.js:37
+TP @ index-COEWRkno.js:37
+EP @ index-COEWRkno.js:37
+Cg @ index-COEWRkno.js:37
+Pb @ index-COEWRkno.js:37
+(anonymous) @ index-COEWRkno.js:37
+Dh @ index-COEWRkno.js:40
+eb @ index-COEWRkno.js:37
+Dd @ index-COEWRkno.js:37
+ch @ index-COEWRkno.js:37
+HP @ index-COEWRkno.js:37Understand this error
+index-COEWRkno.js:342 Uncaught TypeError: Cannot read properties of undefined (reading 'replace')
+    at index-COEWRkno.js:342:83134
+    at Array.map (<anonymous>)
+    at w5 (index-COEWRkno.js:342:82747)
+    at kh (index-COEWRkno.js:38:16998)
+    at qf (index-COEWRkno.js:40:3139)
+    at PS (index-COEWRkno.js:40:44804)
+    at kS (index-COEWRkno.js:40:39766)
+    at iR (index-COEWRkno.js:40:39694)
+    at Kc (index-COEWRkno.js:40:39547)
+    at ip (index-COEWRkno.js:40:35914)

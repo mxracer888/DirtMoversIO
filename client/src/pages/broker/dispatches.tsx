@@ -663,8 +663,8 @@ export default function DispatchesPage() {
                             <div className="space-y-2">
                               <div className="flex items-center gap-3">
                                 <h3 className="font-semibold">{dispatch.jobName}</h3>
-                                <Badge className={getStatusBadge(dispatch.status)}>
-                                  {dispatch.status.replace('_', ' ').toUpperCase()}
+                                <Badge className={getStatusBadge(dispatch.status || 'created')}>
+                                  {(dispatch.status || 'created').replace('_', ' ').toUpperCase()}
                                 </Badge>
                               </div>
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
