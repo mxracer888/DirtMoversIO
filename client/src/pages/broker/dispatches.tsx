@@ -12,10 +12,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, Calendar, Clock, Truck, MapPin, Users, Plus, UserPlus } from "lucide-react";
+import { AlertCircle, Calendar, Clock, Truck, MapPin, Users, Plus, UserPlus, ArrowLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Link } from "wouter";
 
 // Form validation schema
 const dispatchFormSchema = z.object({
@@ -93,6 +94,7 @@ export default function DispatchesPage() {
   // Queries
   const { data: dispatches = [], isLoading: dispatchesLoading } = useQuery({
     queryKey: ["/api/dispatches"],
+    retry: false,
   });
 
   const { data: customers = [], isLoading: customersLoading } = useQuery({
@@ -290,7 +292,7 @@ export default function DispatchesPage() {
     return statusColors[status as keyof typeof statusColors] || "bg-gray-100 text-gray-800";
   };
 
-  const trucksByType = trucks.filter(truck => 
+  const trucksByType = (trucks as Truck[]).filter((truck: Truck) => 
     !form.watch("truckType") || truck.type === form.watch("truckType")
   );
 
@@ -309,9 +311,17 @@ export default function DispatchesPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Dispatches</h1>
-          <p className="text-muted-foreground">Create and manage dispatch assignments</p>
+        <div className="flex items-center gap-4">
+          <Link href="/broker/dashboard">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold">Dispatches</h1>
+            <p className="text-muted-foreground">Create and manage dispatch assignments</p>
+          </div>
         </div>
       </div>
 
