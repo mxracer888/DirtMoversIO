@@ -453,8 +453,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Role-based access control
       let dispatches = [];
-      if (user.role === 'broker') {
-        dispatches = await storage.getDispatches(user.id);
+      if (user.role === 'broker' || user.role === 'broker_admin') {
+        dispatches = await storage.getDispatches(user.companyId);
       } else if (user.role === 'customer') {
         const customerDispatches = await storage.getDispatchesByCustomer(user.companyId!);
         dispatches = customerDispatches;
