@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Link } from "wouter";
+import { useQuery as useAuthQuery } from "@tanstack/react-query";
 
 // Form validation schema
 const dispatchFormSchema = z.object({
@@ -91,30 +92,42 @@ export default function DispatchesPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Queries
+  // Check authentication status
+  const { data: user, isLoading: authLoading } = useAuthQuery({
+    queryKey: ["/api/auth/me"],
+    retry: false,
+  });
+
+  // Queries - only run if authenticated
   const { data: dispatches = [], isLoading: dispatchesLoading } = useQuery<Dispatch[]>({
     queryKey: ["/api/dispatches"],
     retry: false,
+    enabled: !!user,
   });
 
   const { data: customers = [], isLoading: customersLoading } = useQuery<Customer[]>({
     queryKey: ["/api/broker/customers"],
+    enabled: !!user,
   });
 
   const { data: trucks = [], isLoading: trucksLoading } = useQuery<Truck[]>({
     queryKey: ["/api/broker/trucks"],
+    enabled: !!user,
   });
 
   const { data: jobNames = [] } = useQuery({
     queryKey: ["/api/reusable-data/job_name"],
+    enabled: !!user,
   });
 
   const { data: materialTypes = [] } = useQuery({
     queryKey: ["/api/reusable-data/material_type"],
+    enabled: !!user,
   });
 
   const { data: locations = [] } = useQuery({
     queryKey: ["/api/reusable-data/location"],
+    enabled: !!user,
   });
 
   // Form setup
@@ -297,6 +310,31 @@ export default function DispatchesPage() {
   );
 
   const assignedCount = Object.values(truckAssignments).reduce((sum, count) => sum + count, 0);
+
+  // Handle authentication loading and redirect
+  if (authLoading) {
+    return (
+      <div className="p-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading authentication...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    return (
+      <div className="p-8">
+        <div className="flex flex-col items-center justify-center h-64 space-y-4">
+          <div className="text-lg">Authentication required</div>
+          <Link href="/login">
+            <Button>Go to Login</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   if (dispatchesLoading || customersLoading || trucksLoading) {
     return (
