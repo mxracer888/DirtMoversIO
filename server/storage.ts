@@ -586,7 +586,7 @@ export class MemStorage implements IStorage {
     return updatedActivity;
   }
 
-  async getRecentActivities(limit = 10): Promise<Array<Activity & { driver: User; truck: Truck; job: Job }>> {
+  async getRecentActivities(limit = 10): Promise<Array<Activity & { driver: User; truck: Truck & { company?: Company }; job: Job }>> {
     const activities = Array.from(this.activities.values())
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(0, limit);
@@ -596,11 +596,12 @@ export class MemStorage implements IStorage {
       const driver = workDay ? this.users.get(workDay.driverId) : undefined;
       const truck = workDay ? this.trucks.get(workDay.truckId) : undefined;
       const job = workDay ? this.jobs.get(workDay.jobId) : undefined;
+      const company = truck ? this.companies.get(truck.companyId) : undefined;
 
       return {
         ...activity,
         driver: driver!,
-        truck: truck!,
+        truck: { ...truck!, company },
         job: job!,
       };
     }).filter(item => item.driver && item.truck && item.job);

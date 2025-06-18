@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getActivityLabel, getActivityColor, getActivityIcon } from "@/lib/activity-states";
 import { ThemeToggle } from "@/components/theme-toggle";
+import TruckLocationMap from "@/components/TruckLocationMap";
 
 export default function BrokerDashboard() {
   const [, setLocation] = useLocation();

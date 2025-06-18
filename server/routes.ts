@@ -241,6 +241,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(activities);
   });
 
+  // Truck locations for map
+  app.get("/api/truck-locations", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
+        return res.status(403).json({ error: "Only brokers can access truck locations" });
+      }
+
+      // Get recent activities with GPS data
+      const recentActivities = await storage.getRecentActivities(500);
+      
+      // Group by truck and get latest position for each
+      const truckLocations = new Map();
+      
+      recentActivities.forEach(activity => {
+        if (activity.latitude && activity.longitude) {
+          const existing = truckLocations.get(activity.truck.id);
+          if (!existing || new Date(activity.timestamp) > new Date(existing.lastUpdateTime)) {
+            truckLocations.set(activity.truck.id, {
+              truckId: activity.truck.id,
+              truckNumber: activity.truck.number,
+              companyName: activity.truck.company?.name || 'Unknown Company',
+              driverName: activity.driver.name,
+              latitude: parseFloat(activity.latitude),
+              longitude: parseFloat(activity.longitude),
+              lastUpdateTime: activity.timestamp,
+              status: 'active', // You can enhance this based on work day status
+              currentActivity: activity.activityType
+            });
+          }
+        }
+      });
+
+      res.json(Array.from(truckLocations.values()));
+    } catch (error) {
+      console.error("Get truck locations error:", error);
+      res.status(500).json({ error: "Failed to get truck locations" });
+    }
+  });
+
   // Dashboard stats
   app.get("/api/dashboard/stats", async (req, res) => {
     try {
