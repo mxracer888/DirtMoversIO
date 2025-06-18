@@ -24,7 +24,7 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
   const [selectedTruck, setSelectedTruck] = useState<TruckLocation | null>(null);
 
   // Fetch truck locations from API
-  const { data: truckLocations = [], isLoading, error } = useQuery({
+  const { data: truckLocations = [], isLoading, error } = useQuery<TruckLocation[]>({
     queryKey: ['/api/truck-locations'],
     refetchInterval: 30000, // Refresh every 30 seconds
   });

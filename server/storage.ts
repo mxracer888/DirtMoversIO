@@ -95,6 +95,9 @@ export interface IStorage {
   // Company management
   getCompaniesByType(type: string): Promise<Company[]>;
   getCompanyById(id: number): Promise<Company | undefined>;
+  
+  // Truck locations for dashboard
+  getTruckLocationsWithDriverInfo(): Promise<any[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -486,6 +489,44 @@ export class MemStorage implements IStorage {
     ];
 
     sampleActivities.forEach(activity => this.activities.set(activity.id, activity));
+  }
+
+  // Truck locations for dashboard
+  async getTruckLocationsWithDriverInfo(): Promise<any[]> {
+    const activeWorkDays = Array.from(this.workDays.values()).filter(
+      workDay => workDay.status === "active"
+    );
+
+    const truckLocations = [];
+
+    for (const workDay of activeWorkDays) {
+      const driver = this.users.get(workDay.driverId);
+      const truck = this.trucks.get(workDay.truckId);
+      const driverCompany = this.companies.get(driver?.companyId || 0);
+
+      if (!driver || !truck || !driverCompany) continue;
+
+      // Get latest activity for this work day
+      const latestActivity = Array.from(this.activities.values())
+        .filter(activity => activity.workDayId === workDay.id)
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+
+      if (latestActivity && latestActivity.latitude && latestActivity.longitude) {
+        truckLocations.push({
+          truckId: truck.id,
+          truckNumber: truck.number,
+          companyName: driverCompany.name,
+          driverName: driver.name,
+          latitude: parseFloat(latestActivity.latitude),
+          longitude: parseFloat(latestActivity.longitude),
+          lastUpdateTime: latestActivity.timestamp.toISOString(),
+          status: workDay.status,
+          currentActivity: latestActivity.activityType
+        });
+      }
+    }
+
+    return truckLocations;
   }
 
   // Users
