@@ -40,30 +40,33 @@ export default function DailySetup() {
     },
   });
 
-  // Fetch setup data
-  const { data: trucks = [] } = useQuery({
+  // Fetch setup data with error handling
+  const { data: trucks = [], isLoading: trucksLoading, error: trucksError } = useQuery({
     queryKey: ["/api/trucks"],
   });
 
-  const { data: jobs = [] } = useQuery({
+  const { data: jobs = [], isLoading: jobsLoading, error: jobsError } = useQuery({
     queryKey: ["/api/jobs"],
   });
 
-  const { data: customers = [] } = useQuery({
+  const { data: customers = [], isLoading: customersLoading, error: customersError } = useQuery({
     queryKey: ["/api/customers"],
   });
 
-  const { data: materials = [] } = useQuery({
+  const { data: materials = [], isLoading: materialsLoading, error: materialsError } = useQuery({
     queryKey: ["/api/materials"],
   });
 
-  const { data: sourceLocations = [] } = useQuery({
+  const { data: sourceLocations = [], isLoading: sourceLoading, error: sourceError } = useQuery({
     queryKey: ["/api/locations?type=source"],
   });
 
-  const { data: destinationLocations = [] } = useQuery({
+  const { data: destinationLocations = [], isLoading: destinationLoading, error: destinationError } = useQuery({
     queryKey: ["/api/locations?type=destination"],
   });
+
+  const isLoading = trucksLoading || jobsLoading || customersLoading || materialsLoading || sourceLoading || destinationLoading;
+  const hasError = trucksError || jobsError || customersError || materialsError || sourceError || destinationError;
 
   const startDayMutation = useMutation({
     mutationFn: async (data: SetupFormData) => {
