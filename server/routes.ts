@@ -241,6 +241,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(activities);
   });
 
+  // Basic data endpoints for driver setup
+  app.get("/api/trucks", async (req, res) => {
+    try {
+      const trucks = await storage.getTrucks();
+      res.json(trucks);
+    } catch (error) {
+      console.error("Get trucks error:", error);
+      res.status(500).json({ error: "Failed to get trucks" });
+    }
+  });
+
+  app.get("/api/jobs", async (req, res) => {
+    try {
+      const jobs = await storage.getJobs();
+      res.json(jobs);
+    } catch (error) {
+      console.error("Get jobs error:", error);
+      res.status(500).json({ error: "Failed to get jobs" });
+    }
+  });
+
+  app.get("/api/customers", async (req, res) => {
+    try {
+      const customers = await storage.getCustomers();
+      res.json(customers);
+    } catch (error) {
+      console.error("Get customers error:", error);
+      res.status(500).json({ error: "Failed to get customers" });
+    }
+  });
+
+  app.get("/api/materials", async (req, res) => {
+    try {
+      const materials = await storage.getMaterials();
+      res.json(materials);
+    } catch (error) {
+      console.error("Get materials error:", error);
+      res.status(500).json({ error: "Failed to get materials" });
+    }
+  });
+
+  app.get("/api/locations", async (req, res) => {
+    try {
+      const type = req.query.type as string;
+      const locations = type ? await storage.getLocationsByType(type) : await storage.getLocations();
+      res.json(locations);
+    } catch (error) {
+      console.error("Get locations error:", error);
+      res.status(500).json({ error: "Failed to get locations" });
+    }
+  });
+
   // Truck locations for map
   app.get("/api/truck-locations", async (req, res) => {
     try {
