@@ -815,6 +815,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Truck locations endpoint for dashboard
   app.get("/api/truck-locations", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
     try {
       const truckLocations = await storage.getTruckLocationsWithDriverInfo();
       res.json(truckLocations);

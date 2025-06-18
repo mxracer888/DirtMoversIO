@@ -100,6 +100,9 @@ The application follows a full-stack TypeScript architecture with the following 
 ## Changelog
 - June 14, 2025: Initial setup
 - June 14, 2025: Fixed dispatch persistence issue by updating role-based access control to include broker_admin role in dispatch retrieval logic
+- June 18, 2025: Fixed dashboard crashes by removing problematic Mapbox integration that caused "require is not defined" errors
+- June 18, 2025: Resolved authentication persistence issues by removing pre-loaded sample GPS data that was causing existing load data to appear on fresh logins
+- June 18, 2025: Enhanced truck location component with user-friendly messaging explaining map functionality will be available in future updates
 
 ## User Preferences
 
