@@ -41,27 +41,27 @@ export default function DailySetup() {
   });
 
   // Fetch setup data with error handling
-  const { data: trucks = [], isLoading: trucksLoading, error: trucksError } = useQuery({
+  const { data: trucks = [], isLoading: trucksLoading, error: trucksError } = useQuery<any[]>({
     queryKey: ["/api/trucks"],
   });
 
-  const { data: jobs = [], isLoading: jobsLoading, error: jobsError } = useQuery({
+  const { data: jobs = [], isLoading: jobsLoading, error: jobsError } = useQuery<any[]>({
     queryKey: ["/api/jobs"],
   });
 
-  const { data: customers = [], isLoading: customersLoading, error: customersError } = useQuery({
+  const { data: customers = [], isLoading: customersLoading, error: customersError } = useQuery<any[]>({
     queryKey: ["/api/customers"],
   });
 
-  const { data: materials = [], isLoading: materialsLoading, error: materialsError } = useQuery({
+  const { data: materials = [], isLoading: materialsLoading, error: materialsError } = useQuery<any[]>({
     queryKey: ["/api/materials"],
   });
 
-  const { data: sourceLocations = [], isLoading: sourceLoading, error: sourceError } = useQuery({
+  const { data: sourceLocations = [], isLoading: sourceLoading, error: sourceError } = useQuery<any[]>({
     queryKey: ["/api/locations?type=source"],
   });
 
-  const { data: destinationLocations = [], isLoading: destinationLoading, error: destinationError } = useQuery({
+  const { data: destinationLocations = [], isLoading: destinationLoading, error: destinationError } = useQuery<any[]>({
     queryKey: ["/api/locations?type=destination"],
   });
 
@@ -123,6 +123,66 @@ export default function DailySetup() {
     const customer = customers.find(c => c.id === job?.customerId);
     return customer?.name || "";
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="mobile-container">
+        <div className="mobile-header">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation("/")}
+              className="p-2 -ml-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-xl font-semibold">Daily Setup</h1>
+            <div className="w-10"></div>
+          </div>
+        </div>
+        <div className="mobile-content flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-foreground">Loading setup data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (hasError) {
+    return (
+      <div className="mobile-container">
+        <div className="mobile-header">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation("/")}
+              className="p-2 -ml-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-xl font-semibold">Daily Setup</h1>
+            <div className="w-10"></div>
+          </div>
+        </div>
+        <div className="mobile-content flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="text-red-500 mb-4">⚠️</div>
+            <h2 className="text-lg font-semibold mb-2">Setup Data Unavailable</h2>
+            <p className="text-muted-foreground mb-4">Unable to load setup information. Please try refreshing the page.</p>
+            <Button onClick={() => window.location.reload()}>
+              Refresh Page
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mobile-container">
