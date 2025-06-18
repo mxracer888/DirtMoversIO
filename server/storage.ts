@@ -128,6 +128,7 @@ export class MemStorage implements IStorage {
 
   constructor() {
     this.initializeData();
+    this.initializeSampleGPSActivities();
   }
 
   private initializeData() {
@@ -364,6 +365,127 @@ export class MemStorage implements IStorage {
       },
     ];
     locations.forEach(location => this.locations.set(location.id, location));
+  }
+
+  private initializeSampleGPSActivities() {
+    // Create sample work day for GPS testing
+    const driverId = Array.from(this.users.values()).find(u => u.role === "driver")?.id;
+    const truckId = Array.from(this.trucks.values())[0]?.id;
+    const jobId = Array.from(this.jobs.values())[0]?.id;
+
+    if (!driverId || !truckId || !jobId) return;
+
+    const workDay: WorkDay = {
+      id: this.currentWorkDayId++,
+      driverId: driverId,
+      truckId: truckId,
+      jobId: jobId,
+      totalLoads: 2,
+      status: "active",
+      startTime: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
+      endTime: null,
+      driverSignature: null,
+      operatorSignature: null,
+      operatorName: null,
+      createdAt: new Date(),
+    };
+    this.workDays.set(workDay.id, workDay);
+
+    // Create sample activities with GPS coordinates in Salt Lake City area
+    const sampleActivities: Activity[] = [
+      {
+        id: this.currentActivityId++,
+        workDayId: workDay.id,
+        loadNumber: 1,
+        activityType: "arrive_at_load_site",
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+        latitude: "40.7608", // Salt Lake City
+        longitude: "-111.8910",
+        notes: "Arrived at load site - Kilgore Mine",
+        ticketNumber: null,
+        netWeight: null,
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentActivityId++,
+        workDayId: workDay.id,
+        loadNumber: 1,
+        activityType: "loaded_with_material",
+        timestamp: new Date(Date.now() - 105 * 60 * 1000), // 1h 45m ago
+        latitude: "40.7589",
+        longitude: "-111.8883",
+        notes: "Loaded with A1A fill dirt",
+        ticketNumber: "LOAD-001",
+        netWeight: "25.5",
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentActivityId++,
+        workDayId: workDay.id,
+        loadNumber: 1,
+        activityType: "arrive_at_dump_site",
+        timestamp: new Date(Date.now() - 75 * 60 * 1000), // 1h 15m ago
+        latitude: "40.7505",
+        longitude: "-111.8755",
+        notes: "Arrived at Jordan River Heights",
+        ticketNumber: null,
+        netWeight: null,
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentActivityId++,
+        workDayId: workDay.id,
+        loadNumber: 1,
+        activityType: "dumped_material",
+        timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
+        latitude: "40.7498",
+        longitude: "-111.8742",
+        notes: "Dumped load 1",
+        ticketNumber: "DUMP-001",
+        netWeight: "25.5",
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentActivityId++,
+        workDayId: workDay.id,
+        loadNumber: 2,
+        activityType: "arrive_at_load_site",
+        timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+        latitude: "40.7615",
+        longitude: "-111.8920",
+        notes: "Second load - arrived at site",
+        ticketNumber: null,
+        netWeight: null,
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentActivityId++,
+        workDayId: workDay.id,
+        loadNumber: 2,
+        activityType: "loaded_with_material",
+        timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
+        latitude: "40.7595",
+        longitude: "-111.8895",
+        notes: "Second load completed",
+        ticketNumber: "LOAD-002",
+        netWeight: "26.0",
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+    ];
+
+    sampleActivities.forEach(activity => this.activities.set(activity.id, activity));
   }
 
   // Users
