@@ -97,6 +97,17 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+          {/* Map Notice */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center gap-2 text-blue-700">
+              <MapPin className="h-4 w-4" />
+              <span className="text-sm font-medium">Live GPS Tracking</span>
+            </div>
+            <p className="text-sm text-blue-600 mt-1">
+              Interactive map view will be available in the next update. Current locations shown below.
+            </p>
+          </div>
+
           {/* Status Legend */}
           <div className="flex flex-wrap gap-4 text-sm">
             <div className="flex items-center gap-2">
