@@ -382,7 +382,7 @@ export class MemStorage implements IStorage {
       jobId: jobId,
       totalLoads: 2,
       status: "active",
-      startTime: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
+      startTime: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
       endTime: null,
       driverSignature: null,
       operatorSignature: null,

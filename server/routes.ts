@@ -813,6 +813,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Truck locations endpoint for dashboard
+  app.get("/api/truck-locations", async (req, res) => {
+    try {
+      const truckLocations = await storage.getTruckLocationsWithDriverInfo();
+      res.json(truckLocations);
+    } catch (error) {
+      console.error("Error fetching truck locations:", error);
+      res.status(500).json({ error: "Failed to fetch truck locations" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
