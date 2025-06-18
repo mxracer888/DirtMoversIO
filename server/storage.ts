@@ -298,6 +298,14 @@ export class MemStorage implements IStorage {
         isActive: true,
         createdAt: new Date(),
       },
+      {
+        id: this.currentTruckId++,
+        number: "T-112",
+        type: "Side Dump",
+        companyId: company.id,
+        isActive: true,
+        createdAt: new Date(),
+      },
     ];
     trucks.forEach(truck => this.trucks.set(truck.id, truck));
 
@@ -367,6 +375,116 @@ export class MemStorage implements IStorage {
       },
     ];
     locations.forEach(location => this.locations.set(location.id, location));
+
+    // Create sample work days for map demonstration
+    const today = new Date();
+    const workDays: WorkDay[] = [
+      {
+        id: this.currentWorkDayId++,
+        driverId: users[2].id, // Mike Johnson
+        truckId: trucks[0].id,
+        jobId: jobs[0].id,
+        materialId: materials[0].id,
+        sourceLocationId: locations[0].id,
+        destinationLocationId: locations[1].id,
+        workDate: today,
+        status: "active",
+        startTime: new Date(today.getTime() - 2 * 60 * 60 * 1000), // 2 hours ago
+        endTime: null,
+        totalLoads: 0,
+        operatorName: null,
+        driverSignature: null,
+        operatorSignature: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentWorkDayId++,
+        driverId: users[3].id, // Tom Davis
+        truckId: trucks[1].id,
+        jobId: jobs[1].id,
+        materialId: materials[1].id,
+        sourceLocationId: locations[0].id,
+        destinationLocationId: locations[1].id,
+        workDate: today,
+        status: "active",
+        startTime: new Date(today.getTime() - 1.5 * 60 * 60 * 1000), // 1.5 hours ago
+        endTime: null,
+        totalLoads: 0,
+        operatorName: null,
+        driverSignature: null,
+        operatorSignature: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentWorkDayId++,
+        driverId: users[4].id, // Steve Anderson
+        truckId: trucks[2].id,
+        jobId: jobs[0].id,
+        materialId: materials[0].id,
+        sourceLocationId: locations[0].id,
+        destinationLocationId: locations[1].id,
+        workDate: today,
+        status: "active",
+        startTime: new Date(today.getTime() - 1 * 60 * 60 * 1000), // 1 hour ago
+        endTime: null,
+        totalLoads: 0,
+        operatorName: null,
+        driverSignature: null,
+        operatorSignature: null,
+        createdAt: new Date(),
+      },
+    ];
+    workDays.forEach(workDay => this.workDays.set(workDay.id, workDay));
+
+    // Create sample activities with GPS coordinates for map demonstration
+    const activities: Activity[] = [
+      {
+        id: this.currentActivityId++,
+        workDayId: workDays[0].id,
+        loadNumber: 1,
+        activityType: "arrive_at_load_site",
+        timestamp: new Date(today.getTime() - 1.5 * 60 * 60 * 1000),
+        latitude: "40.7608",
+        longitude: "-111.8910",
+        notes: "Arrived at downtown site",
+        ticketNumber: null,
+        netWeight: null,
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentActivityId++,
+        workDayId: workDays[1].id,
+        loadNumber: 1,
+        activityType: "loaded_with_material",
+        timestamp: new Date(today.getTime() - 1 * 60 * 60 * 1000),
+        latitude: "40.7489",
+        longitude: "-111.8677",
+        notes: "Loaded with A1A fill",
+        ticketNumber: "T-12345",
+        netWeight: "15.5",
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+      {
+        id: this.currentActivityId++,
+        workDayId: workDays[2].id,
+        loadNumber: 1,
+        activityType: "arrive_at_dump_site",
+        timestamp: new Date(today.getTime() - 0.5 * 60 * 60 * 1000),
+        latitude: "40.7831",
+        longitude: "-111.9298",
+        notes: "Arrived at West Valley dump site",
+        ticketNumber: null,
+        netWeight: null,
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(),
+      },
+    ];
+    activities.forEach(activity => this.activities.set(activity.id, activity));
   }
 
 

@@ -268,26 +268,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { lat: 40.8230, lng: -111.8638 }, // Bountiful area
       ];
 
-      activeWorkDays.forEach((workDay, index) => {
-        if (index < saltLakeCoords.length) {
-          const coords = saltLakeCoords[index];
-          const truck = trucks.find(t => t.id === workDay.truckId);
+      for (let index = 0; index < activeWorkDays.length && index < saltLakeCoords.length; index++) {
+        const workDay = activeWorkDays[index];
+        const coords = saltLakeCoords[index];
+        const truck = trucks.find(t => t.id === workDay.truckId);
+        
+        if (truck) {
+          // Get driver info
+          const driver = await storage.getUser(workDay.driverId);
           
-          if (truck) {
-            truckLocations.push({
-              truckId: truck.id,
-              truckNumber: truck.number,
-              companyName: 'Mountain Trucking',
-              driverName: workDay.driverName || 'Driver',
-              latitude: coords.lat,
-              longitude: coords.lng,
-              lastUpdateTime: new Date().toISOString(),
-              status: 'active',
-              currentActivity: 'in_transit'
-            });
-          }
+          truckLocations.push({
+            truckId: truck.id,
+            truckNumber: truck.number,
+            companyName: 'Mountain Trucking',
+            driverName: driver?.name || 'Driver',
+            latitude: coords.lat,
+            longitude: coords.lng,
+            lastUpdateTime: new Date().toISOString(),
+            status: 'active',
+            currentActivity: 'in_transit'
+          });
         }
-      });
+      }
 
       res.json(truckLocations);
     } catch (error) {
