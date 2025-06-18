@@ -103,6 +103,8 @@ The application follows a full-stack TypeScript architecture with the following 
 - June 18, 2025: Fixed dashboard crashes by removing problematic Mapbox integration that caused "require is not defined" errors
 - June 18, 2025: Resolved authentication persistence issues by removing pre-loaded sample GPS data that was causing existing load data to appear on fresh logins
 - June 18, 2025: Enhanced truck location component with user-friendly messaging explaining map functionality will be available in future updates
+- June 18, 2025: Successfully implemented interactive Leaflet map with real GPS coordinates for truck tracking on broker dashboard
+- June 18, 2025: Fixed authentication routing issues and verified login functionality with correct demo credentials (sarah.broker@terrafirma.com / broker123)
 
 ## User Preferences
 
