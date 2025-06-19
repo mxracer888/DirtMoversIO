@@ -9,7 +9,7 @@ Your DirtMovers application is complete with Raspberry Pi deployment configurati
    rm -f .git/index.lock .git/config.lock
    git remote add origin https://github.com/mxracer888/DirtMoversIO.git
    git add .
-   git commit -m "Added database debugging and permission fix scripts"
+   git commit -m "Fixed DATABASE_URL encoding for passwords with special characters"
    git push -u origin main
    ```
 

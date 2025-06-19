@@ -60,6 +60,9 @@ if [ ! -f .env ]; then
     # Generate random session secret
     SESSION_SECRET=$(openssl rand -base64 32)
     
+    # URL encode the password for DATABASE_URL
+    ENCODED_PASSWORD=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$DB_PASSWORD', safe=''))" 2>/dev/null || node -e "console.log(encodeURIComponent('$DB_PASSWORD'))" 2>/dev/null || echo "$DB_PASSWORD")
+    
     # Update .env file safely
     cat > .env << EOL
 # Environment Configuration for DirtMovers
@@ -67,7 +70,7 @@ NODE_ENV=production
 PORT=3000
 
 # Database Configuration
-DATABASE_URL=postgresql://dirtmovers:${DB_PASSWORD}@localhost:5432/dirtmovers
+DATABASE_URL=postgresql://dirtmovers:${ENCODED_PASSWORD}@localhost:5432/dirtmovers
 
 # Session Configuration
 SESSION_SECRET=${SESSION_SECRET}
