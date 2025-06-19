@@ -1187,6 +1187,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCompletedWorkDays(): Promise<Array<WorkDay & { driver: User; truck: Truck; job: Job; totalActivities: number }>> {
+    console.log("=== STORAGE: getCompletedWorkDays called ===");
+    
+    // First, let's see all work days to understand what we have
+    const allWorkDays = await db.select().from(workDays);
+    console.log("All work days in database:", allWorkDays.map(wd => ({ 
+      id: wd.id, 
+      status: wd.status, 
+      driverId: wd.driverId,
+      endTime: wd.endTime 
+    })));
+    
+    console.log("Querying for completed work days...");
     const completedWorkDaysWithDetails = await db
       .select({
         workDay: workDays,
@@ -1200,6 +1212,15 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(jobs, eq(workDays.jobId, jobs.id))
       .where(eq(workDays.status, "completed"))
       .orderBy(desc(workDays.createdAt));
+
+    console.log("Raw completed work days query result:", completedWorkDaysWithDetails.length, "rows");
+    console.log("Work days with details:", completedWorkDaysWithDetails.map(row => ({
+      workDayId: row.workDay?.id,
+      status: row.workDay?.status,
+      driverName: row.driver?.name,
+      truckNumber: row.truck?.number,
+      jobName: row.job?.name
+    })));
 
     const result = [];
     for (const row of completedWorkDaysWithDetails) {
@@ -1219,6 +1240,8 @@ export class DatabaseStorage implements IStorage {
       }
     }
 
+    console.log("Final completed work days result:", result.length, "items");
+    console.log("=== STORAGE: getCompletedWorkDays complete ===");
     return result;
   }
 
