@@ -79,7 +79,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}): UseGeolocat
     } catch (err) {
       handleError(err as GeolocationError);
     }
-  }, [isSupported, enableHighAccuracy, timeout, maximumAge, handleSuccess, handleError]);
+  }, [isSupported, geolocationOptions, handleSuccess, handleError]);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -96,7 +96,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}): UseGeolocat
     const id = watchPosition(
       handleSuccess,
       handleError,
-      { enableHighAccuracy, timeout, maximumAge }
+      geolocationOptions
     );
 
     if (id !== null) {
@@ -110,7 +110,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}): UseGeolocat
         clearWatch(id);
       }
     };
-  }, [watch, isSupported, enableHighAccuracy, timeout, maximumAge, handleSuccess, handleError]);
+  }, [watch, isSupported, handleSuccess, handleError, geolocationOptions]);
 
   // Cleanup watch on unmount
   useEffect(() => {
@@ -126,7 +126,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}): UseGeolocat
     if (!watch && isSupported) {
       requestLocation();
     }
-  }, [watch, isSupported]);
+  }, [watch, isSupported, requestLocation]);
 
   return {
     location,

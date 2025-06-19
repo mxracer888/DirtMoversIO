@@ -1,7 +1,5 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
-import connectPgSimple from "connect-pg-simple";
-import { pool } from "./db";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -9,22 +7,15 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Session middleware with PostgreSQL store
-const PgSession = connectPgSimple(session);
+// Session middleware
 app.use(session({
-  store: new PgSession({
-    pool: pool,
-    tableName: 'sessions',
-    createTableIfMissing: true,
-  }),
   secret: 'dirt-movers-secret-key',
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
   cookie: {
     secure: false, // Set to true in production with HTTPS
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    httpOnly: true,
-    sameSite: 'lax'
+    httpOnly: false
   }
 }));
 

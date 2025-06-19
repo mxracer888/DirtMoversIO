@@ -2,11 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import type { User } from "@shared/schema";
 
+interface CurrentUserResponse {
+  user: User;
+}
+
 /**
  * Hook to get the current authenticated user
  */
 export function useCurrentUser() {
-  const { data, isLoading, error, refetch } = useQuery<User | null>({
+  const { data, isLoading, error, refetch } = useQuery<CurrentUserResponse | null>({
     queryKey: ["/api/auth/me"],
     queryFn: getQueryFn({ on401: "returnNull" }),
     retry: false,
@@ -19,10 +23,10 @@ export function useCurrentUser() {
   const safeIsLoading = isLoading && !error;
 
   return {
-    user: data || null,
+    user: data?.user || null,
     isLoading: safeIsLoading,
     error,
-    isAuthenticated: !!data,
+    isAuthenticated: !!data?.user,
     refetch,
   };
 }

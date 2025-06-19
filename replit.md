@@ -100,19 +100,6 @@ The application follows a full-stack TypeScript architecture with the following 
 ## Changelog
 - June 14, 2025: Initial setup
 - June 14, 2025: Fixed dispatch persistence issue by updating role-based access control to include broker_admin role in dispatch retrieval logic
-- June 18, 2025: Fixed dashboard crashes by removing problematic Mapbox integration that caused "require is not defined" errors
-- June 18, 2025: Resolved authentication persistence issues by removing pre-loaded sample GPS data that was causing existing load data to appear on fresh logins
-- June 18, 2025: Enhanced truck location component with user-friendly messaging explaining map functionality will be available in future updates
-- June 18, 2025: Successfully implemented interactive Leaflet map with real GPS coordinates for truck tracking on broker dashboard
-- June 18, 2025: Fixed authentication routing issues and verified login functionality with correct demo credentials (sarah.broker@terrafirma.com / broker123)
-- June 19, 2025: Resolved driver dashboard blank page issue by adding proper loading states and missing API endpoints
-- June 19, 2025: Fixed 504 Gateway Timeout and JSON parsing errors in login system
-- June 19, 2025: Enhanced map component with fallback list view and error handling for improved reliability
-- June 19, 2025: Fixed critical authentication failures by implementing PostgreSQL session store with connect-pg-simple
-- June 19, 2025: Resolved React error #310 by removing conflicting useEffect hooks in driver interface
-- June 19, 2025: Enhanced API error handling to prevent "undefined is not valid JSON" crashes
-- June 19, 2025: Completed broker dashboard fixes by implementing missing API endpoints and proper JSON response handling
-- June 19, 2025: Verified both driver and broker login flows working with persistent sessions and proper authentication
 
 ## User Preferences
 

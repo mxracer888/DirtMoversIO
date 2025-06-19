@@ -10,7 +10,7 @@ import {
   type ReusableData, type InsertReusableData
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, asc, isNotNull } from "drizzle-orm";
+import { eq, and, desc, asc } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -95,9 +95,6 @@ export interface IStorage {
   // Company management
   getCompaniesByType(type: string): Promise<Company[]>;
   getCompanyById(id: number): Promise<Company | undefined>;
-  
-  // Truck locations for dashboard
-  getTruckLocationsWithDriverInfo(): Promise<any[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -298,14 +295,6 @@ export class MemStorage implements IStorage {
         isActive: true,
         createdAt: new Date(),
       },
-      {
-        id: this.currentTruckId++,
-        number: "T-112",
-        type: "Side Dump",
-        companyId: company.id,
-        isActive: true,
-        createdAt: new Date(),
-      },
     ];
     trucks.forEach(truck => this.trucks.set(truck.id, truck));
 
@@ -375,156 +364,6 @@ export class MemStorage implements IStorage {
       },
     ];
     locations.forEach(location => this.locations.set(location.id, location));
-
-    // Create sample work days for map demonstration
-    const today = new Date();
-    const workDays: WorkDay[] = [
-      {
-        id: this.currentWorkDayId++,
-        driverId: users[2].id, // Mike Johnson
-        truckId: trucks[0].id,
-        jobId: jobs[0].id,
-        materialId: materials[0].id,
-        sourceLocationId: locations[0].id,
-        destinationLocationId: locations[1].id,
-        workDate: today,
-        status: "active",
-        startTime: new Date(today.getTime() - 2 * 60 * 60 * 1000), // 2 hours ago
-        endTime: null,
-        totalLoads: 0,
-        operatorName: null,
-        driverSignature: null,
-        operatorSignature: null,
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentWorkDayId++,
-        driverId: users[3].id, // Tom Davis
-        truckId: trucks[1].id,
-        jobId: jobs[1].id,
-        materialId: materials[1].id,
-        sourceLocationId: locations[0].id,
-        destinationLocationId: locations[1].id,
-        workDate: today,
-        status: "active",
-        startTime: new Date(today.getTime() - 1.5 * 60 * 60 * 1000), // 1.5 hours ago
-        endTime: null,
-        totalLoads: 0,
-        operatorName: null,
-        driverSignature: null,
-        operatorSignature: null,
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentWorkDayId++,
-        driverId: users[4].id, // Steve Anderson
-        truckId: trucks[2].id,
-        jobId: jobs[0].id,
-        materialId: materials[0].id,
-        sourceLocationId: locations[0].id,
-        destinationLocationId: locations[1].id,
-        workDate: today,
-        status: "active",
-        startTime: new Date(today.getTime() - 1 * 60 * 60 * 1000), // 1 hour ago
-        endTime: null,
-        totalLoads: 0,
-        operatorName: null,
-        driverSignature: null,
-        operatorSignature: null,
-        createdAt: new Date(),
-      },
-    ];
-    workDays.forEach(workDay => this.workDays.set(workDay.id, workDay));
-
-    // Create sample activities with GPS coordinates for map demonstration
-    const activities: Activity[] = [
-      {
-        id: this.currentActivityId++,
-        workDayId: workDays[0].id,
-        loadNumber: 1,
-        activityType: "arrive_at_load_site",
-        timestamp: new Date(today.getTime() - 1.5 * 60 * 60 * 1000),
-        latitude: "40.7608",
-        longitude: "-111.8910",
-        notes: "Arrived at downtown site",
-        ticketNumber: null,
-        netWeight: null,
-        cancelled: false,
-        cancelledAt: null,
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentActivityId++,
-        workDayId: workDays[1].id,
-        loadNumber: 1,
-        activityType: "loaded_with_material",
-        timestamp: new Date(today.getTime() - 1 * 60 * 60 * 1000),
-        latitude: "40.7489",
-        longitude: "-111.8677",
-        notes: "Loaded with A1A fill",
-        ticketNumber: "T-12345",
-        netWeight: "15.5",
-        cancelled: false,
-        cancelledAt: null,
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentActivityId++,
-        workDayId: workDays[2].id,
-        loadNumber: 1,
-        activityType: "arrive_at_dump_site",
-        timestamp: new Date(today.getTime() - 0.5 * 60 * 60 * 1000),
-        latitude: "40.7831",
-        longitude: "-111.9298",
-        notes: "Arrived at West Valley dump site",
-        ticketNumber: null,
-        netWeight: null,
-        cancelled: false,
-        cancelledAt: null,
-        createdAt: new Date(),
-      },
-    ];
-    activities.forEach(activity => this.activities.set(activity.id, activity));
-  }
-
-
-
-  // Truck locations for dashboard
-  async getTruckLocationsWithDriverInfo(): Promise<any[]> {
-    const activeWorkDays = Array.from(this.workDays.values()).filter(
-      workDay => workDay.status === "active"
-    );
-
-    const truckLocations = [];
-
-    for (const workDay of activeWorkDays) {
-      const driver = this.users.get(workDay.driverId);
-      const truck = this.trucks.get(workDay.truckId);
-      const driverCompany = this.companies.get(driver?.companyId || 0);
-
-      if (!driver || !truck || !driverCompany) continue;
-
-      // Get latest activity for this work day
-      const latestActivity = Array.from(this.activities.values())
-        .filter(activity => activity.workDayId === workDay.id)
-        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
-
-      if (latestActivity && latestActivity.latitude && latestActivity.longitude) {
-        truckLocations.push({
-          truckId: truck.id,
-          truckNumber: truck.number,
-          companyName: driverCompany.name,
-          driverName: driver.name,
-          latitude: parseFloat(latestActivity.latitude),
-          longitude: parseFloat(latestActivity.longitude),
-          lastUpdateTime: latestActivity.timestamp.toISOString(),
-          status: workDay.status,
-          currentActivity: latestActivity.activityType
-        });
-      }
-    }
-
-    return truckLocations;
   }
 
   // Users
@@ -747,7 +586,7 @@ export class MemStorage implements IStorage {
     return updatedActivity;
   }
 
-  async getRecentActivities(limit = 10): Promise<Array<Activity & { driver: User; truck: Truck & { company?: Company }; job: Job }>> {
+  async getRecentActivities(limit = 10): Promise<Array<Activity & { driver: User; truck: Truck; job: Job }>> {
     const activities = Array.from(this.activities.values())
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(0, limit);
@@ -757,12 +596,11 @@ export class MemStorage implements IStorage {
       const driver = workDay ? this.users.get(workDay.driverId) : undefined;
       const truck = workDay ? this.trucks.get(workDay.truckId) : undefined;
       const job = workDay ? this.jobs.get(workDay.jobId) : undefined;
-      const company = truck ? this.companies.get(truck.companyId) : undefined;
 
       return {
         ...activity,
         driver: driver!,
-        truck: { ...truck!, company },
+        truck: truck!,
         job: job!,
       };
     }).filter(item => item.driver && item.truck && item.job);
@@ -1203,7 +1041,7 @@ export class DatabaseStorage implements IStorage {
 
   async getActiveWorkDayByDriver(driverId: number): Promise<WorkDay | undefined> {
     const [workDay] = await db.select().from(workDays)
-      .where(and(eq(workDays.driverId, driverId), eq(workDays.status, "active")));
+      .where(and(eq(workDays.driverId, driverId), eq(workDays.isActive, true)));
     return workDay;
   }
 
@@ -1497,62 +1335,6 @@ export class DatabaseStorage implements IStorage {
   async getCompanyById(id: number): Promise<Company | undefined> {
     const [company] = await db.select().from(companies).where(eq(companies.id, id));
     return company;
-  }
-
-  // Truck locations for dashboard
-  async getTruckLocationsWithDriverInfo(): Promise<any[]> {
-    try {
-      // Get recent activities with truck and driver info to determine current locations
-      const recentActivities = await db.select({
-        truckId: activities.workDayId,
-        latitude: activities.latitude,
-        longitude: activities.longitude,
-        timestamp: activities.timestamp,
-        activityType: activities.activityType,
-        truck: trucks,
-        driver: users,
-        workDay: workDays
-      })
-      .from(activities)
-      .innerJoin(workDays, eq(activities.workDayId, workDays.id))
-      .innerJoin(trucks, eq(workDays.truckId, trucks.id))
-      .innerJoin(users, eq(workDays.driverId, users.id))
-      .where(and(
-        isNotNull(activities.latitude),
-        isNotNull(activities.longitude),
-        eq(workDays.status, "active")
-      ))
-      .orderBy(desc(activities.timestamp))
-      .limit(50);
-
-      // Group by truck to get most recent location for each truck
-      const truckLocations = new Map();
-      
-      for (const activity of recentActivities) {
-        const truckId = activity.truck.id;
-        if (!truckLocations.has(truckId)) {
-          truckLocations.set(truckId, {
-            id: activity.truck.id,
-            number: activity.truck.number,
-            type: activity.truck.type,
-            latitude: parseFloat(activity.latitude || "0"),
-            longitude: parseFloat(activity.longitude || "0"),
-            lastActivity: activity.activityType,
-            timestamp: activity.timestamp,
-            driver: {
-              id: activity.driver.id,
-              name: activity.driver.name,
-              email: activity.driver.email
-            }
-          });
-        }
-      }
-
-      return Array.from(truckLocations.values());
-    } catch (error) {
-      console.error("Error getting truck locations:", error);
-      return [];
-    }
   }
 }
 

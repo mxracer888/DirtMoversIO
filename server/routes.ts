@@ -11,11 +11,7 @@ import "./types";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication
-  app.post("/api/login", async (req, res) => {
-    console.log("POST /api/login - Headers:", req.headers);
-    console.log("POST /api/login - Body:", req.body);
-    console.log("POST /api/login - Content-Type:", req.get('Content-Type'));
-    
+  app.post("/api/auth/login", async (req, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
       
@@ -26,9 +22,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Set session and save it
       req.session.userId = user.id;
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+        }
+      });
       
       console.log("Login successful, session set:", req.session.userId);
-      console.log("Session ID:", req.sessionID);
       
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
@@ -38,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/logout", (req, res) => {
+  app.post("/api/auth/logout", (req, res) => {
     req.session.destroy((err) => {
       if (err) {
         return res.status(500).json({ error: "Could not log out" });
@@ -62,184 +62,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     console.log("Auth check successful for user:", user.email);
     const { password: _, ...userWithoutPassword } = user;
-    res.json(userWithoutPassword);
+    res.json({ user: userWithoutPassword });
   });
 
-  // Setup data endpoints - require authentication
+  // Setup data endpoints
   app.get("/api/trucks", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
     const trucks = await storage.getTrucks();
     res.json(trucks);
   });
 
   app.get("/api/jobs", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
     const jobs = await storage.getActiveJobs();
     res.json(jobs);
   });
 
   app.get("/api/customers", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
     const customers = await storage.getCustomers();
     res.json(customers);
   });
 
   app.get("/api/materials", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
     const materials = await storage.getMaterials();
     res.json(materials);
   });
 
   app.get("/api/locations", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
     const type = req.query.type as string;
     const locations = type 
       ? await storage.getLocationsByType(type)
       : await storage.getLocations();
     res.json(locations);
-  });
-
-  // Reusable data endpoints that drivers need access to
-  app.get("/api/reusable-data/location", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      const locations = await storage.getLocations();
-      res.json(locations);
-    } catch (error) {
-      console.error("Get locations error:", error);
-      res.status(500).json({ error: "Failed to get locations" });
-    }
-  });
-
-  app.get("/api/reusable-data/material_type", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      const materials = await storage.getMaterials();
-      res.json(materials);
-    } catch (error) {
-      console.error("Get materials error:", error);
-      res.status(500).json({ error: "Failed to get materials" });
-    }
-  });
-
-  app.get("/api/reusable-data/job_name", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      const jobs = await storage.getJobs();
-      res.json(jobs);
-    } catch (error) {
-      console.error("Get jobs error:", error);
-      res.status(500).json({ error: "Failed to get jobs" });
-    }
-  });
-
-  // Broker endpoints that drivers also need access to for setup
-  app.get("/api/broker/trucks", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      const trucks = await storage.getTrucks();
-      res.json(trucks);
-    } catch (error) {
-      console.error("Get trucks error:", error);
-      res.status(500).json({ error: "Failed to get trucks" });
-    }
-  });
-
-  app.get("/api/broker/customers", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      const customers = await storage.getCustomers();
-      res.json(customers);
-    } catch (error) {
-      console.error("Get customers error:", error);
-      res.status(500).json({ error: "Failed to get customers" });
-    }
-  });
-
-  // Truck locations endpoint for map functionality
-  app.get("/api/truck-locations", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      // Return truck location data - for now return empty array
-      // This will be populated with real GPS data from activities
-      res.json([]);
-    } catch (error) {
-      console.error("Get truck locations error:", error);
-      res.status(500).json({ error: "Failed to get truck locations" });
-    }
-  });
-
-  // Driver-specific endpoints
-  app.get("/api/driver/current-work-day", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      const driverId = req.session.userId;
-      const workDay = await storage.getActiveWorkDayByDriver(driverId);
-      res.json(workDay);
-    } catch (error) {
-      console.error("Get current work day error:", error);
-      res.status(500).json({ error: "Failed to get current work day" });
-    }
-  });
-
-  app.get("/api/driver/activities/today", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      const driverId = req.session.userId;
-      // Get today's activities for the driver
-      const today = new Date().toDateString();
-      const allActivities = await storage.getRecentActivities(100);
-      const activities = allActivities.filter(activity => 
-        activity.driver.id === driverId && 
-        new Date(activity.timestamp).toDateString() === today
-      );
-      res.json(activities);
-    } catch (error) {
-      console.error("Get today activities error:", error);
-      res.status(500).json({ error: "Failed to get today's activities" });
-    }
-  });
-
-  app.post("/api/driver/break", async (req, res) => {
-    if (!req.session?.userId) {
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-    try {
-      const { type, action } = req.body; // type: 'break' or 'breakdown', action: 'start' or 'end'
-      const driverId = req.session.userId;
-      
-      // For now, just return success - can implement break tracking later
-      res.json({ success: true, type, action });
-    } catch (error) {
-      console.error("Break management error:", error);
-      res.status(500).json({ error: "Failed to manage break" });
-    }
   });
 
   // Work day management
@@ -387,130 +239,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
     const activities = await storage.getRecentActivities(limit);
     res.json(activities);
-  });
-
-  // Basic data endpoints for driver setup
-  app.get("/api/trucks", async (req, res) => {
-    try {
-      const trucks = await storage.getTrucks();
-      res.json(trucks);
-    } catch (error) {
-      console.error("Get trucks error:", error);
-      res.status(500).json({ error: "Failed to get trucks" });
-    }
-  });
-
-  app.get("/api/jobs", async (req, res) => {
-    try {
-      const jobs = await storage.getJobs();
-      res.json(jobs);
-    } catch (error) {
-      console.error("Get jobs error:", error);
-      res.status(500).json({ error: "Failed to get jobs" });
-    }
-  });
-
-  app.get("/api/customers", async (req, res) => {
-    try {
-      const customers = await storage.getCustomers();
-      res.json(customers);
-    } catch (error) {
-      console.error("Get customers error:", error);
-      res.status(500).json({ error: "Failed to get customers" });
-    }
-  });
-
-  app.get("/api/materials", async (req, res) => {
-    try {
-      const materials = await storage.getMaterials();
-      res.json(materials);
-    } catch (error) {
-      console.error("Get materials error:", error);
-      res.status(500).json({ error: "Failed to get materials" });
-    }
-  });
-
-  app.get("/api/locations", async (req, res) => {
-    try {
-      const type = req.query.type as string;
-      const locations = type ? await storage.getLocationsByType(type) : await storage.getLocations();
-      res.json(locations);
-    } catch (error) {
-      console.error("Get locations error:", error);
-      res.status(500).json({ error: "Failed to get locations" });
-    }
-  });
-
-  // Truck locations endpoint for broker dashboard
-  app.get("/api/trucks/locations", async (req, res) => {
-    try {
-      if (!req.session?.userId) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-      
-      const truckLocations = await storage.getTruckLocationsWithDriverInfo();
-      res.json(truckLocations);
-    } catch (error) {
-      console.error("Get truck locations error:", error);
-      res.status(500).json({ error: "Failed to get truck locations" });
-    }
-  });
-
-  // Truck locations for map
-  app.get("/api/truck-locations", async (req, res) => {
-    try {
-      if (!req.session?.userId) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-
-      const user = await storage.getUser(req.session.userId);
-      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
-        return res.status(403).json({ error: "Only brokers can access truck locations" });
-      }
-
-      // Get active work days to show current truck locations
-      const activeWorkDays = await storage.getActiveWorkDays();
-      const trucks = await storage.getTrucks();
-      
-      // Create sample GPS locations for active trucks in Salt Lake City area
-      const truckLocations = [];
-      const saltLakeCoords = [
-        { lat: 40.7608, lng: -111.8910 }, // Downtown Salt Lake City
-        { lat: 40.7489, lng: -111.8677 }, // University of Utah area
-        { lat: 40.7831, lng: -111.9298 }, // West Valley area
-        { lat: 40.7214, lng: -111.8853 }, // Murray area
-        { lat: 40.6688, lng: -111.9058 }, // West Jordan area
-        { lat: 40.8230, lng: -111.8638 }, // Bountiful area
-      ];
-
-      for (let index = 0; index < activeWorkDays.length && index < saltLakeCoords.length; index++) {
-        const workDay = activeWorkDays[index];
-        const coords = saltLakeCoords[index];
-        const truck = trucks.find(t => t.id === workDay.truckId);
-        
-        if (truck) {
-          // Get driver info
-          const driver = await storage.getUser(workDay.driverId);
-          
-          truckLocations.push({
-            truckId: truck.id,
-            truckNumber: truck.number,
-            companyName: 'Mountain Trucking',
-            driverName: driver?.name || 'Driver',
-            latitude: coords.lat,
-            longitude: coords.lng,
-            lastUpdateTime: new Date().toISOString(),
-            status: 'active',
-            currentActivity: 'in_transit'
-          });
-        }
-      }
-
-      res.json(truckLocations);
-    } catch (error) {
-      console.error("Get truck locations error:", error);
-      res.status(500).json({ error: "Failed to get truck locations" });
-    }
   });
 
   // Dashboard stats
@@ -1040,8 +768,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch companies" });
     }
   });
-
-
 
   const httpServer = createServer(app);
   return httpServer;

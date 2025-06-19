@@ -30,14 +30,12 @@ export default function MainActivity() {
   const { location, error: gpsError } = useGeolocation();
 
   // Get active work day
-  const { data: workDay, isLoading, error: workDayError } = useQuery<any>({
+  const { data: workDay, isLoading } = useQuery({
     queryKey: ["/api/work-days/active"],
-    retry: 3,
-    retryDelay: 1000,
   });
 
   // Get activities for current work day
-  const { data: activities = [] } = useQuery<any[]>({
+  const { data: activities = [] } = useQuery({
     queryKey: ["/api/activities/work-day", workDay?.id],
     enabled: !!workDay?.id,
   });
@@ -176,10 +174,79 @@ export default function MainActivity() {
     avgCycleTime: calculateAvgCycleTime(),
   };
 
-  // Initialize state from activities - removed useEffect to prevent React error #310
-  // State will be managed through manual updates instead of reactive useEffect
+  // Initialize state from activities and persist state
+  useEffect(() => {
+    if (validActivities.length > 0) {
+      // Sort activities by timestamp to get the actual last activity
+      const sortedActivities = [...validActivities].sort((a, b) => 
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      );
+      const lastActivity = sortedActivities[sortedActivities.length - 1];
+      
+      console.log("Last activity:", lastActivity.activityType);
+      
+      // Check if last activity is break/breakdown related
+      if (lastActivity.activityType === "break" || lastActivity.activityType === "breakdown") {
+        setCurrentBreakState(lastActivity.activityType);
+        // Don't change currentStep when in break mode
+        return;
+      }
+      
+      // Check if we just finished driving after a break
+      if (lastActivity.activityType === "driving") {
+        // Find the activity before the most recent break/breakdown
+        const breakIndex = sortedActivities.findLastIndex(a => 
+          a.activityType === "break" || a.activityType === "breakdown"
+        );
+        if (breakIndex >= 0) {
+          // There was a recent break, look at the activity before it
+          const preBreakIndex = breakIndex - 1;
+          if (preBreakIndex >= 0) {
+            const preBreakActivity = sortedActivities[preBreakIndex];
+            const nextStep = getActivityFlow(preBreakActivity.activityType as any);
+            console.log("Resuming from break - setting step to:", nextStep);
+            setCurrentStep(nextStep);
+            setCurrentBreakState(null); // Clear break state
+            return;
+          }
+        }
+      }
+      
+      // Normal flow - set next step based on last activity  
+      const nextStep = getActivityFlow(lastActivity.activityType as any);
+      setCurrentStep(nextStep);
+      
+      // Set load number based on load cycle logic
+      const loadActivities = validActivities.filter(a => 
+        ["arrived_at_load_site", "loaded_with_material", "arrived_at_dump_site", "dumped_material"].includes(a.activityType)
+      );
+      
+      if (loadActivities.length === 0) {
+        setLoadNumber(1);
+      } else {
+        // Find the highest load number from existing activities
+        const maxLoadNumber = Math.max(...loadActivities.map(a => a.loadNumber || 1));
+        
+        // Check if current load cycle is complete (has dumped_material)
+        const currentLoadComplete = loadActivities.some(a => 
+          a.loadNumber === maxLoadNumber && a.activityType === "dumped_material"
+        );
+        
+        setLoadNumber(currentLoadComplete ? maxLoadNumber + 1 : maxLoadNumber);
+      }
+    } else {
+      // Reset to first step if no activities
+      setCurrentStep("arrived_at_load_site");
+      setLoadNumber(1);
+    }
+  }, [validActivities]);
 
-  // Redirect logic handled above in main useEffect
+  // Auto-redirect if no active work day
+  useEffect(() => {
+    if (!isLoading && !workDay) {
+      setLocation("/daily-setup");
+    }
+  }, [workDay, isLoading, setLocation]);
 
   const handleLogActivity = useCallback(() => {
     if (isButtonDisabled) return;
@@ -283,34 +350,8 @@ export default function MainActivity() {
     );
   }
 
-  // Add useEffect to handle redirect when no work day
-  useEffect(() => {
-    if (!isLoading && !workDay && !workDayError) {
-      console.log("No active work day found, redirecting to daily setup");
-      setLocation("/driver/start-day");
-    }
-  }, [isLoading, workDay, workDayError, setLocation]);
-
   if (!workDay) {
-    return (
-      <div className="mobile-container flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-text-secondary">
-            {workDayError ? "Error loading work day..." : "Loading work day..."}
-          </p>
-          {workDayError && (
-            <Button 
-              variant="outline" 
-              onClick={() => setLocation("/driver/start-day")}
-              className="mt-4"
-            >
-              Start New Day
-            </Button>
-          )}
-        </div>
-      </div>
-    );
+    return null; // Will redirect in useEffect
   }
 
   return (

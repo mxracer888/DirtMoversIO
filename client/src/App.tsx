@@ -6,13 +6,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import Login from "@/pages/login";
 import DailySetup from "@/pages/driver/daily-setup";
-import MainActivity from "@/pages/driver/main-activity-simple";
+import MainActivity from "@/pages/driver/main-activity";
 import ActivityHistory from "@/pages/driver/activity-history";
 import EndOfDay from "@/pages/driver/end-of-day";
 import BrokerDashboard from "@/pages/broker/dashboard";
 import DispatchesPage from "@/pages/broker/dispatches";
 import EmployeeManagement from "@/pages/broker/employees";
-import Settings from "@/pages/settings";
 import MenuOverlay from "@/components/menu-overlay";
 import { useState } from "react";
 
@@ -55,7 +54,6 @@ function AppContent() {
             />
           )}
         </Route>
-        <Route path="/settings" component={Settings} />
         <Route>
           <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">
