@@ -1178,7 +1178,7 @@ export class DatabaseStorage implements IStorage {
 
   async getActiveWorkDayByDriver(driverId: number): Promise<WorkDay | undefined> {
     const [workDay] = await db.select().from(workDays)
-      .where(and(eq(workDays.driverId, driverId), eq(workDays.isActive, true)));
+      .where(and(eq(workDays.driverId, driverId), eq(workDays.status, "active")));
     return workDay;
   }
 
