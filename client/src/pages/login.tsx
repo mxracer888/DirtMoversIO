@@ -19,20 +19,28 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
+      console.log("Login mutation starting with data:", data);
+      
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        credentials: 'include', // Ensure cookies/sessions are included
       });
+      
+      console.log("Login response received:", response.status, response.ok);
       
       if (!response.ok) {
         const error = await response.json();
+        console.error("Login error response:", error);
         throw new Error(error.error || "Login failed");
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log("Login success response:", result);
+      return result;
     },
     onSuccess: (data) => {
       if (data.user) {
@@ -75,6 +83,8 @@ export default function Login() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted with:", { email, password });
+    
     if (!email || !password) {
       toast({
         title: "Missing information",
@@ -83,18 +93,24 @@ export default function Login() {
       });
       return;
     }
+    
+    console.log("Calling login mutation with:", { email, password });
     loginMutation.mutate({ email, password });
   };
 
   const handleDemoLogin = () => {
+    console.log("Demo login clicked for role:", selectedRole);
+    
     if (!selectedRole) return;
     
     if (selectedRole === "driver") {
+      console.log("Starting driver demo login");
       loginMutation.mutate({ 
         email: "mike.johnson@mountaintrucking.com", 
         password: "driver123" 
       });
     } else {
+      console.log("Starting broker demo login");
       loginMutation.mutate({ 
         email: "sarah.broker@terrafirma.com", 
         password: "broker123" 
