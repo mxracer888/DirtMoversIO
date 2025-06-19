@@ -337,17 +337,7 @@ export default function BrokerDashboard() {
 
         {/* Truck Location Map */}
         <div className="mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <MapPin className="h-5 w-5 mr-2" />
-                Live Truck Locations
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <TruckLocationMap />
-            </CardContent>
-          </Card>
+          <TruckLocationMap />
         </div>
 
         {/* Truck Status Tracking */}

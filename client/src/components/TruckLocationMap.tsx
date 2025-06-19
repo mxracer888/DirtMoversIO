@@ -32,16 +32,42 @@ interface TruckLocationMapProps {
 export default function TruckLocationMap({ className }: TruckLocationMapProps) {
   const [selectedTruck, setSelectedTruck] = useState<TruckLocation | null>(null);
   const [mapLoadError, setMapLoadError] = useState(false);
+  const [isContainerVisible, setIsContainerVisible] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const intersectionObserverRef = useRef<IntersectionObserver | null>(null);
 
   // Fetch truck locations from API
   const { data: truckLocations = [], isLoading, error } = useQuery<TruckLocation[]>({
     queryKey: ['/api/truck-locations'],
     refetchInterval: 30000, // Refresh every 30 seconds
   });
+
+  // Set up intersection observer to detect when container becomes visible
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    intersectionObserverRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsContainerVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    intersectionObserverRef.current.observe(mapRef.current);
+
+    return () => {
+      if (intersectionObserverRef.current) {
+        intersectionObserverRef.current.disconnect();
+      }
+    };
+  }, []);
 
   // Force map resize when truck locations are loaded
   useEffect(() => {
@@ -52,66 +78,49 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
     }
   }, [truckLocations]);
 
-  // Initialize map with proper timing
+  // Initialize map when container becomes visible
   useEffect(() => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+    if (!mapRef.current || mapInstanceRef.current || !isContainerVisible) return;
 
-    // Delay map initialization to ensure container is properly sized
-    const initializeMap = () => {
-      if (!mapRef.current) return;
+    // Create map centered on Salt Lake City
+    const map = L.map(mapRef.current).setView([40.7608, -111.8910], 10);
 
-      // Check if container is visible and has dimensions
-      const rect = mapRef.current.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) {
-        // Retry if container not ready
-        setTimeout(initializeMap, 100);
-        return;
-      }
+    // Add tile layer with error handling
+    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 18,
+      errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2NjY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1hcCBUaWxlIEVycm9yPC90ZXh0Pjwvc3ZnPg=='
+    });
+    
+    tileLayer.on('tileerror', function(error) {
+      console.warn('Map tile failed to load:', error);
+      setMapLoadError(true);
+    });
+    
+    tileLayer.on('tileload', function() {
+      setMapLoadError(false);
+    });
+    
+    tileLayer.addTo(map);
 
-      // Create map centered on Salt Lake City
-      const map = L.map(mapRef.current).setView([40.7608, -111.8910], 10);
+    // Force map to resize and invalidate size after initialization
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
 
-      // Add tile layer with error handling
-      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 18,
-        errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2NjY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1hcCBUaWxlIEVycm9yPC90ZXh0Pjwvc3ZnPg=='
+    mapInstanceRef.current = map;
+
+    // Set up ResizeObserver to handle container size changes
+    if (mapRef.current && window.ResizeObserver) {
+      resizeObserverRef.current = new ResizeObserver(() => {
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
+        }
       });
-      
-      tileLayer.on('tileerror', function(error) {
-        console.warn('Map tile failed to load:', error);
-        setMapLoadError(true);
-      });
-      
-      tileLayer.on('tileload', function() {
-        setMapLoadError(false);
-      });
-      
-      tileLayer.addTo(map);
-
-      // Force map to resize and invalidate size after initialization
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
-
-      mapInstanceRef.current = map;
-
-      // Set up ResizeObserver to handle container size changes
-      if (mapRef.current && window.ResizeObserver) {
-        resizeObserverRef.current = new ResizeObserver(() => {
-          if (mapInstanceRef.current) {
-            mapInstanceRef.current.invalidateSize();
-          }
-        });
-        resizeObserverRef.current.observe(mapRef.current);
-      }
-    };
-
-    // Use setTimeout to ensure DOM is fully rendered
-    const timer = setTimeout(initializeMap, 50);
+      resizeObserverRef.current.observe(mapRef.current);
+    }
 
     return () => {
-      clearTimeout(timer);
       if (resizeObserverRef.current) {
         resizeObserverRef.current.disconnect();
         resizeObserverRef.current = null;
@@ -121,7 +130,7 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
         mapInstanceRef.current = null;
       }
     };
-  }, []);
+  }, [isContainerVisible]);
 
   // Update markers when truck locations change
   useEffect(() => {
@@ -242,24 +251,27 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
                           <Truck className="h-4 w-4 text-blue-600" />
                         </div>
                         <div>
-                          <p className="font-medium">{truck.truckNumber}</p>
-                          <p className="text-sm text-gray-600">{truck.driverName}</p>
-                          <p className="text-xs text-gray-500">{truck.companyName}</p>
+                          <h4 className="font-medium">{truck.truckNumber}</h4>
+                          <p className="text-sm text-muted-foreground">{truck.driverName}</p>
+                          <p className="text-sm text-muted-foreground">{truck.companyName}</p>
+                          <div className="flex items-center gap-1 mt-1">
+                            <Clock className="h-3 w-3" />
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(truck.lastUpdateTime).toLocaleTimeString()}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getStatusColor(truck.status, truck.currentActivity)} text-white`}
-                        >
+                        <Badge variant={truck.status === 'active' ? 'default' : 'secondary'}>
                           {getStatusLabel(truck.status, truck.currentActivity)}
                         </Badge>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {new Date(truck.lastUpdateTime).toLocaleTimeString()}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {truck.latitude.toFixed(4)}, {truck.longitude.toFixed(4)}
-                        </p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <MapPin className="h-3 w-3" />
+                          <span className="text-xs text-muted-foreground">
+                            {truck.latitude.toFixed(4)}, {truck.longitude.toFixed(4)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -267,107 +279,35 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
               </div>
             </div>
           )}
-          
-          {isLoading && (
-            <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-lg">
-              <Loader2 className="h-6 w-6 animate-spin" />
-            </div>
-          )}
-          
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-sm text-red-600">Failed to load truck locations</p>
-            </div>
-          )}
 
-          {/* Status Legend */}
-          <div className="flex flex-wrap gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span>Loading</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-              <span>Dumping</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-              <span>Active</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-gray-500"></div>
-              <span>Inactive</span>
-            </div>
-          </div>
-
-          {/* Truck List */}
-          <div className="space-y-2">
-            <h4 className="font-medium text-sm text-muted-foreground">Active Trucks</h4>
-            {truckLocations.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                No active trucks found
-              </div>
-            ) : (
-              truckLocations.map((truck: TruckLocation) => (
-                <div
-                  key={truck.truckId}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                  onClick={() => setSelectedTruck(selectedTruck?.truckId === truck.truckId ? null : truck)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className={`w-3 h-3 rounded-full ${getStatusColor(truck.status, truck.currentActivity)}`}
-                    />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <Truck className="h-4 w-4" />
-                        <span className="font-medium">Truck #{truck.truckNumber}</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          {truck.driverName}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {new Date(truck.lastUpdateTime).toLocaleTimeString()}
-                        </div>
-                      </div>
+          {/* Truck Status Summary */}
+          {!mapLoadError && truckLocations.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {truckLocations.map((truck) => (
+                <div key={truck.truckId} className="bg-muted/50 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${getStatusColor(truck.status, truck.currentActivity)}`} />
+                      <span className="font-medium text-sm">{truck.truckNumber}</span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={truck.status === 'active' ? 'default' : 'secondary'}>
+                    <Badge variant="outline" className="text-xs">
                       {getStatusLabel(truck.status, truck.currentActivity)}
                     </Badge>
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1">
+                      <User className="h-3 w-3" />
+                      <span className="text-xs text-muted-foreground">{truck.driverName}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(truck.lastUpdateTime).toLocaleTimeString()}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-
-          {/* Selected Truck Details */}
-          {selectedTruck && (
-            <div className="p-4 bg-blue-50 rounded-lg border">
-              <h4 className="font-medium mb-2">Truck #{selectedTruck.truckNumber} Details</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Driver:</span>
-                  <div className="font-medium">{selectedTruck.driverName}</div>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Company:</span>
-                  <div className="font-medium">{selectedTruck.companyName}</div>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Location:</span>
-                  <div className="font-medium">{selectedTruck.latitude.toFixed(4)}, {selectedTruck.longitude.toFixed(4)}</div>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Last Update:</span>
-                  <div className="font-medium">{new Date(selectedTruck.lastUpdateTime).toLocaleString()}</div>
-                </div>
-              </div>
+              ))}
             </div>
           )}
         </div>
