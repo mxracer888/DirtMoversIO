@@ -30,14 +30,14 @@ export default function MainActivity() {
   const { location, error: gpsError } = useGeolocation();
 
   // Get active work day
-  const { data: workDay, isLoading, error: workDayError } = useQuery({
+  const { data: workDay, isLoading, error: workDayError } = useQuery<any>({
     queryKey: ["/api/work-days/active"],
     retry: 3,
     retryDelay: 1000,
   });
 
   // Get activities for current work day
-  const { data: activities = [] } = useQuery({
+  const { data: activities = [] } = useQuery<any[]>({
     queryKey: ["/api/activities/work-day", workDay?.id],
     enabled: !!workDay?.id,
   });
@@ -243,12 +243,7 @@ export default function MainActivity() {
     }
   }, [validActivities]);
 
-  // Auto-redirect if no active work day
-  useEffect(() => {
-    if (!isLoading && !workDay) {
-      setLocation("/daily-setup");
-    }
-  }, [workDay, isLoading, setLocation]);
+  // Redirect logic handled above in main useEffect
 
   const handleLogActivity = useCallback(() => {
     if (isButtonDisabled) return;
@@ -356,14 +351,9 @@ export default function MainActivity() {
   useEffect(() => {
     if (!isLoading && !workDay && !workDayError) {
       console.log("No active work day found, redirecting to daily setup");
-      toast({
-        title: "No active work day",
-        description: "Please start your day first",
-        variant: "destructive",
-      });
       setLocation("/driver/start-day");
     }
-  }, [isLoading, workDay, workDayError, setLocation, toast]);
+  }, [isLoading, workDay, workDayError, setLocation]);
 
   if (!workDay) {
     return (
