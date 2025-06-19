@@ -19,27 +19,48 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
+      console.log("=== CLIENT LOGIN START ===");
+      console.log("Timestamp:", new Date().toISOString());
       console.log("Login mutation starting with data:", data);
+      console.log("Request URL:", "/api/auth/login");
+      console.log("Browser cookies before request:", document.cookie);
       
+      const requestBody = JSON.stringify(data);
+      console.log("Request body:", requestBody);
+      console.log("Request headers to send:", {
+        "Content-Type": "application/json",
+        "credentials": "include"
+      });
+      
+      console.log("Making fetch request...");
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: requestBody,
         credentials: 'include', // Ensure cookies/sessions are included
       });
       
-      console.log("Login response received:", response.status, response.ok);
+      console.log("Response received!");
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+      console.log("Response headers:", response.headers);
+      console.log("Response type:", response.type);
+      console.log("Response url:", response.url);
+      console.log("Browser cookies after response:", document.cookie);
       
       if (!response.ok) {
+        console.log("Response not ok, parsing error...");
         const error = await response.json();
         console.error("Login error response:", error);
         throw new Error(error.error || "Login failed");
       }
       
+      console.log("Response ok, parsing result...");
       const result = await response.json();
       console.log("Login success response:", result);
+      console.log("=== CLIENT LOGIN SUCCESS ===");
       return result;
     },
     onSuccess: async (data) => {

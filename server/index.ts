@@ -7,18 +7,34 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Session middleware
+// Trust proxy for session handling
+app.set('trust proxy', 1);
+
+// Session middleware with proper configuration
 app.use(session({
-  secret: 'dirt-movers-secret-key',
-  resave: true,
-  saveUninitialized: true,
+  secret: 'dirt-movers-secret-key-12345',
+  resave: false,
+  saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true in production with HTTPS
+    secure: false,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    httpOnly: false, // Allow client-side access for better mobile compatibility
-    sameSite: 'none' // Better compatibility with mobile browsers
-  }
+    httpOnly: true,
+    sameSite: 'lax'
+  },
+  name: 'sessionId'
 }));
+
+// Add comprehensive request logging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  console.log('Request headers:', req.headers);
+  if (req.body && Object.keys(req.body).length > 0) {
+    console.log('Request body:', req.body);
+  }
+  console.log('Session ID:', req.sessionID);
+  console.log('Session data:', req.session);
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();

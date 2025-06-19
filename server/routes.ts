@@ -12,41 +12,75 @@ import "./types";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication
   app.post("/api/auth/login", async (req, res) => {
+    console.log("=== LOGIN REQUEST RECEIVED ===");
+    console.log("Timestamp:", new Date().toISOString());
+    console.log("Request method:", req.method);
+    console.log("Request path:", req.path);
+    console.log("Request URL:", req.url);
+    console.log("Request headers:", JSON.stringify(req.headers, null, 2));
+    console.log("Request body:", JSON.stringify(req.body, null, 2));
+    console.log("Session ID before login:", req.sessionID);
+    console.log("Session data before login:", JSON.stringify(req.session, null, 2));
+    console.log("Cookie header:", req.headers.cookie);
+    
     try {
-      console.log("Login attempt with:", req.body);
+      console.log("Parsing login data...");
       const { email, password } = loginSchema.parse(req.body);
+      console.log("Login data parsed successfully for email:", email);
       
+      console.log("Looking up user by email:", email);
       const user = await storage.getUserByEmail(email);
-      console.log("User found:", user ? "Yes" : "No");
+      console.log("User lookup result:", user ? `Found user ID ${user.id}` : "No user found");
       
       if (!user || user.password !== password) {
-        console.log("Login failed - invalid credentials");
+        console.log("Login failed - invalid credentials for:", email);
+        console.log("User exists:", !!user);
+        console.log("Password match:", user ? user.password === password : "N/A");
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
+      console.log("Credentials valid, setting up session...");
+      console.log("User to authenticate:", { id: user.id, email: user.email, role: user.role });
+      
       // Set session and save it properly
       req.session.userId = user.id;
+      console.log("Session userId set to:", req.session.userId);
+      console.log("Session after setting userId:", JSON.stringify(req.session, null, 2));
       
       // Use Promise-based session save to ensure it completes before response
+      console.log("Saving session...");
       await new Promise<void>((resolve, reject) => {
         req.session.save((err) => {
           if (err) {
             console.error("Session save error:", err);
             reject(err);
           } else {
-            console.log("Session saved successfully");
+            console.log("Session saved successfully!");
+            console.log("Session ID after save:", req.sessionID);
+            console.log("Session data after save:", JSON.stringify(req.session, null, 2));
             resolve();
           }
         });
       });
       
-      console.log("Login successful, session set:", req.session.userId);
+      console.log("Login successful, session established");
+      console.log("Final session state - ID:", req.sessionID);
+      console.log("Final session state - Data:", JSON.stringify(req.session, null, 2));
       
       const { password: _, ...userWithoutPassword } = user;
-      console.log("Returning user data:", userWithoutPassword);
-      res.json({ user: userWithoutPassword });
+      console.log("Preparing response with user data:", JSON.stringify(userWithoutPassword, null, 2));
+      
+      // Let express-session handle cookie setting automatically
+      
+      const response = { user: userWithoutPassword };
+      console.log("Sending login response:", JSON.stringify(response, null, 2));
+      console.log("=== LOGIN REQUEST COMPLETE ===");
+      
+      res.json(response);
     } catch (error) {
       console.error("Login error:", error);
+      console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
+      console.log("=== LOGIN REQUEST FAILED ===");
       res.status(400).json({ error: "Invalid request data" });
     }
   });
@@ -61,20 +95,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/api/auth/me", async (req, res) => {
-    console.log("Auth check - Session ID:", req.sessionID);
-    console.log("Auth check - User ID in session:", req.session?.userId);
+    console.log("=== AUTH CHECK REQUEST ===");
+    console.log("Timestamp:", new Date().toISOString());
+    console.log("Request method:", req.method);
+    console.log("Request path:", req.path);
+    console.log("Request headers:", JSON.stringify(req.headers, null, 2));
+    console.log("Cookie header:", req.headers.cookie);
+    console.log("Session ID:", req.sessionID);
+    console.log("Session data:", JSON.stringify(req.session, null, 2));
+    console.log("Session userId:", req.session?.userId);
 
     if (!req.session?.userId) {
+      console.log("AUTH CHECK FAILED: No userId in session");
+      console.log("Session exists:", !!req.session);
+      console.log("Session keys:", req.session ? Object.keys(req.session) : "No session");
       return res.status(401).json({ error: "Not authenticated" });
     }
 
+    console.log("Session userId found:", req.session.userId);
+    console.log("Looking up user in storage...");
+    
     const user = await storage.getUser(req.session.userId);
     if (!user) {
+      console.log("AUTH CHECK FAILED: User not found in storage for ID:", req.session.userId);
       return res.status(401).json({ error: "User not found" });
     }
 
-    console.log("Auth check successful for user:", user.email);
+    console.log("AUTH CHECK SUCCESS: User found:", { id: user.id, email: user.email, role: user.role });
     const { password: _, ...userWithoutPassword } = user;
+    console.log("Sending auth response:", JSON.stringify({ user: userWithoutPassword }, null, 2));
+    console.log("=== AUTH CHECK COMPLETE ===");
     res.json({ user: userWithoutPassword });
   });
 
