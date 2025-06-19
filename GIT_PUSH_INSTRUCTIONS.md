@@ -1,6 +1,6 @@
 # Manual Git Push Instructions
 
-Your DirtMovers application is complete and ready to be pushed to your existing DirtMoversIO repository. Due to git lock files in the Replit environment, you'll need to push manually.
+Your DirtMovers application is complete with Raspberry Pi deployment configuration and ready to be pushed to your existing DirtMoversIO repository. Due to git lock files in the Replit environment, you'll need to push manually.
 
 ## Option 1: Use Replit's Shell
 1. Open the Shell tab in Replit
@@ -9,7 +9,7 @@ Your DirtMovers application is complete and ready to be pushed to your existing 
    rm -f .git/index.lock .git/config.lock
    git remote add origin https://github.com/mxracer888/DirtMoversIO.git
    git add .
-   git commit -m "Complete multi-party dispatch system with broker/leasor management and enhanced activity tracking"
+   git commit -m "Production-ready DirtMovers with Raspberry Pi deployment and custom domain support"
    git push -u origin main
    ```
 
@@ -27,22 +27,27 @@ Your DirtMovers application is complete and ready to be pushed to your existing 
 
 ## What's Included in This Commit:
 - Complete multi-party dispatch control flow (Customer → Broker → Leasor → Driver)
-- Working "+ Add New Customer" functionality with auto-selection
-- Comprehensive dispatch management with truck assignments
-- Employee management system with role-based access control
-- Four-stage activity workflow (arrive → loaded → dump → material dumped)
-- Working undo/rewind functionality with proper state management
-- Real-time GPS location tracking and cycle time calculations
+- Working dispatch management with truck assignments and role-based access
+- Four-stage activity workflow with GPS tracking and cycle time calculations
 - Mobile-optimized driver interface with PWA capabilities
-- Broker dashboard with activity monitoring and dispatch oversight
-- Enhanced data persistence across app versions
-- Session management and authentication system
-- PostgreSQL database schema with comprehensive relationships
-- All TypeScript types and validation schemas with Zod validation
-- Navigation improvements with "Back to Dashboard" buttons
-- Authentication error handling and proper login flow
-- Fixed dispatch display in "Manage Dispatches" tab
-- Comprehensive TypeScript type safety throughout the application
+- Broker dashboard with real-time activity monitoring
+- Enhanced authentication system with session persistence
+- PostgreSQL database with comprehensive relationships and data integrity
+- **Raspberry Pi 5 Deployment Configuration:**
+  - Complete deployment guide with system optimization
+  - Nginx configuration with SSL support
+  - PM2 process management setup
+  - PostgreSQL optimization for Pi hardware
+  - Custom domain configuration
+  - Security hardening and monitoring setup
+- **Production Environment:**
+  - Environment configuration templates
+  - Automated backup scripts
+  - System monitoring and logging
+  - Performance optimization for 16GB Pi 5
+- Database reset functionality for clean presentations
+- Comprehensive error handling and data validation
+- All production deployment files and configurations
 
 ## Key Files:
 - `shared/schema.ts` - Database schema and types
