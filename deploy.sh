@@ -32,13 +32,15 @@ sudo npm install -g pm2
 
 # Create database user
 echo "🗄️ Setting up PostgreSQL..."
-sudo -u postgres createuser --interactive dirtmovers || echo "User already exists"
-sudo -u postgres createdb dirtmovers || echo "Database already exists"
+# Create user with minimal privileges (not superuser)
+sudo -u postgres createuser --no-superuser --createdb --no-createrole dirtmovers 2>/dev/null || echo "User already exists"
+sudo -u postgres createdb -O dirtmovers dirtmovers 2>/dev/null || echo "Database already exists"
 
 # Prompt for database password
 read -s -p "Enter password for PostgreSQL user 'dirtmovers': " DB_PASSWORD
 echo
 sudo -u postgres psql -c "ALTER USER dirtmovers PASSWORD '$DB_PASSWORD';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE dirtmovers TO dirtmovers;"
 
 # Install application dependencies
 echo "📦 Installing application dependencies..."
