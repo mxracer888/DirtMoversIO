@@ -1264,17 +1264,41 @@ export class DatabaseStorage implements IStorage {
       return undefined;
     }
     
+    // Process updates to handle date conversion and ensure proper types
+    const processedUpdates: any = { ...updates };
+    
+    // Convert endTime if it's a string to a proper Date object
+    if (processedUpdates.endTime) {
+      if (typeof processedUpdates.endTime === 'string') {
+        processedUpdates.endTime = new Date(processedUpdates.endTime);
+      }
+      console.log("Processed endTime:", processedUpdates.endTime);
+    }
+    
+    // Ensure totalLoads is a number
+    if (processedUpdates.totalLoads !== undefined) {
+      processedUpdates.totalLoads = Number(processedUpdates.totalLoads);
+      console.log("Processed totalLoads:", processedUpdates.totalLoads);
+    }
+    
+    console.log("Processed updates:", JSON.stringify(processedUpdates, null, 2));
     console.log("Executing database update...");
-    const [workDay] = await db.update(workDays)
-      .set(updates)
-      .where(eq(workDays.id, id))
-      .returning();
     
-    console.log("Database update complete!");
-    console.log("Updated work day:", workDay ? JSON.stringify(workDay, null, 2) : "NO RESULT");
-    console.log("=== STORAGE: updateWorkDay complete ===");
-    
-    return workDay;
+    try {
+      const [workDay] = await db.update(workDays)
+        .set(processedUpdates)
+        .where(eq(workDays.id, id))
+        .returning();
+      
+      console.log("Database update complete!");
+      console.log("Updated work day:", workDay ? JSON.stringify(workDay, null, 2) : "NO RESULT");
+      console.log("=== STORAGE: updateWorkDay complete ===");
+      
+      return workDay;
+    } catch (dbError) {
+      console.error("Database update error:", dbError);
+      throw new Error(`Database update failed: ${dbError instanceof Error ? dbError.message : String(dbError)}`);
+    }
   }
 
   // Activities
