@@ -1228,10 +1228,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateWorkDay(id: number, updates: Partial<WorkDay>): Promise<WorkDay | undefined> {
+    console.log("=== STORAGE: updateWorkDay called ===");
+    console.log("Work day ID:", id);
+    console.log("Updates to apply:", JSON.stringify(updates, null, 2));
+    
+    // First, get the current work day to see what we're updating
+    const currentWorkDay = await db.select().from(workDays).where(eq(workDays.id, id));
+    console.log("Current work day before update:", currentWorkDay.length > 0 ? JSON.stringify(currentWorkDay[0], null, 2) : "NOT FOUND");
+    
+    if (currentWorkDay.length === 0) {
+      console.log("Work day not found - returning undefined");
+      return undefined;
+    }
+    
+    console.log("Executing database update...");
     const [workDay] = await db.update(workDays)
       .set(updates)
       .where(eq(workDays.id, id))
       .returning();
+    
+    console.log("Database update complete!");
+    console.log("Updated work day:", workDay ? JSON.stringify(workDay, null, 2) : "NO RESULT");
+    console.log("=== STORAGE: updateWorkDay complete ===");
+    
     return workDay;
   }
 

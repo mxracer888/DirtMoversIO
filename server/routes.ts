@@ -220,16 +220,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get completed work days for broker EOD view
   app.get("/api/work-days/completed", async (req, res) => {
     try {
+      console.log("=== BROKER REQUESTING COMPLETED WORK DAYS ===");
+      console.log("Timestamp:", new Date().toISOString());
+      console.log("Session ID:", req.sessionID);
+      console.log("User ID in session:", req.session?.userId);
+      
       if (!req.session?.userId) {
+        console.log("No user in session - returning 401");
         return res.status(401).json({ error: "Not authenticated" });
       }
 
       const user = await storage.getUser(req.session.userId);
+      console.log("User found:", user ? { id: user.id, role: user.role, name: user.name } : "none");
+      
       if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
+        console.log("User not authorized - returning 403");
         return res.status(403).json({ error: "Only brokers can view completed work days" });
       }
       
+      console.log("Calling storage.getCompletedWorkDays()...");
       const completedWorkDays = await storage.getCompletedWorkDays();
+      console.log("Found completed work days:", completedWorkDays.length);
+      console.log("Work days details:", completedWorkDays.map(wd => ({ 
+        id: wd.id, 
+        status: wd.status, 
+        driverId: wd.driverId, 
+        driver: wd.driver?.name 
+      })));
+      console.log("=== BROKER EOD REQUEST COMPLETE ===");
+      
       res.json(completedWorkDays);
     } catch (error) {
       console.error("Error fetching completed work days:", error);
@@ -251,8 +270,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/work-days/:id", async (req, res) => {
     try {
-      console.log("Updating work day - Session ID:", req.sessionID);
-      console.log("Updating work day - User ID in session:", req.session?.userId);
+      console.log("=== WORK DAY EOD UPDATE REQUEST ===");
+      console.log("Timestamp:", new Date().toISOString());
+      console.log("Session ID:", req.sessionID);
+      console.log("User ID in session:", req.session?.userId);
+      console.log("Work day ID:", req.params.id);
+      console.log("Update data:", JSON.stringify(req.body, null, 2));
 
       // Temporarily remove auth check to allow EOD submissions to work
       // TODO: Fix session persistence for mobile users
@@ -260,14 +283,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       const updates = req.body;
       
-      console.log("Work day update request:", { id, updates });
+      console.log("Calling storage.updateWorkDay with ID:", id);
+      console.log("Updates to apply:", updates);
       
       const workDay = await storage.updateWorkDay(id, updates);
       if (!workDay) {
+        console.log("Work day not found for ID:", id);
         return res.status(404).json({ error: "Work day not found" });
       }
       
-      console.log("Work day updated successfully:", workDay);
+      console.log("Work day updated successfully!");
+      console.log("Updated work day:", JSON.stringify(workDay, null, 2));
+      console.log("Status after update:", workDay.status);
+      console.log("=== EOD UPDATE COMPLETE ===");
       res.json(workDay);
     } catch (error) {
       console.error("Work day update error:", error);
