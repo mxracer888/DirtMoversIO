@@ -104,7 +104,7 @@ npm run build || echo "Build step completed with warnings"
 
 # Setup PM2
 echo "🔧 Setting up PM2 process manager..."
-pm2 start ecosystem.config.js || pm2 restart dirtmovers
+pm2 start ecosystem.config.cjs || pm2 restart dirtmovers
 pm2 save
 pm2 startup | grep -E '^sudo' | sh || echo "PM2 startup already configured"
 

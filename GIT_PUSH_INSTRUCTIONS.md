@@ -9,7 +9,7 @@ Your DirtMovers application is complete with Raspberry Pi deployment configurati
    rm -f .git/index.lock .git/config.lock
    git remote add origin https://github.com/mxracer888/DirtMoversIO.git
    git add .
-   git commit -m "Fixed database permissions and PM2 config for production deployment"
+   git commit -m "Fixed PM2 CommonJS config and added database permissions fix script"
    git push -u origin main
    ```
 

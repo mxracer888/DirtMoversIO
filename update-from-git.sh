@@ -44,7 +44,7 @@ npm run db:push
 
 # Restart application
 echo "🚀 Restarting application..."
-pm2 start ecosystem.config.js || pm2 restart dirtmovers
+pm2 start ecosystem.config.cjs || pm2 restart dirtmovers
 
 # Show status
 echo "📊 Application status:"
