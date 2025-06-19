@@ -1498,6 +1498,62 @@ export class DatabaseStorage implements IStorage {
     const [company] = await db.select().from(companies).where(eq(companies.id, id));
     return company;
   }
+
+  // Truck locations for dashboard
+  async getTruckLocationsWithDriverInfo(): Promise<any[]> {
+    try {
+      // Get recent activities with truck and driver info to determine current locations
+      const recentActivities = await db.select({
+        truckId: activities.workDayId,
+        latitude: activities.latitude,
+        longitude: activities.longitude,
+        timestamp: activities.timestamp,
+        activityType: activities.activityType,
+        truck: trucks,
+        driver: users,
+        workDay: workDays
+      })
+      .from(activities)
+      .innerJoin(workDays, eq(activities.workDayId, workDays.id))
+      .innerJoin(trucks, eq(workDays.truckId, trucks.id))
+      .innerJoin(users, eq(workDays.driverId, users.id))
+      .where(and(
+        isNotNull(activities.latitude),
+        isNotNull(activities.longitude),
+        eq(workDays.status, "active")
+      ))
+      .orderBy(desc(activities.timestamp))
+      .limit(50);
+
+      // Group by truck to get most recent location for each truck
+      const truckLocations = new Map();
+      
+      for (const activity of recentActivities) {
+        const truckId = activity.truck.id;
+        if (!truckLocations.has(truckId)) {
+          truckLocations.set(truckId, {
+            id: activity.truck.id,
+            number: activity.truck.number,
+            type: activity.truck.type,
+            latitude: parseFloat(activity.latitude || "0"),
+            longitude: parseFloat(activity.longitude || "0"),
+            lastActivity: activity.activityType,
+            timestamp: activity.timestamp,
+            driver: {
+              id: activity.driver.id,
+              name: activity.driver.name,
+              email: activity.driver.email
+            }
+          });
+        }
+      }
+
+      return Array.from(truckLocations.values());
+    } catch (error) {
+      console.error("Error getting truck locations:", error);
+      return [];
+    }
+  }
 }
 
 export const storage = new MemStorage();

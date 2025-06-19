@@ -293,6 +293,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Truck locations endpoint for broker dashboard
+  app.get("/api/trucks/locations", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+      
+      const truckLocations = await storage.getTruckLocationsWithDriverInfo();
+      res.json(truckLocations);
+    } catch (error) {
+      console.error("Get truck locations error:", error);
+      res.status(500).json({ error: "Failed to get truck locations" });
+    }
+  });
+
   // Truck locations for map
   app.get("/api/truck-locations", async (req, res) => {
     try {
