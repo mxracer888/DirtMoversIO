@@ -181,7 +181,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/work-days", async (req, res) => {
     try {
+      console.log("=== WORK DAY CREATION REQUEST ===");
+      console.log("Timestamp:", new Date().toISOString());
+      console.log("Session ID:", req.sessionID);
+      console.log("Session data:", JSON.stringify(req.session, null, 2));
+      console.log("Cookie header:", req.headers.cookie);
+      console.log("User ID in session:", req.session?.userId);
+      
       if (!req.session?.userId) {
+        console.log("WORK DAY AUTH FAILED: No userId in session");
         return res.status(401).json({ error: "Not authenticated" });
       }
 
