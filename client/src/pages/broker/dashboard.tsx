@@ -27,7 +27,14 @@ export default function BrokerDashboard() {
     queryFn: async () => {
       const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
       const response = await fetch(`/api/dashboard/stats${params}`);
-      return response.json();
+      if (!response.ok) {
+        throw new Error(`Failed to fetch stats: ${response.status}`);
+      }
+      const text = await response.text();
+      if (!text) {
+        return { trucksActive: 0, loadsInTransit: 0, loadsDelivered: 0, avgCycleTime: "--" };
+      }
+      return JSON.parse(text);
     },
     refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
     staleTime: 25000, // Data stays fresh for 25 seconds
@@ -55,7 +62,14 @@ export default function BrokerDashboard() {
     queryFn: async () => {
       const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
       const response = await fetch(`/api/dashboard/truck-status${params}`);
-      return response.json();
+      if (!response.ok) {
+        throw new Error(`Failed to fetch truck status: ${response.status}`);
+      }
+      const text = await response.text();
+      if (!text) {
+        return { at_load_site: { count: 0, trucks: [] }, loaded: { count: 0, trucks: [] }, in_transit: { count: 0, trucks: [] }, dumped: { count: 0, trucks: [] } };
+      }
+      return JSON.parse(text);
     },
     refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
     staleTime: 25000, // Data stays fresh for 25 seconds

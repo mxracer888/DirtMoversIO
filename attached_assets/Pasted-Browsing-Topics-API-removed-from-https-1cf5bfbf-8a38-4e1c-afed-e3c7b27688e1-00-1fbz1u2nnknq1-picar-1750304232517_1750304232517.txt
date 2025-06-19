@@ -1,0 +1,128 @@
+Browsing Topics API removed from https://1cf5bfbf-8a38-4e1c-afed-e3c7b27688e1-00-1fbz1u2nnknq1.picard.replit.dev/broker/dashboard which is main frame
+chunk-RPCDYKBN.js?v=b18e5199:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+dashboard:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)Understand this error
+dashboard:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)Understand this error
+dashboard:1 Error while trying to use the following icon from the Manifest: https://1cf5bfbf-8a38-4e1c-afed-e3c7b27688e1-00-1fbz1u2nnknq1.picard.replit.dev/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+VM165:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ dashboard.tsx:29
+fetchFn @ @tanstack_react-query.js?v=8d5f0412:840
+run @ @tanstack_react-query.js?v=8d5f0412:494
+start @ @tanstack_react-query.js?v=8d5f0412:536
+fetch @ @tanstack_react-query.js?v=8d5f0412:926
+executeFetch_fn @ @tanstack_react-query.js?v=8d5f0412:2211
+(anonymous) @ @tanstack_react-query.js?v=8d5f0412:2245Understand this error
+VM166:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ dashboard.tsx:57
+fetchFn @ @tanstack_react-query.js?v=8d5f0412:840
+run @ @tanstack_react-query.js?v=8d5f0412:494
+start @ @tanstack_react-query.js?v=8d5f0412:536
+fetch @ @tanstack_react-query.js?v=8d5f0412:926
+executeFetch_fn @ @tanstack_react-query.js?v=8d5f0412:2211
+(anonymous) @ @tanstack_react-query.js?v=8d5f0412:2245Understand this error
+VM167:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ dashboard.tsx:57
+fetchFn @ @tanstack_react-query.js?v=8d5f0412:840
+run @ @tanstack_react-query.js?v=8d5f0412:494
+start @ @tanstack_react-query.js?v=8d5f0412:536
+fetch @ @tanstack_react-query.js?v=8d5f0412:926
+executeFetch_fn @ @tanstack_react-query.js?v=8d5f0412:2211
+fetch @ @tanstack_react-query.js?v=8d5f0412:2011
+refetch @ @tanstack_react-query.js?v=8d5f0412:2001
+handleManualRefresh @ dashboard.tsx:74
+callCallback2 @ chunk-RPCDYKBN.js?v=b18e5199:3674
+invokeGuardedCallbackDev @ chunk-RPCDYKBN.js?v=b18e5199:3699
+invokeGuardedCallback @ chunk-RPCDYKBN.js?v=b18e5199:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-RPCDYKBN.js?v=b18e5199:3736
+executeDispatch @ chunk-RPCDYKBN.js?v=b18e5199:7014
+processDispatchQueueItemsInOrder @ chunk-RPCDYKBN.js?v=b18e5199:7034
+processDispatchQueue @ chunk-RPCDYKBN.js?v=b18e5199:7043
+dispatchEventsForPlugins @ chunk-RPCDYKBN.js?v=b18e5199:7051
+(anonymous) @ chunk-RPCDYKBN.js?v=b18e5199:7174
+batchedUpdates$1 @ chunk-RPCDYKBN.js?v=b18e5199:18913
+batchedUpdates @ chunk-RPCDYKBN.js?v=b18e5199:3579
+dispatchEventForPluginEventSystem @ chunk-RPCDYKBN.js?v=b18e5199:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-RPCDYKBN.js?v=b18e5199:5478
+dispatchEvent @ chunk-RPCDYKBN.js?v=b18e5199:5472
+dispatchDiscreteEvent @ chunk-RPCDYKBN.js?v=b18e5199:5449Understand this error
+VM168:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
