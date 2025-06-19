@@ -198,7 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     try {
       const driverId = req.session.userId;
-      const workDay = await storage.getCurrentWorkDayByDriver(driverId);
+      const workDay = await storage.getActiveWorkDayByDriver(driverId);
       res.json(workDay);
     } catch (error) {
       console.error("Get current work day error:", error);
@@ -212,7 +212,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     try {
       const driverId = req.session.userId;
-      const activities = await storage.getTodayActivitiesByDriver(driverId);
+      // Get today's activities for the driver
+      const today = new Date().toDateString();
+      const allActivities = await storage.getRecentActivities(100);
+      const activities = allActivities.filter(activity => 
+        activity.driver.id === driverId && 
+        new Date(activity.timestamp).toDateString() === today
+      );
       res.json(activities);
     } catch (error) {
       console.error("Get today activities error:", error);
