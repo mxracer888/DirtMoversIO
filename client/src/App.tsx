@@ -12,6 +12,7 @@ import EndOfDay from "@/pages/driver/end-of-day";
 import BrokerDashboard from "@/pages/broker/dashboard";
 import DispatchesPage from "@/pages/broker/dispatches";
 import EmployeeManagement from "@/pages/broker/employees";
+import Settings from "@/pages/settings";
 import MenuOverlay from "@/components/menu-overlay";
 import { useState } from "react";
 

@@ -1,0 +1,276 @@
+Browsing Topics API removed from https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/ which is main frame
+/api/auth/me:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+index-DsUEejGT.js:288 Frontend: Making login request with data: Object
+index-DsUEejGT.js:288 Frontend: Response status: 200
+index-DsUEejGT.js:288 Frontend: Response headers: Object
+index-DsUEejGT.js:328 Button clicked
+index-DsUEejGT.js:328 Form state: Object
+index-DsUEejGT.js:328 Form values: Object
+index-DsUEejGT.js:328 Form submitted with data: Object
+index-DsUEejGT.js:328 Form errors: Object
+index-DsUEejGT.js:328 Forcing submission with: Object
+index-DsUEejGT.js:328 Sending work day data: Object
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/reusable-data/location 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/reusable-data/material_type 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/broker/trucks 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/reusable-data/job_name 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/broker/customers 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/truck-locations 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40
+setTimeout
+s @ index-DsUEejGT.js:40
+l @ index-DsUEejGT.js:40
+batch @ index-DsUEejGT.js:40
+mi @ index-DsUEejGT.js:40
+setData @ index-DsUEejGT.js:40
+onSuccess @ index-DsUEejGT.js:40
+g @ index-DsUEejGT.js:40
+Promise.then
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+10/broker/dashboard:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/reusable-data/job_name 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/reusable-data/material_type 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/reusable-data/location 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/broker/trucks 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/broker/customers 403 (Forbidden)
+(anonymous) @ index-DsUEejGT.js:48
+o @ index-DsUEejGT.js:40
+T @ index-DsUEejGT.js:40
+start @ index-DsUEejGT.js:40
+fetch @ index-DsUEejGT.js:40
+Pl @ index-DsUEejGT.js:40
+onSubscribe @ index-DsUEejGT.js:40
+subscribe @ index-DsUEejGT.js:40
+(anonymous) @ index-DsUEejGT.js:40
+YC @ index-DsUEejGT.js:38
+Tf @ index-DsUEejGT.js:40
+sa @ index-DsUEejGT.js:40
+MR @ index-DsUEejGT.js:40
+Vs @ index-DsUEejGT.js:40
+cx @ index-DsUEejGT.js:40
+Es @ index-DsUEejGT.js:38
+(anonymous) @ index-DsUEejGT.js:40Understand this error
+index-DsUEejGT.js:48 
+            
+            
+           GET https://8c2f3ca8-d4b2-4b44-8bea-48a8749625f3.picard.prod.repl.run/api/truck-locations 403 (Forbidden)

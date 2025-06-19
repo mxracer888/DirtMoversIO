@@ -280,7 +280,7 @@ export default function MainActivity() {
       <MenuOverlay
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
-        user={user}
+        userRole={user?.role || "driver"}
       />
     </div>
   );

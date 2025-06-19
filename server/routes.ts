@@ -65,33 +65,175 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(userWithoutPassword);
   });
 
-  // Setup data endpoints
+  // Setup data endpoints - require authentication
   app.get("/api/trucks", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
     const trucks = await storage.getTrucks();
     res.json(trucks);
   });
 
   app.get("/api/jobs", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
     const jobs = await storage.getActiveJobs();
     res.json(jobs);
   });
 
   app.get("/api/customers", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
     const customers = await storage.getCustomers();
     res.json(customers);
   });
 
   app.get("/api/materials", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
     const materials = await storage.getMaterials();
     res.json(materials);
   });
 
   app.get("/api/locations", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
     const type = req.query.type as string;
     const locations = type 
       ? await storage.getLocationsByType(type)
       : await storage.getLocations();
     res.json(locations);
+  });
+
+  // Reusable data endpoints that drivers need access to
+  app.get("/api/reusable-data/location", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      const locations = await storage.getLocations();
+      res.json(locations);
+    } catch (error) {
+      console.error("Get locations error:", error);
+      res.status(500).json({ error: "Failed to get locations" });
+    }
+  });
+
+  app.get("/api/reusable-data/material_type", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      const materials = await storage.getMaterials();
+      res.json(materials);
+    } catch (error) {
+      console.error("Get materials error:", error);
+      res.status(500).json({ error: "Failed to get materials" });
+    }
+  });
+
+  app.get("/api/reusable-data/job_name", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      const jobs = await storage.getJobs();
+      res.json(jobs);
+    } catch (error) {
+      console.error("Get jobs error:", error);
+      res.status(500).json({ error: "Failed to get jobs" });
+    }
+  });
+
+  // Broker endpoints that drivers also need access to for setup
+  app.get("/api/broker/trucks", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      const trucks = await storage.getTrucks();
+      res.json(trucks);
+    } catch (error) {
+      console.error("Get trucks error:", error);
+      res.status(500).json({ error: "Failed to get trucks" });
+    }
+  });
+
+  app.get("/api/broker/customers", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      const customers = await storage.getCustomers();
+      res.json(customers);
+    } catch (error) {
+      console.error("Get customers error:", error);
+      res.status(500).json({ error: "Failed to get customers" });
+    }
+  });
+
+  // Truck locations endpoint for map functionality
+  app.get("/api/truck-locations", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      // Return truck location data - for now return empty array
+      // This will be populated with real GPS data from activities
+      res.json([]);
+    } catch (error) {
+      console.error("Get truck locations error:", error);
+      res.status(500).json({ error: "Failed to get truck locations" });
+    }
+  });
+
+  // Driver-specific endpoints
+  app.get("/api/driver/current-work-day", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      const driverId = req.session.userId;
+      const workDay = await storage.getCurrentWorkDayByDriver(driverId);
+      res.json(workDay);
+    } catch (error) {
+      console.error("Get current work day error:", error);
+      res.status(500).json({ error: "Failed to get current work day" });
+    }
+  });
+
+  app.get("/api/driver/activities/today", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      const driverId = req.session.userId;
+      const activities = await storage.getTodayActivitiesByDriver(driverId);
+      res.json(activities);
+    } catch (error) {
+      console.error("Get today activities error:", error);
+      res.status(500).json({ error: "Failed to get today's activities" });
+    }
+  });
+
+  app.post("/api/driver/break", async (req, res) => {
+    if (!req.session?.userId) {
+      return res.status(401).json({ error: "Not authenticated" });
+    }
+    try {
+      const { type, action } = req.body; // type: 'break' or 'breakdown', action: 'start' or 'end'
+      const driverId = req.session.userId;
+      
+      // For now, just return success - can implement break tracking later
+      res.json({ success: true, type, action });
+    } catch (error) {
+      console.error("Break management error:", error);
+      res.status(500).json({ error: "Failed to manage break" });
+    }
   });
 
   // Work day management
