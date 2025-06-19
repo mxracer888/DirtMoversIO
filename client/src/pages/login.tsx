@@ -21,35 +21,51 @@ export default function Login() {
     mutationFn: async (data: { email: string; password: string }) => {
       console.log("Frontend: Making login request with data:", data);
       
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      
-      console.log("Frontend: Response status:", response.status);
-      console.log("Frontend: Response headers:", Object.fromEntries(response.headers.entries()));
-      
-      if (!response.ok) {
-        let errorMessage = "Login failed";
-        try {
-          const error = await response.json();
-          errorMessage = error.error || errorMessage;
-        } catch (e) {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || `HTTP ${response.status}`;
+      try {
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(data),
+          credentials: 'same-origin',
+        });
+        
+        console.log("Frontend: Response status:", response.status);
+        console.log("Frontend: Response headers:", Object.fromEntries(response.headers.entries()));
+        
+        if (!response.ok) {
+          let errorMessage = "Login failed";
+          try {
+            const error = await response.json();
+            errorMessage = error.error || errorMessage;
+          } catch (e) {
+            // Handle specific HTTP status codes
+            if (response.status === 504) {
+              errorMessage = "Server timeout - please try again";
+            } else if (response.status === 0) {
+              errorMessage = "Network connection failed";
+            } else {
+              errorMessage = response.statusText || `HTTP ${response.status}`;
+            }
+          }
+          throw new Error(errorMessage);
         }
-        throw new Error(errorMessage);
+        
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Server returned non-JSON response");
+        }
+        
+        return response.json();
+      } catch (error) {
+        // Handle network errors
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          throw new Error("Network connection failed - please check your connection");
+        }
+        throw error;
       }
-      
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Server returned non-JSON response");
-      }
-      
-      return response.json();
     },
     onSuccess: (data) => {
       if (data.user) {
