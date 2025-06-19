@@ -50,10 +50,16 @@ export const getQueryFn: <T>(options: {
       return null;
     }
     
+    // Check if response is HTML (error page)
+    if (text.trim().startsWith('<!DOCTYPE html>') || text.trim().startsWith('<html')) {
+      console.error('Received HTML response instead of JSON:', url);
+      throw new Error('Server returned HTML instead of JSON - check authentication');
+    }
+    
     try {
       return JSON.parse(text);
     } catch (error) {
-      console.error('Failed to parse JSON response:', text);
+      console.error('Failed to parse JSON response:', text.substring(0, 200));
       throw new Error('Invalid JSON response from server');
     }
   };

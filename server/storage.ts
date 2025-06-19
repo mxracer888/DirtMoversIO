@@ -10,7 +10,7 @@ import {
   type ReusableData, type InsertReusableData
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, isNotNull } from "drizzle-orm";
 
 export interface IStorage {
   // Users
