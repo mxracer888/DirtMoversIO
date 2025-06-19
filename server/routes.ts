@@ -24,12 +24,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
-      // Set session and save it
+      // Set session and save it properly
       req.session.userId = user.id;
-      req.session.save((err) => {
-        if (err) {
-          console.error("Session save error:", err);
-        }
+      
+      // Use Promise-based session save to ensure it completes before response
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            reject(err);
+          } else {
+            console.log("Session saved successfully");
+            resolve();
+          }
+        });
       });
       
       console.log("Login successful, session set:", req.session.userId);
