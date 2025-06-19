@@ -10,7 +10,7 @@ import {
   type ReusableData, type InsertReusableData
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, count } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -1226,7 +1226,7 @@ export class DatabaseStorage implements IStorage {
     for (const row of completedWorkDaysWithDetails) {
       if (row.workDay && row.driver && row.truck && row.job) {
         const activityCount = await db
-          .select({ count: count() })
+          .select({ count: count(activities.id) })
           .from(activities)
           .where(eq(activities.workDayId, row.workDay.id));
 
@@ -1498,9 +1498,7 @@ export class DatabaseStorage implements IStorage {
       company: companies
     })
     .from(trucks)
-    .innerJoin(companies, eq(trucks.companyId, companies.id))
-    .innerJoin(brokerLeasorRelationships, eq(companies.id, brokerLeasorRelationships.leasorId))
-    .where(eq(brokerLeasorRelationships.brokerId, brokerId));
+    .innerJoin(companies, eq(trucks.companyId, companies.id));
 
     return result.map(row => ({
       id: row.id,
