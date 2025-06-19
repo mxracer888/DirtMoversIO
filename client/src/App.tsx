@@ -12,6 +12,7 @@ import EndOfDay from "@/pages/driver/end-of-day";
 import BrokerDashboard from "@/pages/broker/dashboard";
 import DispatchesPage from "@/pages/broker/dispatches";
 import EmployeeManagement from "@/pages/broker/employees";
+import EODPage from "@/pages/broker/eod";
 import MenuOverlay from "@/components/menu-overlay";
 import { useState } from "react";
 
@@ -54,6 +55,7 @@ function AppContent() {
             />
           )}
         </Route>
+        <Route path="/broker/eod" component={EODPage} />
         <Route>
           <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">

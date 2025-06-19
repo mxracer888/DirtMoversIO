@@ -199,6 +199,16 @@ export default function BrokerDashboard() {
               </Button>
             )}
 
+            {/* Navigation to End of Day Reports */}
+            <Button
+              variant="outline"
+              onClick={() => setLocation("/broker/eod")}
+              className="flex items-center space-x-2"
+            >
+              <Clock className="h-4 w-4" />
+              <span>EOD Reports</span>
+            </Button>
+
             {/* Job Filter */}
             <div className="flex items-center space-x-2">
               <Filter className="h-4 w-4 text-gray-500" />
