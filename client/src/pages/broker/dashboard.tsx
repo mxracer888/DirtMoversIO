@@ -25,16 +25,26 @@ export default function BrokerDashboard() {
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useQuery({
     queryKey: ["/api/dashboard/stats", selectedJobId],
     queryFn: async () => {
-      const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
-      const response = await fetch(`/api/dashboard/stats${params}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch stats: ${response.status}`);
-      }
-      const text = await response.text();
-      if (!text) {
+      try {
+        const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
+        const response = await fetch(`/api/dashboard/stats${params}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch stats: ${response.status}`);
+        }
+        const text = await response.text();
+        if (!text || text.trim() === '' || text === 'undefined') {
+          return { trucksActive: 0, loadsInTransit: 0, loadsDelivered: 0, avgCycleTime: "--" };
+        }
+        try {
+          return JSON.parse(text);
+        } catch (parseError) {
+          console.warn('Failed to parse stats response:', text);
+          return { trucksActive: 0, loadsInTransit: 0, loadsDelivered: 0, avgCycleTime: "--" };
+        }
+      } catch (error) {
+        console.warn('Stats fetch error:', error);
         return { trucksActive: 0, loadsInTransit: 0, loadsDelivered: 0, avgCycleTime: "--" };
       }
-      return JSON.parse(text);
     },
     refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
     staleTime: 25000, // Data stays fresh for 25 seconds
@@ -60,16 +70,26 @@ export default function BrokerDashboard() {
   const { data: truckStatus, isLoading: truckStatusLoading, refetch: refetchTruckStatus } = useQuery({
     queryKey: ["/api/dashboard/truck-status", selectedJobId],
     queryFn: async () => {
-      const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
-      const response = await fetch(`/api/dashboard/truck-status${params}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch truck status: ${response.status}`);
+      try {
+        const params = selectedJobId !== "all" ? `?jobId=${selectedJobId}` : "";
+        const response = await fetch(`/api/dashboard/truck-status${params}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch truck status: ${response.status}`);
+        }
+        const text = await response.text();
+        if (!text || text.trim() === '' || text === 'undefined') {
+          return { at_load_site: { count: 0, trucks: [] }, loaded: { count: 0, trucks: [] }, in_transit: { count: 0, trucks: [] }, dumped: { count: 0, trucks: [] }, completed: { count: 0, trucks: [] } };
+        }
+        try {
+          return JSON.parse(text);
+        } catch (parseError) {
+          console.warn('Failed to parse truck status response:', text);
+          return { at_load_site: { count: 0, trucks: [] }, loaded: { count: 0, trucks: [] }, in_transit: { count: 0, trucks: [] }, dumped: { count: 0, trucks: [] }, completed: { count: 0, trucks: [] } };
+        }
+      } catch (error) {
+        console.warn('Truck status fetch error:', error);
+        return { at_load_site: { count: 0, trucks: [] }, loaded: { count: 0, trucks: [] }, in_transit: { count: 0, trucks: [] }, dumped: { count: 0, trucks: [] }, completed: { count: 0, trucks: [] } };
       }
-      const text = await response.text();
-      if (!text) {
-        return { at_load_site: { count: 0, trucks: [] }, loaded: { count: 0, trucks: [] }, in_transit: { count: 0, trucks: [] }, dumped: { count: 0, trucks: [] } };
-      }
-      return JSON.parse(text);
     },
     refetchInterval: autoRefresh ? 30000 : false, // Refresh every 30 seconds
     staleTime: 25000, // Data stays fresh for 25 seconds

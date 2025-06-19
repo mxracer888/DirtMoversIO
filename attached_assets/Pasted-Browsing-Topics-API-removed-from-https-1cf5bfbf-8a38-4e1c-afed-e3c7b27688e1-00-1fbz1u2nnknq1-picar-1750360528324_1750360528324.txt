@@ -1,0 +1,60 @@
+Browsing Topics API removed from https://1cf5bfbf-8a38-4e1c-afed-e3c7b27688e1-00-1fbz1u2nnknq1.picard.replit.dev/ which is main frame
+chunk-RPCDYKBN.js?v=9d60a583:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+/api/auth/me:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+1cf5bfbf-8a38-4e1c-afed-e3c7b27688e1-00-1fbz1u2nnknq1.picard.replit.dev/:1 Error while trying to use the following icon from the Manifest: https://1cf5bfbf-8a38-4e1c-afed-e3c7b27688e1-00-1fbz1u2nnknq1.picard.replit.dev/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+login.tsx:115 Form submitted with: Object
+login.tsx:126 Calling login mutation with: Object
+login.tsx:22 === CLIENT LOGIN START ===
+login.tsx:23 Timestamp: 2025-06-19T19:14:36.482Z
+login.tsx:24 Login mutation starting with data: Object
+login.tsx:25 Request URL: /api/auth/login
+login.tsx:26 Browser cookies before request: 
+login.tsx:29 Request body: {"email":"sarah.broker@terrafirma.com","password":"broker123"}
+login.tsx:30 Request headers to send: Object
+login.tsx:35 Making fetch request...
+login.tsx:45 Response received!
+login.tsx:46 Response status: 200
+login.tsx:47 Response ok: true
+login.tsx:48 Response headers: Headers
+login.tsx:49 Response type: basic
+login.tsx:50 Response url: https://1cf5bfbf-8a38-4e1c-afed-e3c7b27688e1-00-1fbz1u2nnknq1.picard.replit.dev/api/auth/login
+login.tsx:51 Browser cookies after response: 
+login.tsx:60 Response ok, parsing result...
+login.tsx:62 Login success response: Object
+login.tsx:63 === CLIENT LOGIN SUCCESS ===
+login.tsx:68 Login success, invalidating queries and redirecting
+dashboard:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)Understand this error
+dashboard:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)Understand this error
+dashboard:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)Understand this error
+dashboard:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
