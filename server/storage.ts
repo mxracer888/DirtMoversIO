@@ -1128,7 +1128,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveJobs(): Promise<Job[]> {
-    return await db.select().from(jobs).where(eq(jobs.isActive, true));
+    return await db.select().from(jobs).where(eq(jobs.status, "active"));
   }
 
   async createJob(insertJob: InsertJob): Promise<Job> {
