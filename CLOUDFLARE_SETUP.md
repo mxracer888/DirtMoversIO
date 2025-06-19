@@ -167,9 +167,42 @@ app.use((req, res, next) => {
 2. **Update nameservers** at your domain registrar
 3. **Configure DNS records** (proxied)
 4. **Set SSL mode** to Full (strict)
-5. **Update Nginx config** with Cloudflare IPs
-6. **Configure firewall** to allow only Cloudflare
-7. **Test your application**
+
+### Authenticated Origin Pulls Setup
+5. **Run origin pulls setup:**
+   ```bash
+   ./setup-cloudflare-origin-pulls.sh
+   ```
+
+6. **Generate Cloudflare Origin Certificate:**
+   - Go to SSL/TLS → Origin Server in Cloudflare dashboard
+   - Click "Create Certificate"
+   - Select "Let Cloudflare generate a private key and a CSR"
+   - Choose 15-year validity
+   - Add your hostnames (your-domain.com, *.your-domain.com)
+   - Copy the certificate and private key
+
+7. **Install the certificates:**
+   ```bash
+   # Replace with your Cloudflare-issued certificate
+   sudo nano /etc/nginx/cloudflare/cert.pem
+   # Replace with your Cloudflare-issued private key
+   sudo nano /etc/nginx/cloudflare/key.pem
+   ```
+
+8. **Enable Authenticated Origin Pulls in Cloudflare:**
+   - Go to SSL/TLS → Origin Server
+   - Enable "Authenticated Origin Pulls"
+
+9. **Update Nginx configuration:**
+   ```bash
+   sudo cp cloudflare-nginx.conf /etc/nginx/sites-available/dirtmovers
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+
+10. **Configure firewall** to allow only Cloudflare
+11. **Test your application**
 
 ## Monitoring
 Use Cloudflare Analytics to monitor:
