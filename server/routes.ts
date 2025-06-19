@@ -10,6 +10,17 @@ import {
 import "./types";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Add a catch-all route to debug missing requests
+  app.use("/api/*", (req, res, next) => {
+    console.log("=== API REQUEST INTERCEPTED ===");
+    console.log("Method:", req.method);
+    console.log("Path:", req.path);
+    console.log("URL:", req.url);
+    console.log("Body:", req.body);
+    console.log("Headers:", req.headers);
+    next();
+  });
+
   // Authentication
   app.post("/api/auth/login", async (req, res) => {
     console.log("=== LOGIN REQUEST RECEIVED ===");
