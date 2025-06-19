@@ -47,7 +47,7 @@ pm2 delete dirtmovers 2>/dev/null || true
 
 # Start the application with PM2
 echo "🚀 Starting application with PM2..."
-pm2 start ecosystem.config.cjs
+pm2 start ecosystem.config.cjs --update-env
 
 if [ $? -eq 0 ]; then
     echo "✅ Application started successfully!"
