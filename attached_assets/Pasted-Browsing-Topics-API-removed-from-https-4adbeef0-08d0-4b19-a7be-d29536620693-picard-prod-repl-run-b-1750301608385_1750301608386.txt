@@ -1,0 +1,356 @@
+Browsing Topics API removed from https://4adbeef0-08d0-4b19-a7be-d29536620693.picard.prod.repl.run/broker/dashboard which is main frame
+index-wY3N1bpq.js:48 
+            
+            
+           GET https://4adbeef0-08d0-4b19-a7be-d29536620693.picard.prod.repl.run/api/auth/me 401 (Unauthorized)
+(anonymous) @ index-wY3N1bpq.js:48
+o @ index-wY3N1bpq.js:40
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+Pl @ index-wY3N1bpq.js:40
+onSubscribe @ index-wY3N1bpq.js:40
+subscribe @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+eT @ index-wY3N1bpq.js:38
+Tf @ index-wY3N1bpq.js:40
+oa @ index-wY3N1bpq.js:40
+ux @ index-wY3N1bpq.js:40
+js @ index-wY3N1bpq.js:38
+IR @ index-wY3N1bpq.js:40
+$s @ index-wY3N1bpq.js:40
+MT @ index-wY3N1bpq.js:40
+j @ index-wY3N1bpq.js:25
+U @ index-wY3N1bpq.js:25Understand this error
+dashboard:1 Error while trying to use the following icon from the Manifest: https://4adbeef0-08d0-4b19-a7be-d29536620693.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+index-wY3N1bpq.js:293 Frontend: Making login request with data: {email: 'sarah.broker@terrafirma.com', password: 'broker123'}
+index-wY3N1bpq.js:293 Frontend: Response status: 200
+index-wY3N1bpq.js:293 Frontend: Response headers: {content-length: '206', content-type: 'application/json; charset=utf-8', date: 'Thu, 19 Jun 2025 02:52:43 GMT', etag: 'W/"ce-uRt/b9YCekO3SVxsXOGHJjNVZSI"', server-timing: 'pid1req;dur=1750301563770, pid1res;dur=1750301563772', …}
+VM220:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-wY3N1bpq.js:348
+o @ index-wY3N1bpq.js:40
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+Pl @ index-wY3N1bpq.js:40
+onSubscribe @ index-wY3N1bpq.js:40
+subscribe @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+eT @ index-wY3N1bpq.js:38
+Tf @ index-wY3N1bpq.js:40
+oa @ index-wY3N1bpq.js:40
+IR @ index-wY3N1bpq.js:40
+$s @ index-wY3N1bpq.js:40
+ux @ index-wY3N1bpq.js:40
+js @ index-wY3N1bpq.js:38
+(anonymous) @ index-wY3N1bpq.js:40
+setTimeout
+s @ index-wY3N1bpq.js:40
+c @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+gi @ index-wY3N1bpq.js:40
+setData @ index-wY3N1bpq.js:40
+onSuccess @ index-wY3N1bpq.js:40
+g @ index-wY3N1bpq.js:40
+Promise.then
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+refetchQueries @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+invalidateQueries @ index-wY3N1bpq.js:40
+onSuccess @ index-wY3N1bpq.js:293
+execute @ index-wY3N1bpq.js:40
+await in execute
+mutate @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+p @ index-wY3N1bpq.js:293
+YI @ index-wY3N1bpq.js:37
+eA @ index-wY3N1bpq.js:37
+tA @ index-wY3N1bpq.js:37
+A_ @ index-wY3N1bpq.js:37
+FC @ index-wY3N1bpq.js:37
+(anonymous) @ index-wY3N1bpq.js:37
+Qg @ index-wY3N1bpq.js:40
+lC @ index-wY3N1bpq.js:37
+Qh @ index-wY3N1bpq.js:37
+Cg @ index-wY3N1bpq.js:37
+vA @ index-wY3N1bpq.js:37Understand this error
+VM221:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-wY3N1bpq.js:348
+o @ index-wY3N1bpq.js:40
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+Pl @ index-wY3N1bpq.js:40
+onSubscribe @ index-wY3N1bpq.js:40
+subscribe @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+eT @ index-wY3N1bpq.js:38
+Tf @ index-wY3N1bpq.js:40
+oa @ index-wY3N1bpq.js:40
+IR @ index-wY3N1bpq.js:40
+$s @ index-wY3N1bpq.js:40
+ux @ index-wY3N1bpq.js:40
+js @ index-wY3N1bpq.js:38
+(anonymous) @ index-wY3N1bpq.js:40
+setTimeout
+s @ index-wY3N1bpq.js:40
+c @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+gi @ index-wY3N1bpq.js:40
+setData @ index-wY3N1bpq.js:40
+onSuccess @ index-wY3N1bpq.js:40
+g @ index-wY3N1bpq.js:40
+Promise.then
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+refetchQueries @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+invalidateQueries @ index-wY3N1bpq.js:40
+onSuccess @ index-wY3N1bpq.js:293
+execute @ index-wY3N1bpq.js:40
+await in execute
+mutate @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+p @ index-wY3N1bpq.js:293
+YI @ index-wY3N1bpq.js:37
+eA @ index-wY3N1bpq.js:37
+tA @ index-wY3N1bpq.js:37
+A_ @ index-wY3N1bpq.js:37
+FC @ index-wY3N1bpq.js:37
+(anonymous) @ index-wY3N1bpq.js:37
+Qg @ index-wY3N1bpq.js:40
+lC @ index-wY3N1bpq.js:37
+Qh @ index-wY3N1bpq.js:37
+Cg @ index-wY3N1bpq.js:37
+vA @ index-wY3N1bpq.js:37Understand this error
+VM326:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-wY3N1bpq.js:348
+o @ index-wY3N1bpq.js:40
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+refetchQueries @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+invalidateQueries @ index-wY3N1bpq.js:40
+onValueChange @ index-wY3N1bpq.js:348
+(anonymous) @ index-wY3N1bpq.js:48
+(anonymous) @ index-wY3N1bpq.js:48
+b @ index-wY3N1bpq.js:333
+(anonymous) @ index-wY3N1bpq.js:333
+(anonymous) @ index-wY3N1bpq.js:48
+YI @ index-wY3N1bpq.js:37
+eA @ index-wY3N1bpq.js:37
+tA @ index-wY3N1bpq.js:37
+A_ @ index-wY3N1bpq.js:37
+FC @ index-wY3N1bpq.js:37
+(anonymous) @ index-wY3N1bpq.js:37
+Qg @ index-wY3N1bpq.js:40
+lC @ index-wY3N1bpq.js:37
+Qh @ index-wY3N1bpq.js:37
+Cg @ index-wY3N1bpq.js:37
+vA @ index-wY3N1bpq.js:37Understand this error
+VM327:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-wY3N1bpq.js:348
+o @ index-wY3N1bpq.js:40
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+Pl @ index-wY3N1bpq.js:40
+setOptions @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+Tf @ index-wY3N1bpq.js:40
+oa @ index-wY3N1bpq.js:40
+IR @ index-wY3N1bpq.js:40
+$s @ index-wY3N1bpq.js:40
+ux @ index-wY3N1bpq.js:40
+js @ index-wY3N1bpq.js:38
+(anonymous) @ index-wY3N1bpq.js:40Understand this error
+VM328:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-wY3N1bpq.js:348
+o @ index-wY3N1bpq.js:40
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+Pl @ index-wY3N1bpq.js:40
+setOptions @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+Tf @ index-wY3N1bpq.js:40
+oa @ index-wY3N1bpq.js:40
+IR @ index-wY3N1bpq.js:40
+$s @ index-wY3N1bpq.js:40
+ux @ index-wY3N1bpq.js:40
+js @ index-wY3N1bpq.js:38
+(anonymous) @ index-wY3N1bpq.js:40Understand this error
+VM330:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-wY3N1bpq.js:348
+o @ index-wY3N1bpq.js:40
+T @ index-wY3N1bpq.js:40
+start @ index-wY3N1bpq.js:40
+fetch @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+refetchQueries @ index-wY3N1bpq.js:40
+(anonymous) @ index-wY3N1bpq.js:40
+batch @ index-wY3N1bpq.js:40
+invalidateQueries @ index-wY3N1bpq.js:40
+onValueChange @ index-wY3N1bpq.js:348
+(anonymous) @ index-wY3N1bpq.js:48
+(anonymous) @ index-wY3N1bpq.js:48
+b @ index-wY3N1bpq.js:333
+(anonymous) @ index-wY3N1bpq.js:333
+(anonymous) @ index-wY3N1bpq.js:48
+YI @ index-wY3N1bpq.js:37
+eA @ index-wY3N1bpq.js:37
+tA @ index-wY3N1bpq.js:37
+A_ @ index-wY3N1bpq.js:37
+FC @ index-wY3N1bpq.js:37
+(anonymous) @ index-wY3N1bpq.js:37
+Qg @ index-wY3N1bpq.js:40
+lC @ index-wY3N1bpq.js:37
+Qh @ index-wY3N1bpq.js:37
+Cg @ index-wY3N1bpq.js:37
+vA @ index-wY3N1bpq.js:37Understand this error
+VM331:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)

@@ -26,13 +26,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Set session and save it
       req.session.userId = user.id;
-      req.session.save((err) => {
-        if (err) {
-          console.error("Session save error:", err);
-        }
-      });
       
       console.log("Login successful, session set:", req.session.userId);
+      console.log("Session ID:", req.sessionID);
       
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
@@ -66,7 +62,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     console.log("Auth check successful for user:", user.email);
     const { password: _, ...userWithoutPassword } = user;
-    res.json({ user: userWithoutPassword });
+    res.json(userWithoutPassword);
   });
 
   // Setup data endpoints

@@ -10,12 +10,13 @@ app.use(express.urlencoded({ extended: false }));
 // Session middleware
 app.use(session({
   secret: 'dirt-movers-secret-key',
-  resave: true,
-  saveUninitialized: true,
+  resave: false,
+  saveUninitialized: false,
   cookie: {
     secure: false, // Set to true in production with HTTPS
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    httpOnly: false
+    httpOnly: true,
+    sameSite: 'lax'
   }
 }));
 
