@@ -176,55 +176,8 @@ export default function MainActivity() {
     avgCycleTime: calculateAvgCycleTime(),
   };
 
-  // Initialize state from activities - simplified to prevent React error #310
-  useEffect(() => {
-    if (!validActivities || validActivities.length === 0) {
-      setCurrentStep("arrived_at_load_site");
-      setLoadNumber(1);
-      return;
-    }
-
-    try {
-      const sortedActivities = [...validActivities].sort((a, b) => 
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-      );
-      const lastActivity = sortedActivities[sortedActivities.length - 1];
-      
-      if (!lastActivity) return;
-      
-      // Handle break states
-      if (lastActivity.activityType === "break" || lastActivity.activityType === "breakdown") {
-        setCurrentBreakState(lastActivity.activityType);
-        return;
-      }
-      
-      // Clear break state and set next activity step
-      setCurrentBreakState(null);
-      const nextStep = getActivityFlow(lastActivity.activityType as any);
-      if (nextStep) {
-        setCurrentStep(nextStep);
-      }
-      
-      // Set load number
-      const loadActivities = validActivities.filter(a => 
-        a.activityType && ["arrived_at_load_site", "loaded_with_material", "arrived_at_dump_site", "dumped_material"].includes(a.activityType)
-      );
-      
-      if (loadActivities.length > 0) {
-        const maxLoadNumber = Math.max(...loadActivities.map(a => a.loadNumber || 1));
-        const currentLoadComplete = loadActivities.some(a => 
-          a.loadNumber === maxLoadNumber && a.activityType === "dumped_material"
-        );
-        setLoadNumber(currentLoadComplete ? maxLoadNumber + 1 : maxLoadNumber);
-      } else {
-        setLoadNumber(1);
-      }
-    } catch (error) {
-      console.error("Error in activity state update:", error);
-      setCurrentStep("arrived_at_load_site");
-      setLoadNumber(1);
-    }
-  }, [validActivities.length]);
+  // Initialize state from activities - removed useEffect to prevent React error #310
+  // State will be managed through manual updates instead of reactive useEffect
 
   // Redirect logic handled above in main useEffect
 

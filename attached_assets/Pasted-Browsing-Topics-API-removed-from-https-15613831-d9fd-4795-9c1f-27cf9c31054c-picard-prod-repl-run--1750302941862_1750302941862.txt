@@ -1,0 +1,39 @@
+Browsing Topics API removed from https://15613831-d9fd-4795-9c1f-27cf9c31054c.picard.prod.repl.run/ which is main frame
+/api/auth/me:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+15613831-d9fd-4795-9c1f-27cf9c31054c.picard.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://15613831-d9fd-4795-9c1f-27cf9c31054c.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+index-B00rb2p_.js:293 Frontend: Making login request with data: Object
+index-B00rb2p_.js:293 Frontend: Response status: 200
+index-B00rb2p_.js:293 Frontend: Response headers: Object
+index-B00rb2p_.js:333 Button clicked
+index-B00rb2p_.js:333 Form state: Object
+index-B00rb2p_.js:333 Form values: Object
+index-B00rb2p_.js:333 Form submitted with data: Object
+index-B00rb2p_.js:333 Form errors: Object
+index-B00rb2p_.js:333 Forcing submission with: Object
+index-B00rb2p_.js:333 Sending work day data: Object
+index-B00rb2p_.js:40 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at pr (index-B00rb2p_.js:38:17615)
+    at Sf (index-B00rb2p_.js:38:20561)
+    at Object.Ug [as useEffect] (index-B00rb2p_.js:38:20819)
+    at He.useEffect (index-B00rb2p_.js:9:5880)
+    at j6 (index-B00rb2p_.js:337:37774)
+    at $g (index-B00rb2p_.js:38:17018)
+    at lp (index-B00rb2p_.js:40:3139)
+    at DN (index-B00rb2p_.js:40:44833)
+    at AN (index-B00rb2p_.js:40:39790)
+    at MR (index-B00rb2p_.js:40:39718)
+ap @ index-B00rb2p_.js:40Understand this error
+index-B00rb2p_.js:38 Uncaught Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at pr (index-B00rb2p_.js:38:17615)
+    at Sf (index-B00rb2p_.js:38:20561)
+    at Object.Ug [as useEffect] (index-B00rb2p_.js:38:20819)
+    at He.useEffect (index-B00rb2p_.js:9:5880)
+    at j6 (index-B00rb2p_.js:337:37774)
+    at $g (index-B00rb2p_.js:38:17018)
+    at lp (index-B00rb2p_.js:40:3139)
+    at DN (index-B00rb2p_.js:40:44833)
+    at AN (index-B00rb2p_.js:40:39790)
+    at MR (index-B00rb2p_.js:40:39718)

@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import Login from "@/pages/login";
 import DailySetup from "@/pages/driver/daily-setup";
-import MainActivity from "@/pages/driver/main-activity";
+import MainActivity from "@/pages/driver/main-activity-simple";
 import ActivityHistory from "@/pages/driver/activity-history";
 import EndOfDay from "@/pages/driver/end-of-day";
 import BrokerDashboard from "@/pages/broker/dashboard";
