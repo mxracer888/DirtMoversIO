@@ -365,6 +365,121 @@ export class MemStorage implements IStorage {
       },
     ];
     locations.forEach(location => this.locations.set(location.id, location));
+
+    // Create completed work days for EOD testing
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const completedWorkDay: WorkDay = {
+      id: this.currentWorkDayId++,
+      driverId: users[2].id, // Mike Johnson
+      truckId: trucks[0].id,
+      jobId: jobs[0].id,
+      workDate: yesterday.toISOString().split('T')[0],
+      status: "completed",
+      startTime: new Date(yesterday.getTime() + 7 * 60 * 60 * 1000), // 7 AM yesterday
+      endTime: new Date(yesterday.getTime() + 16 * 60 * 60 * 1000), // 4 PM yesterday
+      totalLoads: 8,
+      driverSignature: "Mike Johnson",
+      operatorName: "Mike Johnson",
+      operatorSignature: "MJ",
+      createdAt: yesterday,
+    };
+    this.workDays.set(completedWorkDay.id, completedWorkDay);
+
+    // Create activities for the completed work day
+    const completedActivities: Activity[] = [];
+    for (let load = 1; load <= 3; load++) {
+      const baseTime = new Date(yesterday.getTime() + 8 * 60 * 60 * 1000); // Start at 8 AM
+      const loadStartTime = new Date(baseTime.getTime() + (load - 1) * 90 * 60 * 1000); // 90 min cycles
+      
+      // Arrive at load site
+      completedActivities.push({
+        id: this.currentActivityId++,
+        workDayId: completedWorkDay.id,
+        loadNumber: load,
+        activityType: "arrived_at_load_site",
+        timestamp: new Date(loadStartTime.getTime()),
+        latitude: "40.7589",
+        longitude: "-111.9389",
+        notes: `Load ${load} - Arrived at Kilgore West Valley Mine`,
+        ticketNumber: null,
+        netWeight: null,
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(loadStartTime.getTime()),
+      });
+
+      // Loaded with material
+      completedActivities.push({
+        id: this.currentActivityId++,
+        workDayId: completedWorkDay.id,
+        loadNumber: load,
+        activityType: "loaded_with_material",
+        timestamp: new Date(loadStartTime.getTime() + 15 * 60 * 1000), // 15 min later
+        latitude: "40.7589",
+        longitude: "-111.9389",
+        notes: `Load ${load} - Loaded with dirt material`,
+        ticketNumber: `TK${yesterday.getDate()}${load.toString().padStart(3, '0')}`,
+        netWeight: (18 + Math.random() * 4).toFixed(1), // 18-22 tons
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(loadStartTime.getTime() + 15 * 60 * 1000),
+      });
+
+      // Arrive at dump site
+      completedActivities.push({
+        id: this.currentActivityId++,
+        workDayId: completedWorkDay.id,
+        loadNumber: load,
+        activityType: "arrived_at_dump_site",
+        timestamp: new Date(loadStartTime.getTime() + 45 * 60 * 1000), // 45 min later
+        latitude: "40.5621",
+        longitude: "-111.9291",
+        notes: `Load ${load} - Arrived at Jordan River Heights Site`,
+        ticketNumber: null,
+        netWeight: null,
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(loadStartTime.getTime() + 45 * 60 * 1000),
+      });
+
+      // Dumped material
+      completedActivities.push({
+        id: this.currentActivityId++,
+        workDayId: completedWorkDay.id,
+        loadNumber: load,
+        activityType: "dumped_material",
+        timestamp: new Date(loadStartTime.getTime() + 60 * 60 * 1000), // 60 min later
+        latitude: "40.5621",
+        longitude: "-111.9291",
+        notes: `Load ${load} - Material dumped successfully`,
+        ticketNumber: null,
+        netWeight: null,
+        cancelled: false,
+        cancelledAt: null,
+        createdAt: new Date(loadStartTime.getTime() + 60 * 60 * 1000),
+      });
+    }
+
+    // Add EOD activity
+    completedActivities.push({
+      id: this.currentActivityId++,
+      workDayId: completedWorkDay.id,
+      loadNumber: 0,
+      activityType: "end_of_day",
+      timestamp: completedWorkDay.endTime!,
+      latitude: "40.5621",
+      longitude: "-111.9291",
+      notes: "Work day completed by Mike Johnson",
+      ticketNumber: null,
+      netWeight: null,
+      cancelled: false,
+      cancelledAt: null,
+      createdAt: completedWorkDay.endTime!,
+    });
+
+    completedActivities.forEach(activity => this.activities.set(activity.id, activity));
   }
 
   // Users
