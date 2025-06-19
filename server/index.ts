@@ -67,6 +67,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize demo data on server startup
+  const { getStorage } = await import('./storage');
+  await getStorage();
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

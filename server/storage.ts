@@ -1031,12 +1031,12 @@ async function initializeDemoData() {
   });
 
   // Create demo customer
-  await db.insert(customers).values({
+  const customer = await db.insert(customers).values({
     name: "Wasatch Construction",
     contactEmail: "jobs@wasatchconstruction.com",
     contactPhone: "(555) 555-0123",
     address: "789 Construction Blvd, West Valley City, UT 84119"
-  });
+  }).returning();
 
   // Create demo truck
   await db.insert(trucks).values({
@@ -1049,7 +1049,7 @@ async function initializeDemoData() {
   await db.insert(jobs).values({
     name: "Wasatch Highway Expansion",
     description: "Road construction and material delivery",
-    companyId: brokerCompany[0].id
+    customerId: customer[0].id
   });
 
   // Create demo materials
@@ -1553,4 +1553,18 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Initialize database storage and demo data
+let storageInstance: DatabaseStorage | null = null;
+
+const initializeStorage = async () => {
+  if (!storageInstance) {
+    await initializeDemoData();
+    storageInstance = new DatabaseStorage();
+  }
+  return storageInstance;
+};
+
+export const getStorage = initializeStorage;
+
+// For backward compatibility, initialize storage immediately
+export const storage = new DatabaseStorage();
