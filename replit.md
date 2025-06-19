@@ -100,6 +100,9 @@ The application follows a full-stack TypeScript architecture with the following 
 ## Changelog
 - June 14, 2025: Initial setup
 - June 14, 2025: Fixed dispatch persistence issue by updating role-based access control to include broker_admin role in dispatch retrieval logic
+- June 19, 2025: Resolved EOD data persistence issue by switching from memory-based to database-based storage
+- June 19, 2025: Fixed authentication system with proper bcrypt password hashing implementation
+- June 19, 2025: EOD submission flow fully operational with persistent data storage
 
 ## User Preferences
 
