@@ -54,9 +54,9 @@ if [ ! -f .env ]; then
     # Generate random session secret
     SESSION_SECRET=$(openssl rand -base64 32)
     
-    # Update .env file
-    sed -i "s/your_secure_password/$DB_PASSWORD/g" .env
-    sed -i "s/your_super_secure_session_secret_here_minimum_32_chars/$SESSION_SECRET/g" .env
+    # Update .env file with escaped special characters
+    sed -i "s|your_secure_password|$DB_PASSWORD|g" .env
+    sed -i "s|your_super_secure_session_secret_here_minimum_32_chars|$SESSION_SECRET|g" .env
     
     echo "✅ Environment file created. Please update your domain in .env"
 else
