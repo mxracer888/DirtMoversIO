@@ -32,10 +32,33 @@ export default function EndOfDay() {
 
   const submitEndOfDayMutation = useMutation({
     mutationFn: async () => {
-      if (!workDay) throw new Error("No active work day");
-      if (!driverSignature) throw new Error("Driver signature required");
-      if (!operatorSignature) throw new Error("Operator signature required");
-      if (!operatorName.trim()) throw new Error("Operator name required");
+      console.log("=== CLIENT: EOD SUBMISSION STARTING ===");
+      console.log("Timestamp:", new Date().toISOString());
+      console.log("Current URL:", window.location.href);
+      
+      if (!workDay) {
+        console.error("No active work day found!");
+        throw new Error("No active work day");
+      }
+      if (!driverSignature) {
+        console.error("Driver signature missing!");
+        throw new Error("Driver signature required");
+      }
+      if (!operatorSignature) {
+        console.error("Operator signature missing!");
+        throw new Error("Operator signature required");
+      }
+      if (!operatorName.trim()) {
+        console.error("Operator name missing!");
+        throw new Error("Operator name required");
+      }
+
+      console.log("Work day data:", JSON.stringify(workDay, null, 2));
+      console.log("Activities data:", JSON.stringify(activities, null, 2));
+      console.log("Driver signature:", driverSignature);
+      console.log("Operator name:", operatorName);
+      console.log("Operator signature:", operatorSignature);
+      console.log("Total loads calculated:", getTotalLoads());
 
       const updates = {
         endTime: new Date(),
@@ -46,8 +69,32 @@ export default function EndOfDay() {
         totalLoads: getTotalLoads(),
       };
 
+      console.log("Updates to send:", JSON.stringify(updates, null, 2));
+
+      // Check authentication before submission
+      console.log("Checking authentication status...");
+      try {
+        const authResponse = await fetch('/api/auth/me', {
+          credentials: 'include'
+        });
+        const authData = await authResponse.json();
+        console.log("Auth response status:", authResponse.status);
+        console.log("Auth response data:", JSON.stringify(authData, null, 2));
+        
+        if (!authResponse.ok) {
+          console.error("Authentication failed before EOD submission!");
+          console.error("Auth error:", authData);
+          throw new Error("Authentication failed. Please log in again.");
+        }
+        console.log("Authentication verified for user:", authData.name);
+      } catch (authError) {
+        console.error("Authentication check failed:", authError);
+        throw authError;
+      }
+
       // First create an end_of_day activity for truck tracking
-      await apiRequest("POST", "/api/activities", {
+      console.log("Creating end_of_day activity...");
+      const activityData = {
         workDayId: workDay.id,
         loadNumber: 0, // EOD activity doesn't need a load number
         activityType: "end_of_day",
@@ -55,11 +102,32 @@ export default function EndOfDay() {
         latitude: location?.latitude || null,
         longitude: location?.longitude || null,
         notes: `Work day completed by ${operatorName.trim()}`
-      });
+      };
+      console.log("Activity data to send:", JSON.stringify(activityData, null, 2));
+      
+      try {
+        const activityResponse = await apiRequest("POST", "/api/activities", activityData);
+        const activityResult = await activityResponse.json();
+        console.log("Activity creation response:", JSON.stringify(activityResult, null, 2));
+      } catch (activityError) {
+        console.error("Activity creation failed:", activityError);
+        throw activityError;
+      }
 
       // Then update the work day
-      const res = await apiRequest("PATCH", `/api/work-days/${workDay.id}`, updates);
-      return res.json();
+      console.log("Updating work day status to completed...");
+      console.log("PATCH URL:", `/api/work-days/${workDay.id}`);
+      
+      try {
+        const res = await apiRequest("PATCH", `/api/work-days/${workDay.id}`, updates);
+        const result = await res.json();
+        console.log("Work day update response:", JSON.stringify(result, null, 2));
+        console.log("=== CLIENT: EOD SUBMISSION COMPLETE ===");
+        return result;
+      } catch (updateError) {
+        console.error("Work day update failed:", updateError);
+        throw updateError;
+      }
     },
     onSuccess: () => {
       toast({
