@@ -1,0 +1,239 @@
+Browsing Topics API removed from https://d0731e20-7d26-4051-8419-532d217c96a4.picard.prod.repl.run/ which is main frame
+/api/auth/me:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+d0731e20-7d26-4051-8419-532d217c96a4.picard.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://d0731e20-7d26-4051-8419-532d217c96a4.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+index-DSikeweI.js:298 Form submitted with: Object
+index-DSikeweI.js:298 Calling login mutation with: Object
+index-DSikeweI.js:298 === CLIENT LOGIN START ===
+index-DSikeweI.js:298 Timestamp: 2025-06-19T05:14:43.879Z
+index-DSikeweI.js:298 Login mutation starting with data: Object
+index-DSikeweI.js:298 Request URL: /api/auth/login
+index-DSikeweI.js:298 Browser cookies before request: 
+index-DSikeweI.js:298 Request body: {"email":"sarah.broker@terrafirma.com","password":"broker123"}
+index-DSikeweI.js:298 Request headers to send: Object
+index-DSikeweI.js:298 Making fetch request...
+index-DSikeweI.js:298 Response received!
+index-DSikeweI.js:298 Response status: 200
+index-DSikeweI.js:298 Response ok: true
+index-DSikeweI.js:298 Response headers: Headers
+index-DSikeweI.js:298 Response type: basic
+index-DSikeweI.js:298 Response url: https://d0731e20-7d26-4051-8419-532d217c96a4.picard.prod.repl.run/api/auth/login
+index-DSikeweI.js:298 Browser cookies after response: 
+index-DSikeweI.js:298 Response ok, parsing result...
+index-DSikeweI.js:298 Login success response: Object
+index-DSikeweI.js:298 === CLIENT LOGIN SUCCESS ===
+index-DSikeweI.js:298 Login success, invalidating queries and redirecting
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/trucks:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/jobs:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/work-days/completed:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/jobs:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/trucks:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/stats:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/dashboard/truck-status:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()Understand this error
+/api/activities/recent:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 ()

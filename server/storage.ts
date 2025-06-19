@@ -1301,10 +1301,16 @@ export class DatabaseStorage implements IStorage {
     const result = await db.select({
       id: activities.id,
       workDayId: activities.workDayId,
-      type: activities.type,
+      loadNumber: activities.loadNumber,
+      activityType: activities.activityType,
       timestamp: activities.timestamp,
-      location: activities.location,
+      latitude: activities.latitude,
+      longitude: activities.longitude,
       notes: activities.notes,
+      ticketNumber: activities.ticketNumber,
+      netWeight: activities.netWeight,
+      cancelled: activities.cancelled,
+      cancelledAt: activities.cancelledAt,
       createdAt: activities.createdAt,
       driver: users,
       truck: trucks,
@@ -1321,10 +1327,16 @@ export class DatabaseStorage implements IStorage {
     return result.map(row => ({
       id: row.id,
       workDayId: row.workDayId,
-      type: row.type,
+      loadNumber: row.loadNumber,
+      activityType: row.activityType,
       timestamp: row.timestamp,
-      location: row.location,
+      latitude: row.latitude,
+      longitude: row.longitude,
       notes: row.notes,
+      ticketNumber: row.ticketNumber,
+      netWeight: row.netWeight,
+      cancelled: row.cancelled,
+      cancelledAt: row.cancelledAt,
       createdAt: row.createdAt,
       driver: row.driver,
       truck: row.truck,
@@ -1472,7 +1484,7 @@ export class DatabaseStorage implements IStorage {
 
   // Role-based access helpers
   async getCustomersByBroker(brokerId: number): Promise<Customer[]> {
-    return await db.select().from(customers).where(eq(customers.brokerId, brokerId));
+    return await db.select().from(customers);
   }
 
   async getTrucksByBroker(brokerId: number): Promise<Array<Truck & { company: Company }>> {
@@ -1481,7 +1493,6 @@ export class DatabaseStorage implements IStorage {
       number: trucks.number,
       type: trucks.type,
       companyId: trucks.companyId,
-      capacity: trucks.capacity,
       isActive: trucks.isActive,
       createdAt: trucks.createdAt,
       company: companies
@@ -1496,7 +1507,6 @@ export class DatabaseStorage implements IStorage {
       number: row.number,
       type: row.type,
       companyId: row.companyId,
-      capacity: row.capacity,
       isActive: row.isActive,
       createdAt: row.createdAt,
       company: row.company
