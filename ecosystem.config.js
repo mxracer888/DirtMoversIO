@@ -2,9 +2,9 @@ module.exports = {
   apps: [{
     name: 'dirtmovers',
     script: 'server/index.js',
-    cwd: '/home/pi/DirtMoversIO',
-    instances: 'max',
-    exec_mode: 'cluster',
+    cwd: '/mnt/nvme/DirtMoversIO',
+    instances: 1,
+    exec_mode: 'fork',
     env: {
       NODE_ENV: 'production',
       PORT: 3000
@@ -13,9 +13,9 @@ module.exports = {
       NODE_ENV: 'production',
       PORT: 3000
     },
-    error_file: '/var/log/pm2/dirtmovers-error.log',
-    out_file: '/var/log/pm2/dirtmovers-out.log',
-    log_file: '/var/log/pm2/dirtmovers.log',
+    error_file: './logs/dirtmovers-error.log',
+    out_file: './logs/dirtmovers-out.log',
+    log_file: './logs/dirtmovers.log',
     time: true,
     max_memory_restart: '1G',
     restart_delay: 4000,
