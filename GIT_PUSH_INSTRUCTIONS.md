@@ -9,7 +9,7 @@ Your DirtMovers application is complete with Raspberry Pi deployment configurati
    rm -f .git/index.lock .git/config.lock
    git remote add origin https://github.com/mxracer888/DirtMoversIO.git
    git add .
-   git commit -m "Added dotenv support and PM2 environment variable loading"
+   git commit -m "Fixed database driver for local PostgreSQL connection"
    git push -u origin main
    ```
 

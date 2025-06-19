@@ -111,6 +111,7 @@ The application follows a full-stack TypeScript architecture with the following 
 - June 19, 2025: Complete Raspberry Pi deployment configuration added with custom domain support, SSL setup, and production optimization
 - June 19, 2025: Fixed DATABASE_URL encoding for passwords with special characters, resolved PostgreSQL permissions, and corrected PM2 configuration format
 - June 19, 2025: Fixed PM2 script path configuration and created comprehensive startup script with build automation
+- June 19, 2025: Switched from Neon serverless driver to standard PostgreSQL driver for local database connections, resolving SSL certificate errors
 
 ## User Preferences
 
