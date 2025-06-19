@@ -591,6 +591,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dispatches API Routes
   app.get("/api/dispatches", async (req, res) => {
     try {
+      console.log("=== GET DISPATCHES REQUEST ===");
+      console.log("Session userId:", req.session?.userId);
+      
       if (!req.session?.userId) {
         return res.status(401).json({ error: "Not authenticated" });
       }
@@ -600,10 +603,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "User not found" });
       }
 
+      console.log("User details:", { id: user.id, role: user.role, companyId: user.companyId });
+
       // Role-based access control
       let dispatches = [];
       if (user.role === 'broker' || user.role === 'broker_admin') {
+        console.log("Fetching dispatches for broker with companyId:", user.companyId);
         dispatches = await storage.getDispatches(user.companyId);
+        console.log("Found dispatches:", dispatches.length);
       } else if (user.role === 'customer') {
         const customerDispatches = await storage.getDispatchesByCustomer(user.companyId!);
         dispatches = customerDispatches;
@@ -617,6 +624,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dispatches = dispatchResults.filter(d => d !== undefined);
       }
 
+      console.log("Returning dispatches:", dispatches.map(d => ({ id: d.id, jobName: d.jobName, brokerId: d.brokerId })));
       res.json(dispatches);
     } catch (error) {
       console.error("Get dispatches error:", error);
@@ -626,6 +634,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/dispatches", async (req, res) => {
     try {
+      console.log("=== CREATE DISPATCH REQUEST ===");
+      console.log("Session userId:", req.session?.userId);
+      console.log("Request body:", JSON.stringify(req.body, null, 2));
+      
       if (!req.session?.userId) {
         return res.status(401).json({ error: "Not authenticated" });
       }
@@ -635,13 +647,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ error: "Only brokers can create dispatches" });
       }
 
+      console.log("Creating dispatch for user:", { id: user.id, role: user.role, companyId: user.companyId });
+
       const dispatchData = insertDispatchSchema.parse({
         ...req.body,
         brokerId: user.companyId,
         status: "created"
       });
 
+      console.log("Dispatch data to create:", JSON.stringify(dispatchData, null, 2));
+
       const dispatch = await storage.createDispatch(dispatchData);
+      console.log("Created dispatch:", JSON.stringify(dispatch, null, 2));
 
       // Save reusable data
       const reusableFields = [
