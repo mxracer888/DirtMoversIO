@@ -1,0 +1,218 @@
+Browsing Topics API removed from https://93f97886-a556-43b1-bf1e-0a6422ee8b3c.picard.prod.repl.run/ which is main frame
+93f97886-a556-43b1-bf1e-0a6422ee8b3c.picard.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://93f97886-a556-43b1-bf1e-0a6422ee8b3c.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+VM306:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-DUq7rOxg.js:348
+o @ index-DUq7rOxg.js:40
+T @ index-DUq7rOxg.js:40
+start @ index-DUq7rOxg.js:40
+fetch @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+batch @ index-DUq7rOxg.js:40
+refetchQueries @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+batch @ index-DUq7rOxg.js:40
+invalidateQueries @ index-DUq7rOxg.js:40
+onValueChange @ index-DUq7rOxg.js:348
+(anonymous) @ index-DUq7rOxg.js:48
+(anonymous) @ index-DUq7rOxg.js:48
+b @ index-DUq7rOxg.js:333
+(anonymous) @ index-DUq7rOxg.js:333
+(anonymous) @ index-DUq7rOxg.js:48
+eA @ index-DUq7rOxg.js:37
+nA @ index-DUq7rOxg.js:37
+rA @ index-DUq7rOxg.js:37
+A_ @ index-DUq7rOxg.js:37
+FC @ index-DUq7rOxg.js:37
+(anonymous) @ index-DUq7rOxg.js:37
+Qg @ index-DUq7rOxg.js:40
+lC @ index-DUq7rOxg.js:37
+Qh @ index-DUq7rOxg.js:37
+Cg @ index-DUq7rOxg.js:37
+_A @ index-DUq7rOxg.js:37Understand this error
+VM307:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-DUq7rOxg.js:348
+o @ index-DUq7rOxg.js:40
+T @ index-DUq7rOxg.js:40
+start @ index-DUq7rOxg.js:40
+fetch @ index-DUq7rOxg.js:40
+Pl @ index-DUq7rOxg.js:40
+setOptions @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+Tf @ index-DUq7rOxg.js:40
+oa @ index-DUq7rOxg.js:40
+RR @ index-DUq7rOxg.js:40
+$s @ index-DUq7rOxg.js:40
+ux @ index-DUq7rOxg.js:40
+js @ index-DUq7rOxg.js:38
+(anonymous) @ index-DUq7rOxg.js:40Understand this error
+VM308:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-DUq7rOxg.js:348
+o @ index-DUq7rOxg.js:40
+T @ index-DUq7rOxg.js:40
+start @ index-DUq7rOxg.js:40
+fetch @ index-DUq7rOxg.js:40
+Pl @ index-DUq7rOxg.js:40
+setOptions @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+Tf @ index-DUq7rOxg.js:40
+oa @ index-DUq7rOxg.js:40
+RR @ index-DUq7rOxg.js:40
+$s @ index-DUq7rOxg.js:40
+ux @ index-DUq7rOxg.js:40
+js @ index-DUq7rOxg.js:38
+(anonymous) @ index-DUq7rOxg.js:40Understand this error
+VM312:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-DUq7rOxg.js:348
+o @ index-DUq7rOxg.js:40
+T @ index-DUq7rOxg.js:40
+start @ index-DUq7rOxg.js:40
+fetch @ index-DUq7rOxg.js:40
+Pl @ index-DUq7rOxg.js:40
+setOptions @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+Tf @ index-DUq7rOxg.js:40
+oa @ index-DUq7rOxg.js:40
+RR @ index-DUq7rOxg.js:40
+$s @ index-DUq7rOxg.js:40
+ux @ index-DUq7rOxg.js:40
+js @ index-DUq7rOxg.js:38
+(anonymous) @ index-DUq7rOxg.js:40Understand this error
+VM313:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)
+(anonymous) @ frame_ant.js:2
+p @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+Promise.then
+t @ frame_ant.js:2
+u @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+(anonymous) @ frame_ant.js:2
+u @ frame_ant.js:2
+window.fetch @ frame_ant.js:2
+queryFn @ index-DUq7rOxg.js:348
+o @ index-DUq7rOxg.js:40
+T @ index-DUq7rOxg.js:40
+start @ index-DUq7rOxg.js:40
+fetch @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+batch @ index-DUq7rOxg.js:40
+refetchQueries @ index-DUq7rOxg.js:40
+(anonymous) @ index-DUq7rOxg.js:40
+batch @ index-DUq7rOxg.js:40
+invalidateQueries @ index-DUq7rOxg.js:40
+onValueChange @ index-DUq7rOxg.js:348
+(anonymous) @ index-DUq7rOxg.js:48
+(anonymous) @ index-DUq7rOxg.js:48
+b @ index-DUq7rOxg.js:333
+(anonymous) @ index-DUq7rOxg.js:333
+(anonymous) @ index-DUq7rOxg.js:48
+eA @ index-DUq7rOxg.js:37
+nA @ index-DUq7rOxg.js:37
+rA @ index-DUq7rOxg.js:37
+A_ @ index-DUq7rOxg.js:37
+FC @ index-DUq7rOxg.js:37
+(anonymous) @ index-DUq7rOxg.js:37
+Qg @ index-DUq7rOxg.js:40
+lC @ index-DUq7rOxg.js:37
+Qh @ index-DUq7rOxg.js:37
+Cg @ index-DUq7rOxg.js:37
+_A @ index-DUq7rOxg.js:37Understand this error
+VM314:1 Uncaught (in promise) SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at frame_ant.js:2:10345
+    at p (frame_ant.js:2:755)
+    at Generator.<anonymous> (frame_ant.js:2:2092)
+    at Generator.next (frame_ant.js:2:1118)
+    at t (frame_ant.js:2:7726)
+    at u (frame_ant.js:2:7929)

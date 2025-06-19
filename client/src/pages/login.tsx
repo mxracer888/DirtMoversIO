@@ -28,7 +28,7 @@ export default function Login() {
             "Accept": "application/json",
           },
           body: JSON.stringify(data),
-          credentials: 'same-origin',
+          credentials: 'include',
         });
         
         console.log("Frontend: Response status:", response.status);
