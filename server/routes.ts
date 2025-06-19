@@ -13,10 +13,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication
   app.post("/api/auth/login", async (req, res) => {
     try {
+      console.log("Login attempt with:", req.body);
       const { email, password } = loginSchema.parse(req.body);
       
       const user = await storage.getUserByEmail(email);
+      console.log("User found:", user ? "Yes" : "No");
+      
       if (!user || user.password !== password) {
+        console.log("Login failed - invalid credentials");
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
@@ -31,6 +35,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Login successful, session set:", req.session.userId);
       
       const { password: _, ...userWithoutPassword } = user;
+      console.log("Returning user data:", userWithoutPassword);
       res.json({ user: userWithoutPassword });
     } catch (error) {
       console.error("Login error:", error);
