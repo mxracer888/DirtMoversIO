@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Truck, MapPin, Clock, User, Loader2 } from 'lucide-react';
+import { Truck, MapPin, Clock, User, Loader2, AlertTriangle } from 'lucide-react';
 import L from 'leaflet';
 
 // Fix for default markers in Leaflet
@@ -31,6 +31,7 @@ interface TruckLocationMapProps {
 
 export default function TruckLocationMap({ className }: TruckLocationMapProps) {
   const [selectedTruck, setSelectedTruck] = useState<TruckLocation | null>(null);
+  const [mapLoadError, setMapLoadError] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -57,6 +58,11 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
     
     tileLayer.on('tileerror', function(error) {
       console.warn('Map tile failed to load:', error);
+      setMapLoadError(true);
+    });
+    
+    tileLayer.on('tileload', function() {
+      setMapLoadError(false);
     });
     
     tileLayer.addTo(map);
@@ -173,6 +179,48 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
             className="w-full h-96 rounded-lg border border-gray-200"
             style={{ minHeight: '384px' }}
           />
+          
+          {/* Map Fallback - Show truck list if map fails */}
+          {mapLoadError && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                <p className="text-sm text-amber-800 font-medium">Map temporarily unavailable</p>
+              </div>
+              <div className="space-y-3">
+                {truckLocations.map((truck) => (
+                  <div key={truck.truckId} className="bg-white rounded-lg p-3 border">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                          <Truck className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{truck.truckNumber}</p>
+                          <p className="text-sm text-gray-600">{truck.driverName}</p>
+                          <p className="text-xs text-gray-500">{truck.companyName}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <Badge 
+                          variant="secondary" 
+                          className={`${getStatusColor(truck.status, truck.currentActivity)} text-white`}
+                        >
+                          {getStatusLabel(truck.status, truck.currentActivity)}
+                        </Badge>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {new Date(truck.lastUpdateTime).toLocaleTimeString()}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {truck.latitude.toFixed(4)}, {truck.longitude.toFixed(4)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           
           {isLoading && (
             <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-lg">
