@@ -42,6 +42,12 @@ echo
 sudo -u postgres psql -c "ALTER USER dirtmovers PASSWORD '$DB_PASSWORD';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE dirtmovers TO dirtmovers;"
 
+# Grant schema permissions
+sudo -u postgres psql -c "GRANT ALL ON SCHEMA public TO dirtmovers;" dirtmovers
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO dirtmovers;" dirtmovers
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO dirtmovers;" dirtmovers
+sudo -u postgres psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO dirtmovers;" dirtmovers
+
 # Install application dependencies
 echo "📦 Installing application dependencies..."
 npm install
@@ -54,14 +60,39 @@ if [ ! -f .env ]; then
     # Generate random session secret
     SESSION_SECRET=$(openssl rand -base64 32)
     
-    # Update .env file with escaped special characters
-    sed -i "s|your_secure_password|$DB_PASSWORD|g" .env
-    sed -i "s|your_super_secure_session_secret_here_minimum_32_chars|$SESSION_SECRET|g" .env
+    # Update .env file safely
+    cat > .env << EOL
+# Environment Configuration for DirtMovers
+NODE_ENV=production
+PORT=3000
+
+# Database Configuration
+DATABASE_URL=postgresql://dirtmovers:${DB_PASSWORD}@localhost:5432/dirtmovers
+
+# Session Configuration
+SESSION_SECRET=${SESSION_SECRET}
+
+# PostgreSQL Connection Details
+PGHOST=localhost
+PGPORT=5432
+PGUSER=dirtmovers
+PGPASSWORD=${DB_PASSWORD}
+PGDATABASE=dirtmovers
+
+# Domain Configuration
+DOMAIN=your-domain.com
+
+# Security Settings
+CORS_ORIGIN=https://your-domain.com
+EOL
     
     echo "✅ Environment file created. Please update your domain in .env"
 else
     echo "ℹ️ Environment file already exists"
 fi
+
+# Create logs directory
+mkdir -p logs
 
 # Setup database
 echo "🗄️ Setting up database schema..."

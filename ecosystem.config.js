@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: 'dirtmovers',
     script: 'server/index.js',
-    cwd: '/mnt/nvme/DirtMoversIO',
+    cwd: process.cwd(),
     instances: 1,
     exec_mode: 'fork',
     env: {
