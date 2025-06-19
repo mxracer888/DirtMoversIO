@@ -42,10 +42,18 @@ export default function Login() {
       console.log("Login success response:", result);
       return result;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.user) {
+        console.log("Login success, invalidating queries and redirecting");
+        
+        // Wait a moment for session to propagate
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         // Invalidate auth queries to refresh user state
         queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+        
+        // Wait for query invalidation to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
         
         // Redirect based on user role
         if (data.user.role.includes("broker") || data.user.role === "admin") {
@@ -55,7 +63,7 @@ export default function Login() {
         }
         toast({
           title: "Login successful",
-          description: `Welcome back, ${data.user.email}`,
+          description: `Welcome back, ${data.user.name}`,
         });
       }
     },
