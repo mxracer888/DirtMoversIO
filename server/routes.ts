@@ -143,6 +143,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(workDay);
   });
 
+  // Get completed work days for broker EOD view
+  app.get("/api/work-days/completed", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
+        return res.status(403).json({ error: "Only brokers can view completed work days" });
+      }
+      
+      const completedWorkDays = await storage.getCompletedWorkDays();
+      res.json(completedWorkDays);
+    } catch (error) {
+      console.error("Error fetching completed work days:", error);
+      res.status(500).json({ error: "Failed to fetch completed work days" });
+    }
+  });
+
   // Get activities by work day
   app.get("/api/activities/work-day/:workDayId", async (req, res) => {
     try {

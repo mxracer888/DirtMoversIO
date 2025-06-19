@@ -49,6 +49,7 @@ export interface IStorage {
   getWorkDay(id: number): Promise<WorkDay | undefined>;
   getActiveWorkDayByDriver(driverId: number): Promise<WorkDay | undefined>;
   getActiveWorkDays(): Promise<WorkDay[]>;
+  getCompletedWorkDays(): Promise<Array<WorkDay & { driver: User; truck: Truck; job: Job; totalActivities: number }>>;
   createWorkDay(workDay: InsertWorkDay): Promise<WorkDay>;
   updateWorkDay(id: number, updates: Partial<WorkDay>): Promise<WorkDay | undefined>;
   
@@ -519,6 +520,27 @@ export class MemStorage implements IStorage {
     return Array.from(this.workDays.values()).filter(
       workDay => workDay.status === "active" || workDay.status === "completed"
     );
+  }
+
+  async getCompletedWorkDays(): Promise<Array<WorkDay & { driver: User; truck: Truck; job: Job; totalActivities: number }>> {
+    const completedWorkDays = Array.from(this.workDays.values())
+      .filter(wd => wd.status === "completed")
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return completedWorkDays.map(workDay => {
+      const driver = this.users.get(workDay.driverId);
+      const truck = this.trucks.get(workDay.truckId);
+      const job = this.jobs.get(workDay.jobId);
+      const activities = Array.from(this.activities.values()).filter(a => a.workDayId === workDay.id);
+
+      return {
+        ...workDay,
+        driver: driver!,
+        truck: truck!,
+        job: job!,
+        totalActivities: activities.length,
+      };
+    }).filter(item => item.driver && item.truck && item.job);
   }
 
   async createWorkDay(insertWorkDay: InsertWorkDay): Promise<WorkDay> {
@@ -1046,7 +1068,43 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveWorkDays(): Promise<WorkDay[]> {
-    return await db.select().from(workDays).where(eq(workDays.isActive, true));
+    return await db.select().from(workDays).where(eq(workDays.status, "active"));
+  }
+
+  async getCompletedWorkDays(): Promise<Array<WorkDay & { driver: User; truck: Truck; job: Job; totalActivities: number }>> {
+    const completedWorkDaysWithDetails = await db
+      .select({
+        workDay: workDays,
+        driver: users,
+        truck: trucks,
+        job: jobs,
+      })
+      .from(workDays)
+      .leftJoin(users, eq(workDays.driverId, users.id))
+      .leftJoin(trucks, eq(workDays.truckId, trucks.id))
+      .leftJoin(jobs, eq(workDays.jobId, jobs.id))
+      .where(eq(workDays.status, "completed"))
+      .orderBy(desc(workDays.createdAt));
+
+    const result = [];
+    for (const row of completedWorkDaysWithDetails) {
+      if (row.workDay && row.driver && row.truck && row.job) {
+        const activityCount = await db
+          .select({ count: count() })
+          .from(activities)
+          .where(eq(activities.workDayId, row.workDay.id));
+
+        result.push({
+          ...row.workDay,
+          driver: row.driver,
+          truck: row.truck,
+          job: row.job,
+          totalActivities: activityCount[0]?.count || 0,
+        });
+      }
+    }
+
+    return result;
   }
 
   async createWorkDay(insertWorkDay: InsertWorkDay): Promise<WorkDay> {
