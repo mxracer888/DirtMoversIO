@@ -12,6 +12,10 @@ import "./types";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication
   app.post("/api/login", async (req, res) => {
+    console.log("POST /api/login - Headers:", req.headers);
+    console.log("POST /api/login - Body:", req.body);
+    console.log("POST /api/login - Content-Type:", req.get('Content-Type'));
+    
     try {
       const { email, password } = loginSchema.parse(req.body);
       

@@ -19,6 +19,8 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
+      console.log("Frontend: Making login request with data:", data);
+      
       const response = await fetch("/api/login", {
         method: "POST",
         headers: {
@@ -27,9 +29,24 @@ export default function Login() {
         body: JSON.stringify(data),
       });
       
+      console.log("Frontend: Response status:", response.status);
+      console.log("Frontend: Response headers:", Object.fromEntries(response.headers.entries()));
+      
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Login failed");
+        let errorMessage = "Login failed";
+        try {
+          const error = await response.json();
+          errorMessage = error.error || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use status text
+          errorMessage = response.statusText || `HTTP ${response.status}`;
+        }
+        throw new Error(errorMessage);
+      }
+      
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server returned non-JSON response");
       }
       
       return response.json();
