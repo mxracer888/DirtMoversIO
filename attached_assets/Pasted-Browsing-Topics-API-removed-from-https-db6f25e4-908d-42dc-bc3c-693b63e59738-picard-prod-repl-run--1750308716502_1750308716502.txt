@@ -1,0 +1,77 @@
+Browsing Topics API removed from https://db6f25e4-908d-42dc-bc3c-693b63e59738.picard.prod.repl.run/ which is main frame
+/api/auth/me:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+db6f25e4-908d-42dc-bc3c-693b63e59738.picard.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://db6f25e4-908d-42dc-bc3c-693b63e59738.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+index-DSikeweI.js:298 Form submitted with: Object
+index-DSikeweI.js:298 Calling login mutation with: Object
+index-DSikeweI.js:298 === CLIENT LOGIN START ===
+index-DSikeweI.js:298 Timestamp: 2025-06-19T04:51:30.396Z
+index-DSikeweI.js:298 Login mutation starting with data: Object
+index-DSikeweI.js:298 Request URL: /api/auth/login
+index-DSikeweI.js:298 Browser cookies before request: 
+index-DSikeweI.js:298 Request body: {"email":"sarah.broker@terrafirma.com","password":"broker123"}
+index-DSikeweI.js:298 Request headers to send: Object
+index-DSikeweI.js:298 Making fetch request...
+/api/auth/login:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+index-DSikeweI.js:298 Response received!
+index-DSikeweI.js:298 Response status: 401
+index-DSikeweI.js:298 Response ok: false
+index-DSikeweI.js:298 Response headers: Headers
+index-DSikeweI.js:298 Response type: basic
+index-DSikeweI.js:298 Response url: https://db6f25e4-908d-42dc-bc3c-693b63e59738.picard.prod.repl.run/api/auth/login
+index-DSikeweI.js:298 Browser cookies after response: 
+index-DSikeweI.js:298 Response not ok, parsing error...
+index-DSikeweI.js:298 Login error response: Object
+mutationFn @ index-DSikeweI.js:298Understand this error
+index-DSikeweI.js:298 Demo login clicked for role: broker
+index-DSikeweI.js:298 Starting broker demo login
+index-DSikeweI.js:298 === CLIENT LOGIN START ===
+index-DSikeweI.js:298 Timestamp: 2025-06-19T04:51:33.380Z
+index-DSikeweI.js:298 Login mutation starting with data: Object
+index-DSikeweI.js:298 Request URL: /api/auth/login
+index-DSikeweI.js:298 Browser cookies before request: 
+index-DSikeweI.js:298 Request body: {"email":"sarah.broker@terrafirma.com","password":"broker123"}
+index-DSikeweI.js:298 Request headers to send: Object
+index-DSikeweI.js:298 Making fetch request...
+/api/auth/login:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+index-DSikeweI.js:298 Response received!
+index-DSikeweI.js:298 Response status: 401
+index-DSikeweI.js:298 Response ok: false
+index-DSikeweI.js:298 Response headers: Headers
+index-DSikeweI.js:298 Response type: basic
+index-DSikeweI.js:298 Response url: https://db6f25e4-908d-42dc-bc3c-693b63e59738.picard.prod.repl.run/api/auth/login
+index-DSikeweI.js:298 Browser cookies after response: 
+index-DSikeweI.js:298 Response not ok, parsing error...
+index-DSikeweI.js:298 Login error response: Object
+mutationFn @ index-DSikeweI.js:298Understand this error
+index-DSikeweI.js:298 Form submitted with: Object
+index-DSikeweI.js:298 Calling login mutation with: Object
+index-DSikeweI.js:298 === CLIENT LOGIN START ===
+index-DSikeweI.js:298 Timestamp: 2025-06-19T04:51:34.198Z
+index-DSikeweI.js:298 Login mutation starting with data: Object
+index-DSikeweI.js:298 Request URL: /api/auth/login
+index-DSikeweI.js:298 Browser cookies before request: 
+index-DSikeweI.js:298 Request body: {"email":"sarah.broker@terrafirma.com","password":"broker123"}
+index-DSikeweI.js:298 Request headers to send: Object
+index-DSikeweI.js:298 Making fetch request...
+/api/auth/login:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+index-DSikeweI.js:298 Response received!
+index-DSikeweI.js:298 Response status: 401
+index-DSikeweI.js:298 Response ok: false
+index-DSikeweI.js:298 Response headers: Headers
+index-DSikeweI.js:298 Response type: basic
+index-DSikeweI.js:298 Response url: https://db6f25e4-908d-42dc-bc3c-693b63e59738.picard.prod.repl.run/api/auth/login
+index-DSikeweI.js:298 Browser cookies after response: 
+index-DSikeweI.js:298 Response not ok, parsing error...
+index-DSikeweI.js:298

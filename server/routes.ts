@@ -43,10 +43,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUserByEmail(email);
       console.log("User lookup result:", user ? `Found user ID ${user.id}` : "No user found");
       
-      if (!user || user.password !== password) {
-        console.log("Login failed - invalid credentials for:", email);
+      if (!user) {
+        console.log("Login failed - user not found for:", email);
+        return res.status(401).json({ error: "Invalid email or password" });
+      }
+
+      // Import bcrypt for password comparison
+      const bcrypt = await import('bcrypt');
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      
+      if (!passwordMatch) {
+        console.log("Login failed - invalid password for:", email);
         console.log("User exists:", !!user);
-        console.log("Password match:", user ? user.password === password : "N/A");
+        console.log("Password match:", passwordMatch);
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
