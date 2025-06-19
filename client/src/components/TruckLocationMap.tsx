@@ -35,6 +35,7 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   // Fetch truck locations from API
   const { data: truckLocations = [], isLoading, error } = useQuery<TruckLocation[]>({
@@ -42,34 +43,79 @@ export default function TruckLocationMap({ className }: TruckLocationMapProps) {
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
-  // Initialize map
+  // Force map resize when truck locations are loaded
+  useEffect(() => {
+    if (mapInstanceRef.current && truckLocations.length > 0) {
+      setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+      }, 250);
+    }
+  }, [truckLocations]);
+
+  // Initialize map with proper timing
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
-    // Create map centered on Salt Lake City
-    const map = L.map(mapRef.current).setView([40.7608, -111.8910], 10);
+    // Delay map initialization to ensure container is properly sized
+    const initializeMap = () => {
+      if (!mapRef.current) return;
 
-    // Add tile layer with error handling
-    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 18,
-      errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2NjY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1hcCBUaWxlIEVycm9yPC90ZXh0Pjwvc3ZnPg=='
-    });
-    
-    tileLayer.on('tileerror', function(error) {
-      console.warn('Map tile failed to load:', error);
-      setMapLoadError(true);
-    });
-    
-    tileLayer.on('tileload', function() {
-      setMapLoadError(false);
-    });
-    
-    tileLayer.addTo(map);
+      // Check if container is visible and has dimensions
+      const rect = mapRef.current.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) {
+        // Retry if container not ready
+        setTimeout(initializeMap, 100);
+        return;
+      }
 
-    mapInstanceRef.current = map;
+      // Create map centered on Salt Lake City
+      const map = L.map(mapRef.current).setView([40.7608, -111.8910], 10);
+
+      // Add tile layer with error handling
+      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 18,
+        errorTileUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2NjY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1hcCBUaWxlIEVycm9yPC90ZXh0Pjwvc3ZnPg=='
+      });
+      
+      tileLayer.on('tileerror', function(error) {
+        console.warn('Map tile failed to load:', error);
+        setMapLoadError(true);
+      });
+      
+      tileLayer.on('tileload', function() {
+        setMapLoadError(false);
+      });
+      
+      tileLayer.addTo(map);
+
+      // Force map to resize and invalidate size after initialization
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+
+      mapInstanceRef.current = map;
+
+      // Set up ResizeObserver to handle container size changes
+      if (mapRef.current && window.ResizeObserver) {
+        resizeObserverRef.current = new ResizeObserver(() => {
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.invalidateSize();
+          }
+        });
+        resizeObserverRef.current.observe(mapRef.current);
+      }
+    };
+
+    // Use setTimeout to ensure DOM is fully rendered
+    const timer = setTimeout(initializeMap, 50);
 
     return () => {
+      clearTimeout(timer);
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
