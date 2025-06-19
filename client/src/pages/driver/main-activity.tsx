@@ -176,72 +176,55 @@ export default function MainActivity() {
     avgCycleTime: calculateAvgCycleTime(),
   };
 
-  // Initialize state from activities and persist state
+  // Initialize state from activities - simplified to prevent React error #310
   useEffect(() => {
-    if (validActivities.length > 0) {
-      // Sort activities by timestamp to get the actual last activity
+    if (!validActivities || validActivities.length === 0) {
+      setCurrentStep("arrived_at_load_site");
+      setLoadNumber(1);
+      return;
+    }
+
+    try {
       const sortedActivities = [...validActivities].sort((a, b) => 
         new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       );
       const lastActivity = sortedActivities[sortedActivities.length - 1];
       
-      console.log("Last activity:", lastActivity.activityType);
+      if (!lastActivity) return;
       
-      // Check if last activity is break/breakdown related
+      // Handle break states
       if (lastActivity.activityType === "break" || lastActivity.activityType === "breakdown") {
         setCurrentBreakState(lastActivity.activityType);
-        // Don't change currentStep when in break mode
         return;
       }
       
-      // Check if we just finished driving after a break
-      if (lastActivity.activityType === "driving") {
-        // Find the activity before the most recent break/breakdown
-        const breakIndex = sortedActivities.findLastIndex(a => 
-          a.activityType === "break" || a.activityType === "breakdown"
-        );
-        if (breakIndex >= 0) {
-          // There was a recent break, look at the activity before it
-          const preBreakIndex = breakIndex - 1;
-          if (preBreakIndex >= 0) {
-            const preBreakActivity = sortedActivities[preBreakIndex];
-            const nextStep = getActivityFlow(preBreakActivity.activityType as any);
-            console.log("Resuming from break - setting step to:", nextStep);
-            setCurrentStep(nextStep);
-            setCurrentBreakState(null); // Clear break state
-            return;
-          }
-        }
+      // Clear break state and set next activity step
+      setCurrentBreakState(null);
+      const nextStep = getActivityFlow(lastActivity.activityType as any);
+      if (nextStep) {
+        setCurrentStep(nextStep);
       }
       
-      // Normal flow - set next step based on last activity  
-      const nextStep = getActivityFlow(lastActivity.activityType as any);
-      setCurrentStep(nextStep);
-      
-      // Set load number based on load cycle logic
+      // Set load number
       const loadActivities = validActivities.filter(a => 
-        ["arrived_at_load_site", "loaded_with_material", "arrived_at_dump_site", "dumped_material"].includes(a.activityType)
+        a.activityType && ["arrived_at_load_site", "loaded_with_material", "arrived_at_dump_site", "dumped_material"].includes(a.activityType)
       );
       
-      if (loadActivities.length === 0) {
-        setLoadNumber(1);
-      } else {
-        // Find the highest load number from existing activities
+      if (loadActivities.length > 0) {
         const maxLoadNumber = Math.max(...loadActivities.map(a => a.loadNumber || 1));
-        
-        // Check if current load cycle is complete (has dumped_material)
         const currentLoadComplete = loadActivities.some(a => 
           a.loadNumber === maxLoadNumber && a.activityType === "dumped_material"
         );
-        
         setLoadNumber(currentLoadComplete ? maxLoadNumber + 1 : maxLoadNumber);
+      } else {
+        setLoadNumber(1);
       }
-    } else {
-      // Reset to first step if no activities
+    } catch (error) {
+      console.error("Error in activity state update:", error);
       setCurrentStep("arrived_at_load_site");
       setLoadNumber(1);
     }
-  }, [validActivities]);
+  }, [validActivities.length]);
 
   // Redirect logic handled above in main useEffect
 

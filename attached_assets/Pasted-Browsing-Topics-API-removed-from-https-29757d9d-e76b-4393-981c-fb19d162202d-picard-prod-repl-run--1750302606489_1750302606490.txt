@@ -1,0 +1,39 @@
+Browsing Topics API removed from https://29757d9d-e76b-4393-981c-fb19d162202d.picard.prod.repl.run/ which is main frame
+/api/auth/me:1 
+            
+            
+           Failed to load resource: the server responded with a status of 401 ()Understand this error
+29757d9d-e76b-4393-981c-fb19d162202d.picard.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://29757d9d-e76b-4393-981c-fb19d162202d.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+index-Bx64psdr.js:293 Frontend: Making login request with data: Object
+index-Bx64psdr.js:293 Frontend: Response status: 200
+index-Bx64psdr.js:293 Frontend: Response headers: Object
+index-Bx64psdr.js:333 Button clicked
+index-Bx64psdr.js:333 Form state: Object
+index-Bx64psdr.js:333 Form values: Object
+index-Bx64psdr.js:333 Form submitted with data: Object
+index-Bx64psdr.js:333 Form errors: Object
+index-Bx64psdr.js:333 Forcing submission with: Object
+index-Bx64psdr.js:333 Sending work day data: Object
+index-Bx64psdr.js:40 Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at pr (index-Bx64psdr.js:38:17615)
+    at Sf (index-Bx64psdr.js:38:20561)
+    at Object.Ug [as useEffect] (index-Bx64psdr.js:38:20819)
+    at He.useEffect (index-Bx64psdr.js:9:5880)
+    at j6 (index-Bx64psdr.js:337:37939)
+    at $g (index-Bx64psdr.js:38:17018)
+    at lp (index-Bx64psdr.js:40:3139)
+    at FT (index-Bx64psdr.js:40:44833)
+    at RT (index-Bx64psdr.js:40:39790)
+    at IR (index-Bx64psdr.js:40:39718)
+ap @ index-Bx64psdr.js:40Understand this error
+index-Bx64psdr.js:38 Uncaught Error: Minified React error #310; visit https://reactjs.org/docs/error-decoder.html?invariant=310 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    at pr (index-Bx64psdr.js:38:17615)
+    at Sf (index-Bx64psdr.js:38:20561)
+    at Object.Ug [as useEffect] (index-Bx64psdr.js:38:20819)
+    at He.useEffect (index-Bx64psdr.js:9:5880)
+    at j6 (index-Bx64psdr.js:337:37939)
+    at $g (index-Bx64psdr.js:38:17018)
+    at lp (index-Bx64psdr.js:40:3139)
+    at FT (index-Bx64psdr.js:40:44833)
+    at RT (index-Bx64psdr.js:40:39790)
+    at IR (index-Bx64psdr.js:40:39718)
