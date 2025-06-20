@@ -1,6 +1,6 @@
 import { useLocation } from "wouter";
 import { useMutation } from "@tanstack/react-query";
-import { X, Home, History, LogOut, Settings, BarChart3, Users, FileText } from "lucide-react";
+import { X, Home, History, LogOut, Settings, BarChart3, Users, FileText, Truck, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -90,7 +90,41 @@ export default function MenuOverlay({ isOpen, onClose, userRole }: MenuOverlayPr
     },
   ];
 
-  const menuItems = userRole === "driver" ? driverMenuItems : brokerMenuItems;
+  const leasorMenuItems = [
+    {
+      icon: BarChart3,
+      label: "Dashboard",
+      path: "/leasor/dashboard",
+    },
+    {
+      icon: FileText,
+      label: "Dispatches",
+      path: "/leasor/dispatches",
+    },
+    {
+      icon: Truck,
+      label: "Fleet",
+      path: "/leasor/fleet",
+    },
+    {
+      icon: UserPlus,
+      label: "Drivers",
+      path: "/leasor/drivers",
+    },
+    {
+      icon: Settings,
+      label: "Settings",
+      path: "/settings",
+    },
+  ];
+
+  const getMenuItems = () => {
+    if (userRole === "driver" || userRole === "leasor_driver") return driverMenuItems;
+    if (userRole === "leasor_admin") return leasorMenuItems;
+    return brokerMenuItems;
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose}>

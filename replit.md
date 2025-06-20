@@ -42,6 +42,13 @@ The application follows a full-stack TypeScript architecture with the following 
 - **Employee Management**: User role and permission management
 - **Analytics Dashboard**: Performance metrics and efficiency tracking
 
+### Lease Hauler Portal (`client/src/pages/leasor/`)
+- **LH Dashboard**: Real-time fleet and driver metrics for intermediary companies
+- **Dispatch Assignment**: Receive and assign dispatches from brokers to own fleet
+- **Fleet Management**: Complete CRUD operations for truck inventory
+- **Driver Management**: Invitation system and status tracking for leasor drivers
+- **Role-based Access**: Separate leasor_admin and leasor_driver user roles
+
 ### Activity State Management (`client/src/lib/activity-states.ts`)
 - **Four-Stage Workflow**: Complete dump truck operation cycle
 - **State Transitions**: Enforced sequential activity progression
@@ -113,6 +120,7 @@ The application follows a full-stack TypeScript architecture with the following 
 - June 19, 2025: Fixed PM2 script path configuration and created comprehensive startup script with build automation
 - June 19, 2025: Switched from Neon serverless driver to standard PostgreSQL driver for local database connections, resolving SSL certificate errors
 - June 19, 2025: Fixed demo authentication passwords with proper bcrypt hashing - demo logins now functional for sarah.broker@terrafirma.com and mike.johnson@mountaintrucking.com
+- June 20, 2025: Complete Lease Hauler Portal implementation - added intermediary dispatch management system with dashboard, fleet tracking, driver management, and role-based access control for leasor_admin and leasor_driver roles
 
 ## User Preferences
 

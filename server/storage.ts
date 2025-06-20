@@ -1039,6 +1039,40 @@ async function initializeDemoData() {
     isActive: true
   });
 
+  // Create demo leasor admin user
+  await db.insert(users).values({
+    email: "admin@mountaintrucking.com",
+    password: "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewTyaVz4xVJO6m/K", // leasor123
+    name: "Mountain Trucking Admin",
+    role: "leasor_admin",
+    companyId: leasorCompany[0].id,
+    brokerId: null,
+    permissions: "admin",
+    isActive: true
+  });
+
+  // Create demo trucks for the leasor company
+  await db.insert(trucks).values([
+    {
+      number: "MT-001",
+      type: "Side Dump",
+      companyId: leasorCompany[0].id,
+      isActive: true
+    },
+    {
+      number: "MT-002", 
+      type: "End Dump",
+      companyId: leasorCompany[0].id,
+      isActive: true
+    },
+    {
+      number: "MT-003",
+      type: "Tri-Axle",
+      companyId: leasorCompany[0].id,
+      isActive: false
+    }
+  ]);
+
   // Create broker-leasor relationship
   await db.insert(brokerLeasorRelationships).values({
     brokerId: brokerCompany[0].id,
