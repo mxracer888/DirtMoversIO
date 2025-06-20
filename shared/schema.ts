@@ -138,7 +138,18 @@ export const dispatches = pgTable("dispatches", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Dispatch assignments to trucks/drivers
+// Company-level dispatch assignments (broker assigns to lease hauler company)
+export const companyDispatchAssignments = pgTable("company_dispatch_assignments", {
+  id: serial("id").primaryKey(),
+  dispatchId: integer("dispatch_id").notNull(),
+  companyId: integer("company_id").notNull(), // Lease hauler company receiving the assignment
+  quantity: integer("quantity").notNull(), // Number of trucks requested
+  assignedBy: integer("assigned_by").notNull(), // Broker user ID who made the assignment
+  status: text("status").default("pending_lh_assignment"), // pending_lh_assignment, assigned_to_trucks, in_progress, completed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Truck-level dispatch assignments (lease hauler assigns to specific trucks/drivers)
 export const dispatchAssignments = pgTable("dispatch_assignments", {
   id: serial("id").primaryKey(),
   dispatchId: integer("dispatch_id").notNull(),
@@ -255,6 +266,11 @@ export const insertDispatchSchema = createInsertSchema(dispatches).omit({
 }).extend({
   date: z.string(),
   startTime: z.string(),
+});
+
+export const insertCompanyDispatchAssignmentSchema = createInsertSchema(companyDispatchAssignments).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertDispatchAssignmentSchema = createInsertSchema(dispatchAssignments).omit({

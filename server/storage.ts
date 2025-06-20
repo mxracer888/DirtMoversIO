@@ -1,6 +1,6 @@
 import { 
   users, trucks, jobs, customers, materials, locations, workDays, activities, companies,
-  dispatches, dispatchAssignments, brokerLeasorRelationships, reusableData,
+  dispatches, dispatchAssignments, companyDispatchAssignments, brokerLeasorRelationships, reusableData,
   type User, type InsertUser, type Truck, type InsertTruck, type Job, type InsertJob,
   type Customer, type InsertCustomer, type Material, type InsertMaterial, 
   type Location, type InsertLocation, type WorkDay, type InsertWorkDay,
@@ -10,7 +10,7 @@ import {
   type ReusableData, type InsertReusableData
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, asc, count } from "drizzle-orm";
+import { eq, and, desc, asc, count, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -1766,8 +1766,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getDispatchesByCompany(companyId: number): Promise<Dispatch[]> {
-    // For leasor companies, get dispatches that have been assigned to their trucks
-    const result = await db.select({
+    // For leasor companies, get dispatches that have been assigned to their company
+    // First check for company-based assignments in dispatch_assignments table where companyId matches
+    const companyAssignments = await db.select({
       dispatch: dispatches
     })
     .from(dispatchAssignments)
@@ -1776,7 +1777,29 @@ export class DatabaseStorage implements IStorage {
     .where(eq(trucks.companyId, companyId))
     .orderBy(desc(dispatches.createdAt));
 
-    return result.map(row => row.dispatch);
+    // Also check for dispatches directly assigned to the company via the new company assignment system
+    // We need to look for dispatches with status 'assigned_to_lh' where the assignment was made to this company
+    const directAssignments = await db.select()
+    .from(dispatches)
+    .where(and(
+      eq(dispatches.status, 'assigned_to_lh'),
+      // We'll need to track which company was assigned in the dispatch record or a separate table
+      // For now, let's check if there are any trucks from this company that could handle the dispatch
+      sql`EXISTS (
+        SELECT 1 FROM ${trucks} 
+        WHERE ${trucks.companyId} = ${companyId} 
+        AND ${trucks.type} = ${dispatches.truckType}
+      )`
+    ))
+    .orderBy(desc(dispatches.createdAt));
+
+    // Combine and deduplicate results
+    const allDispatches = [...companyAssignments.map(row => row.dispatch), ...directAssignments];
+    const uniqueDispatches = allDispatches.filter((dispatch, index, array) => 
+      array.findIndex(d => d.id === dispatch.id) === index
+    );
+
+    return uniqueDispatches;
   }
 
   async getActivitiesByCompany(companyId: number, date: Date): Promise<Activity[]> {
