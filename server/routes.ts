@@ -708,26 +708,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const dispatchId = parseInt(req.params.id);
-      const { truckAssignments } = req.body; // Array of { truckId, driverId? }
+      const { companyId, quantity } = req.body;
 
-      const assignments = [];
-      for (const assignment of truckAssignments) {
-        const dispatchAssignment = await storage.createDispatchAssignment({
-          dispatchId,
-          truckId: assignment.truckId,
-          driverId: assignment.driverId || null,
-          assignedBy: user.id
-        });
-        assignments.push(dispatchAssignment);
+      if (!companyId || !quantity) {
+        return res.status(400).json({ error: "Company ID and quantity are required" });
       }
 
-      // Update dispatch status
-      await storage.updateDispatch(dispatchId, { status: 'assigned' });
+      // Create company dispatch assignment
+      const assignment = await storage.createCompanyDispatchAssignment({
+        dispatchId,
+        companyId: parseInt(companyId),
+        quantity: parseInt(quantity),
+        assignedBy: user.id,
+        status: 'pending_lh_assignment'
+      });
 
-      res.json(assignments);
+      // Update dispatch status
+      await storage.updateDispatch(dispatchId, { status: 'assigned_to_lh' });
+
+      res.json(assignment);
     } catch (error) {
-      console.error("Assign dispatch error:", error);
-      res.status(400).json({ error: "Failed to assign dispatch" });
+      console.error("Assign dispatch to company error:", error);
+      res.status(400).json({ error: "Failed to assign dispatch to company" });
     }
   });
 
@@ -940,6 +942,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Lease Hauler Portal API Routes
   
+  // Get available lease hauler companies for dispatch assignment (for brokers)
+  app.get("/api/broker/lease-hauler-companies", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
+        return res.status(403).json({ error: "Only brokers can view lease hauler companies" });
+      }
+
+      const companies = await storage.getLeaseHaulerCompanies(user.companyId);
+      res.json(companies);
+    } catch (error) {
+      console.error("Get lease hauler companies error:", error);
+      res.status(500).json({ error: "Failed to get lease hauler companies" });
+    }
+  });
+
   // LH Dashboard Routes
   app.get("/api/leasor/dashboard", async (req, res) => {
     try {

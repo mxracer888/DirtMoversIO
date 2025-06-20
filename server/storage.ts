@@ -1536,6 +1536,27 @@ export class DatabaseStorage implements IStorage {
     return assignment;
   }
 
+  async createCompanyDispatchAssignment(data: {
+    dispatchId: number;
+    companyId: number;
+    quantity: number;
+    assignedBy: number;
+    status: string;
+  }): Promise<any> {
+    // For now, create a placeholder assignment that the lease hauler will see
+    // In a real implementation, this would go to a separate table
+    const assignment = {
+      id: Date.now(), // temporary ID
+      dispatchId: data.dispatchId,
+      companyId: data.companyId,
+      quantity: data.quantity,
+      assignedBy: data.assignedBy,
+      status: data.status,
+      createdAt: new Date()
+    };
+    return assignment;
+  }
+
   async updateDispatchAssignment(id: number, updates: Partial<DispatchAssignment>): Promise<DispatchAssignment | undefined> {
     const [assignment] = await db.update(dispatchAssignments)
       .set(updates)
@@ -1618,6 +1639,47 @@ export class DatabaseStorage implements IStorage {
     await db.update(reusableData)
       .set({ usageCount: 1 })
       .where(eq(reusableData.id, id));
+  }
+
+  // Get lease hauler companies that work with this broker
+  async getLeaseHaulerCompanies(brokerId: number): Promise<Array<Company & { availableTrucks: number; truckTypes: string[] }>> {
+    // Get companies that have active relationships with this broker and have trucks
+    const result = await db.select({
+      id: companies.id,
+      name: companies.name,
+      type: companies.type,
+      createdAt: companies.createdAt
+    })
+    .from(companies)
+    .innerJoin(brokerLeasorRelationships, eq(companies.id, brokerLeasorRelationships.leasorId))
+    .where(and(
+      eq(brokerLeasorRelationships.brokerId, brokerId),
+      eq(brokerLeasorRelationships.isActive, true),
+      eq(companies.type, 'leasor')
+    ));
+
+    // For each company, get truck count and types
+    const companiesWithTrucks = await Promise.all(
+      result.map(async (company) => {
+        const companyTrucks = await db.select({
+          type: trucks.type,
+          isActive: trucks.isActive
+        })
+        .from(trucks)
+        .where(eq(trucks.companyId, company.id));
+
+        const activeTrucks = companyTrucks.filter(t => t.isActive);
+        const truckTypes = [...new Set(activeTrucks.map(t => t.type))];
+
+        return {
+          ...company,
+          availableTrucks: activeTrucks.length,
+          truckTypes
+        };
+      })
+    );
+
+    return companiesWithTrucks.filter(c => c.availableTrucks > 0);
   }
 
   // Role-based access helpers
