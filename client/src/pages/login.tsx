@@ -6,13 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Truck, BarChart3, User, Lock, MapPin } from "lucide-react";
+import { Truck, BarChart3, User, Lock, MapPin, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const [selectedRole, setSelectedRole] = useState<"driver" | "broker" | null>(null);
+  const [selectedRole, setSelectedRole] = useState<"driver" | "broker" | "leasor" | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { toast } = useToast();
@@ -79,6 +79,8 @@ export default function Login() {
         // Redirect based on user role
         if (data.user.role.includes("broker") || data.user.role === "admin") {
           setLocation("/broker/dashboard");
+        } else if (data.user.role.includes("leasor")) {
+          setLocation("/leasor/dashboard");
         } else {
           setLocation("/driver/start-day");
         }
@@ -97,16 +99,19 @@ export default function Login() {
     },
   });
 
-  const handleRoleSelect = (role: "driver" | "broker") => {
+  const handleRoleSelect = (role: "driver" | "broker" | "leasor") => {
     setSelectedRole(role);
     
     // Pre-fill demo credentials based on role
     if (role === "driver") {
       setEmail("mike.johnson@mountaintrucking.com");
       setPassword("driver123");
-    } else {
+    } else if (role === "broker") {
       setEmail("sarah.broker@terrafirma.com");
       setPassword("broker123");
+    } else if (role === "leasor") {
+      setEmail("admin@mountaintrucking.com");
+      setPassword("leasor123");
     }
   };
 
@@ -138,11 +143,17 @@ export default function Login() {
         email: "mike.johnson@mountaintrucking.com", 
         password: "driver123" 
       });
-    } else {
+    } else if (selectedRole === "broker") {
       console.log("Starting broker demo login");
       loginMutation.mutate({ 
         email: "sarah.broker@terrafirma.com", 
         password: "broker123" 
+      });
+    } else if (selectedRole === "leasor") {
+      console.log("Starting leasor demo login");
+      loginMutation.mutate({ 
+        email: "admin@mountaintrucking.com", 
+        password: "leasor123" 
       });
     }
   };
@@ -163,7 +174,7 @@ export default function Login() {
 
         {!selectedRole ? (
           /* Role Selection */
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <Card 
               className="cursor-pointer hover:shadow-lg transition-all duration-200 border-2 hover:border-primary"
               onClick={() => handleRoleSelect("driver")}
@@ -231,6 +242,40 @@ export default function Login() {
                 </Button>
               </CardContent>
             </Card>
+
+            <Card 
+              className="cursor-pointer hover:shadow-lg transition-all duration-200 border-2 hover:border-primary"
+              onClick={() => handleRoleSelect("leasor")}
+            >
+              <CardHeader className="text-center pb-4">
+                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                  <Building2 className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-2xl">Lease Hauler Portal</CardTitle>
+                <p className="text-gray-600">
+                  Manage dispatch assignments, fleet operations, and driver coordination
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <BarChart3 className="h-4 w-4 mr-2 text-green-600" />
+                    Dispatch management system
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Truck className="h-4 w-4 mr-2 text-blue-600" />
+                    Fleet tracking and management
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <User className="h-4 w-4 mr-2 text-purple-600" />
+                    Driver management and assignment
+                  </div>
+                </div>
+                <Button className="w-full mt-6" size="lg">
+                  Continue as Lease Hauler
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         ) : (
           /* Login Form */
@@ -239,16 +284,18 @@ export default function Login() {
               <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 {selectedRole === "driver" ? (
                   <Truck className="h-6 w-6 text-primary" />
-                ) : (
+                ) : selectedRole === "broker" ? (
                   <BarChart3 className="h-6 w-6 text-primary" />
+                ) : (
+                  <Building2 className="h-6 w-6 text-primary" />
                 )}
               </div>
               <CardTitle className="text-xl">
-                {selectedRole === "driver" ? "Driver Login" : "Broker Login"}
+                {selectedRole === "driver" ? "Driver Login" : selectedRole === "broker" ? "Broker Login" : "Lease Hauler Login"}
               </CardTitle>
               <div className="flex justify-center">
                 <Badge variant="secondary" className="mt-2">
-                  {selectedRole === "driver" ? "Driver Portal" : "Broker Dashboard"}
+                  {selectedRole === "driver" ? "Driver Portal" : selectedRole === "broker" ? "Broker Dashboard" : "Lease Hauler Portal"}
                 </Badge>
               </div>
             </CardHeader>
@@ -302,7 +349,7 @@ export default function Login() {
                     onClick={handleDemoLogin}
                     disabled={loginMutation.isPending}
                   >
-                    Demo Login ({selectedRole === "driver" ? "Driver" : "Broker"})
+                    Demo Login ({selectedRole === "driver" ? "Driver" : selectedRole === "broker" ? "Broker" : "Lease Hauler"})
                   </Button>
                 </div>
               </form>
