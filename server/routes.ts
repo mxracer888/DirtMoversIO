@@ -591,6 +591,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Lease Hauler Companies API
+  app.get("/api/broker/lease-hauler-companies", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || (user.role !== 'broker' && user.role !== 'broker_admin')) {
+        return res.status(403).json({ error: "Only brokers can access lease hauler companies" });
+      }
+
+      const companies = await storage.getLeaseHaulerCompanies(user.companyId);
+      res.json(companies);
+    } catch (error) {
+      console.error("Get lease hauler companies error:", error);
+      res.status(500).json({ error: "Failed to get lease hauler companies" });
+    }
+  });
+
   // Dispatches API Routes
   app.get("/api/dispatches", async (req, res) => {
     try {

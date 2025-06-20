@@ -110,7 +110,13 @@ export default function DispatchesPage() {
     enabled: !!user,
   });
 
-  const { data: leaseHaulerCompanies = [], isLoading: companiesLoading } = useQuery({
+  const { data: leaseHaulerCompanies = [], isLoading: companiesLoading } = useQuery<Array<{
+    id: number;
+    name: string;
+    type: string;
+    availableTrucks: number;
+    truckTypes: string[];
+  }>>({
     queryKey: ["/api/broker/lease-hauler-companies"],
     enabled: !!user,
   });
@@ -733,7 +739,7 @@ export default function DispatchesPage() {
                             <SelectValue placeholder="Choose a lease hauler company" />
                           </SelectTrigger>
                           <SelectContent>
-                            {leaseHaulerCompanies.map((company: any) => (
+                            {leaseHaulerCompanies.map((company) => (
                               <SelectItem key={company.id} value={company.id.toString()}>
                                 <div className="flex justify-between items-center w-full">
                                   <span>{company.name}</span>
