@@ -607,14 +607,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Lease Hauler Companies API
-  app.get("/api/broker/lease-hauler-companies", async (req, res) => {
+  app.get("/api/broker/lease-hauler-companies", requireAuth, async (req: any, res) => {
     try {
-      if (!req.session?.userId) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-
-      const user = await storage.getUser(req.session.userId);
-      if (!user || (user.role !== 'broker' && user.role !== 'broker_admin')) {
+      const user = req.user;
+      if (user.role !== 'broker' && user.role !== 'broker_admin') {
         return res.status(403).json({ error: "Only brokers can access lease hauler companies" });
       }
 
@@ -701,18 +697,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/dispatches", async (req, res) => {
+  app.post("/api/dispatches", requireAuth, async (req: any, res) => {
     try {
       console.log("=== CREATE DISPATCH REQUEST ===");
       console.log("Session userId:", req.session?.userId);
       console.log("Request body:", JSON.stringify(req.body, null, 2));
       
-      if (!req.session?.userId) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-
-      const user = await storage.getUser(req.session.userId);
-      if (!user || (!user.role.includes('broker') && user.role !== 'broker_admin')) {
+      const user = req.user;
+      if (!user.role.includes('broker') && user.role !== 'broker_admin') {
         return res.status(403).json({ error: "Only brokers can create dispatches" });
       }
 
@@ -787,14 +779,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/dispatches/:id/assign", async (req, res) => {
+  app.post("/api/dispatches/:id/assign", requireAuth, async (req: any, res) => {
     try {
-      if (!req.session?.userId) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-
-      const user = await storage.getUser(req.session.userId);
-      if (!user || user.role !== 'broker') {
+      const user = req.user;
+      if (user.role !== 'broker') {
         return res.status(403).json({ error: "Only brokers can assign dispatches" });
       }
 
