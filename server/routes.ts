@@ -646,10 +646,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         
         // Get all dispatches that have company assignments for this leasor's company
-        const allDispatches = await storage.getAllDispatches();
-        console.log("📋 ALL DISPATCHES FOUND:", allDispatches.length);
+        const allDispatchesWithAssignments = await storage.getAllDispatches();
+        console.log("📋 ALL DISPATCHES FOUND:", allDispatchesWithAssignments.length);
         
-        dispatches = allDispatches.filter(dispatch => {
+        dispatches = allDispatchesWithAssignments.filter((dispatch: any) => {
           const hasCompanyAssignment = dispatch.companyDispatchAssignments?.some(
             (assignment: any) => assignment.companyId === user.companyId
           );
@@ -664,15 +664,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           return hasCompanyAssignment;
+        }).map((dispatch: any) => {
+          // Return dispatch without the extra property to match Dispatch type
+          const { companyDispatchAssignments, ...cleanDispatch } = dispatch;
+          return cleanDispatch;
         });
         
         console.log("✅ FILTERED DISPATCHES FOR LEASOR:", {
           totalFound: dispatches.length,
-          dispatches: dispatches.map(d => ({
+          dispatches: dispatches.map((d: any) => ({
             id: d.id,
             jobName: d.jobName,
-            status: d.status,
-            companyAssignments: d.companyDispatchAssignments?.length || 0
+            status: d.status
           }))
         });
       } else if (user.role === 'driver') {
