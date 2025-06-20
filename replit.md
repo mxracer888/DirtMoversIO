@@ -121,6 +121,7 @@ The application follows a full-stack TypeScript architecture with the following 
 - June 19, 2025: Switched from Neon serverless driver to standard PostgreSQL driver for local database connections, resolving SSL certificate errors
 - June 19, 2025: Fixed demo authentication passwords with proper bcrypt hashing - demo logins now functional for sarah.broker@terrafirma.com and mike.johnson@mountaintrucking.com
 - June 20, 2025: Complete Lease Hauler Portal implementation - added intermediary dispatch management system with dashboard, fleet tracking, driver management, and role-based access control for leasor_admin and leasor_driver roles
+- June 20, 2025: MAJOR BREAKTHROUGH - Company-based dispatch assignment system fully operational with end-to-end filtering: brokers can assign dispatches to specific lease hauler companies, and lease haulers see only dispatches assigned to their company
 
 ## User Preferences
 
