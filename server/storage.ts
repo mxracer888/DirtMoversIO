@@ -982,6 +982,69 @@ export class MemStorage implements IStorage {
   async getCompanyById(id: number): Promise<Company | undefined> {
     return this.companies.get(id);
   }
+
+  // Lease Hauler Portal method implementations
+  async getUsersByCompany(companyId: number): Promise<User[]> {
+    return Array.from(this.users.values()).filter(user => user.companyId === companyId);
+  }
+
+  async getDispatchesByCompany(companyId: number): Promise<Dispatch[]> {
+    return Array.from(this.dispatches.values()).filter(dispatch => dispatch.brokerId === companyId);
+  }
+
+  async getActivitiesByCompany(companyId: number, date: Date): Promise<Activity[]> {
+    const companyTrucks = Array.from(this.trucks.values()).filter(truck => truck.companyId === companyId);
+    const truckIds = companyTrucks.map(t => t.id);
+    const companyWorkDays = Array.from(this.workDays.values()).filter(wd => truckIds.includes(wd.truckId));
+    const workDayIds = companyWorkDays.map(wd => wd.id);
+    return Array.from(this.activities.values()).filter(activity => workDayIds.includes(activity.workDayId));
+  }
+
+  async updateTruck(id: number, updates: Partial<Truck>): Promise<Truck | undefined> {
+    if (this.trucks.has(id)) {
+      const existing = this.trucks.get(id)!;
+      const updated = { ...existing, ...updates };
+      this.trucks.set(id, updated);
+      return updated;
+    }
+    return undefined;
+  }
+
+  async deleteTruck(id: number): Promise<void> {
+    this.trucks.delete(id);
+  }
+
+  async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
+    if (this.users.has(id)) {
+      const existing = this.users.get(id)!;
+      const updated = { ...existing, ...updates };
+      this.users.set(id, updated);
+      return updated;
+    }
+    return undefined;
+  }
+
+  async createUserInvitation(invitation: {
+    email: string;
+    name: string;
+    role: string;
+    companyId: number;
+    invitedBy: number;
+  }): Promise<any> {
+    const id = Date.now();
+    const inv = {
+      id,
+      ...invitation,
+      createdAt: new Date(),
+      status: 'pending'
+    };
+    this.userInvitations.set(id, inv);
+    return inv;
+  }
+
+  async getPendingInvitationsByCompany(companyId: number): Promise<any[]> {
+    return Array.from(this.userInvitations.values()).filter(inv => inv.companyId === companyId && inv.status === 'pending');
+  }
 }
 
 // Initialize demo data in database on first run
