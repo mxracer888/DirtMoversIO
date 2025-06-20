@@ -9,7 +9,7 @@ Your DirtMovers application is complete with Raspberry Pi deployment configurati
    rm -f .git/index.lock .git/config.lock
    git remote add origin https://github.com/mxracer888/DirtMoversIO.git
    git add .
-   git commit -m "Fixed port configuration to use environment variable"
+   git commit -m "Added demo password fix script for authentication issues"
    git push -u origin main
    ```
 
