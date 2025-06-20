@@ -66,6 +66,9 @@ export interface IStorage {
   updateDispatch(id: number, updates: Partial<Dispatch>): Promise<Dispatch | undefined>;
   getDispatchesByCustomer(customerId: number): Promise<Dispatch[]>;
   
+  // Company Dispatch Assignments
+  createCompanyDispatchAssignment(assignment: { dispatchId: number; companyId: number; quantity: number; assignedBy: number }): Promise<any>;
+  
   // Dispatch Assignments
   getDispatchAssignments(dispatchId?: number, driverId?: number): Promise<DispatchAssignment[]>;
   createDispatchAssignment(assignment: InsertDispatchAssignment): Promise<DispatchAssignment>;
@@ -800,6 +803,25 @@ export class MemStorage implements IStorage {
     if (dispatchId) filtered = filtered.filter(a => a.dispatchId === dispatchId);
     if (driverId) filtered = filtered.filter(a => a.driverId === driverId);
     return filtered;
+  }
+
+  async createCompanyDispatchAssignment(data: {
+    dispatchId: number;
+    companyId: number;
+    quantity: number;
+    assignedBy: number;
+  }): Promise<any> {
+    // For MemStorage, we'll store company assignments in a simple structure
+    const assignment = {
+      id: Date.now(),
+      dispatchId: data.dispatchId,
+      companyId: data.companyId,
+      quantity: data.quantity,
+      assignedBy: data.assignedBy,
+      status: "pending_lh_assignment",
+      createdAt: new Date()
+    };
+    return assignment;
   }
 
   async createDispatchAssignment(insertAssignment: InsertDispatchAssignment): Promise<DispatchAssignment> {
@@ -1541,19 +1563,14 @@ export class DatabaseStorage implements IStorage {
     companyId: number;
     quantity: number;
     assignedBy: number;
-    status: string;
   }): Promise<any> {
-    // For now, create a placeholder assignment that the lease hauler will see
-    // In a real implementation, this would go to a separate table
-    const assignment = {
-      id: Date.now(), // temporary ID
+    const [assignment] = await db.insert(companyDispatchAssignments).values({
       dispatchId: data.dispatchId,
       companyId: data.companyId,
       quantity: data.quantity,
       assignedBy: data.assignedBy,
-      status: data.status,
-      createdAt: new Date()
-    };
+      status: "pending_lh_assignment"
+    }).returning();
     return assignment;
   }
 
@@ -1766,40 +1783,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getDispatchesByCompany(companyId: number): Promise<Dispatch[]> {
-    // For leasor companies, get dispatches that have been assigned to their company
-    // First check for company-based assignments in dispatch_assignments table where companyId matches
-    const companyAssignments = await db.select({
+    // For leasor companies, get dispatches assigned to their company through company dispatch assignments
+    const result = await db.select({
       dispatch: dispatches
     })
-    .from(dispatchAssignments)
-    .innerJoin(dispatches, eq(dispatchAssignments.dispatchId, dispatches.id))
-    .innerJoin(trucks, eq(dispatchAssignments.truckId, trucks.id))
-    .where(eq(trucks.companyId, companyId))
+    .from(companyDispatchAssignments)
+    .innerJoin(dispatches, eq(companyDispatchAssignments.dispatchId, dispatches.id))
+    .where(eq(companyDispatchAssignments.companyId, companyId))
     .orderBy(desc(dispatches.createdAt));
 
-    // Also check for dispatches directly assigned to the company via the new company assignment system
-    // We need to look for dispatches with status 'assigned_to_lh' where the assignment was made to this company
-    const directAssignments = await db.select()
-    .from(dispatches)
-    .where(and(
-      eq(dispatches.status, 'assigned_to_lh'),
-      // We'll need to track which company was assigned in the dispatch record or a separate table
-      // For now, let's check if there are any trucks from this company that could handle the dispatch
-      sql`EXISTS (
-        SELECT 1 FROM ${trucks} 
-        WHERE ${trucks.companyId} = ${companyId} 
-        AND ${trucks.type} = ${dispatches.truckType}
-      )`
-    ))
-    .orderBy(desc(dispatches.createdAt));
-
-    // Combine and deduplicate results
-    const allDispatches = [...companyAssignments.map(row => row.dispatch), ...directAssignments];
-    const uniqueDispatches = allDispatches.filter((dispatch, index, array) => 
-      array.findIndex(d => d.id === dispatch.id) === index
-    );
-
-    return uniqueDispatches;
+    return result.map(row => row.dispatch);
   }
 
   async getActivitiesByCompany(companyId: number, date: Date): Promise<Activity[]> {

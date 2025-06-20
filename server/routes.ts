@@ -739,8 +739,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         dispatchId,
         companyId: parseInt(companyId),
         quantity: parseInt(quantity),
-        assignedBy: user.id,
-        status: 'pending_lh_assignment'
+        assignedBy: user.id
       });
 
       // Update dispatch status
