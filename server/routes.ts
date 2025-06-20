@@ -721,6 +721,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const dispatch = await storage.createDispatch(dispatchData);
       console.log("Created dispatch:", JSON.stringify(dispatch, null, 2));
 
+      // Handle company dispatch assignments if provided
+      if (req.body.assignments && Array.isArray(req.body.assignments)) {
+        console.log("🎯 PROCESSING COMPANY ASSIGNMENTS:", req.body.assignments);
+        
+        for (const assignment of req.body.assignments) {
+          if (assignment.companyId && assignment.quantity) {
+            console.log("📦 CREATING COMPANY ASSIGNMENT:", {
+              dispatchId: dispatch.id,
+              companyId: assignment.companyId,
+              quantity: assignment.quantity,
+              assignedBy: user.id
+            });
+            
+            const companyAssignment = await storage.createCompanyDispatchAssignment({
+              dispatchId: dispatch.id,
+              companyId: assignment.companyId,
+              quantity: assignment.quantity,
+              assignedBy: user.id
+            });
+            
+            console.log("✅ COMPANY ASSIGNMENT CREATED:", companyAssignment);
+          }
+        }
+      }
+
       // Save reusable data
       const reusableFields = [
         { type: 'job_name', value: dispatch.jobName },
