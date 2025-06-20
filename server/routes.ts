@@ -9,6 +9,21 @@ import {
 } from "@shared/schema";
 import "./types";
 
+// Authentication middleware
+const requireAuth = async (req: any, res: any, next: any) => {
+  if (!req.session?.userId) {
+    return res.status(401).json({ error: "Not authenticated" });
+  }
+  
+  const user = await storage.getUser(req.session.userId);
+  if (!user) {
+    return res.status(401).json({ error: "User not found" });
+  }
+  
+  req.user = user;
+  next();
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Add a catch-all route to debug missing requests
   app.use("/api/*", (req, res, next) => {
@@ -152,27 +167,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Setup data endpoints
-  app.get("/api/trucks", async (req, res) => {
+  app.get("/api/trucks", requireAuth, async (req, res) => {
     const trucks = await storage.getTrucks();
     res.json(trucks);
   });
 
-  app.get("/api/jobs", async (req, res) => {
+  app.get("/api/jobs", requireAuth, async (req, res) => {
     const jobs = await storage.getActiveJobs();
     res.json(jobs);
   });
 
-  app.get("/api/customers", async (req, res) => {
+  app.get("/api/customers", requireAuth, async (req, res) => {
     const customers = await storage.getCustomers();
     res.json(customers);
   });
 
-  app.get("/api/materials", async (req, res) => {
+  app.get("/api/materials", requireAuth, async (req, res) => {
     const materials = await storage.getMaterials();
     res.json(materials);
   });
 
-  app.get("/api/locations", async (req, res) => {
+  app.get("/api/locations", requireAuth, async (req, res) => {
     const type = req.query.type as string;
     const locations = type 
       ? await storage.getLocationsByType(type)
@@ -612,19 +627,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Dispatches API Routes
-  app.get("/api/dispatches", async (req, res) => {
+  app.get("/api/dispatches", requireAuth, async (req: any, res) => {
     try {
       console.log("=== GET DISPATCHES REQUEST ===");
       console.log("Session userId:", req.session?.userId);
       
-      if (!req.session?.userId) {
-        return res.status(401).json({ error: "Not authenticated" });
-      }
-
-      const user = await storage.getUser(req.session.userId);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
+      const user = req.user;
 
       console.log("User details:", { id: user.id, role: user.role, companyId: user.companyId });
 

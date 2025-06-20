@@ -14,8 +14,9 @@ app.set('trust proxy', 1);
 // Session middleware with proper configuration
 app.use(session({
   secret: 'dirt-movers-secret-key-12345',
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
+  rolling: true,
   cookie: {
     secure: false,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
