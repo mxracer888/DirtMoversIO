@@ -13,6 +13,10 @@ import BrokerDashboard from "@/pages/broker/dashboard";
 import DispatchesPage from "@/pages/broker/dispatches";
 import EmployeeManagement from "@/pages/broker/employees";
 import EODPage from "@/pages/broker/eod";
+import LeasorDashboard from "@/pages/leasor/dashboard";
+import LeasorDispatches from "@/pages/leasor/dispatches";
+import LeasorFleet from "@/pages/leasor/fleet";
+import LeasorDrivers from "@/pages/leasor/drivers";
 import MenuOverlay from "@/components/menu-overlay";
 import { useState } from "react";
 
@@ -35,14 +39,23 @@ function AppContent() {
     return <Login />;
   }
 
+  const getDefaultRoute = () => {
+    if (user.role === "driver" || user.role === "leasor_driver") return DailySetup;
+    if (user.role === "leasor_admin") return LeasorDashboard;
+    return BrokerDashboard;
+  };
+
   return (
     <>
       <Switch>
-        <Route path="/" component={user.role === "driver" ? DailySetup : BrokerDashboard} />
+        <Route path="/" component={getDefaultRoute()} />
+        {/* Driver Routes */}
         <Route path="/driver/start-day" component={DailySetup} />
         <Route path="/driver/main-activity" component={MainActivity} />
         <Route path="/driver/activity-history" component={ActivityHistory} />
         <Route path="/driver/end-of-day" component={EndOfDay} />
+        
+        {/* Broker Routes */}
         <Route path="/broker/dashboard" component={BrokerDashboard} />
         <Route path="/broker/dispatches" component={DispatchesPage} />
         <Route path="/broker/employees">
@@ -56,6 +69,12 @@ function AppContent() {
           )}
         </Route>
         <Route path="/broker/eod" component={EODPage} />
+        
+        {/* Leasor Routes */}
+        <Route path="/leasor/dashboard" component={LeasorDashboard} />
+        <Route path="/leasor/dispatches" component={LeasorDispatches} />
+        <Route path="/leasor/fleet" component={LeasorFleet} />
+        <Route path="/leasor/drivers" component={LeasorDrivers} />
         <Route>
           <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">

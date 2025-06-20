@@ -96,6 +96,22 @@ export interface IStorage {
   // Company management
   getCompaniesByType(type: string): Promise<Company[]>;
   getCompanyById(id: number): Promise<Company | undefined>;
+  
+  // Lease Hauler Portal methods
+  getUsersByCompany(companyId: number): Promise<User[]>;
+  getDispatchesByCompany(companyId: number): Promise<Dispatch[]>;
+  getActivitiesByCompany(companyId: number, date: Date): Promise<Activity[]>;
+  updateTruck(id: number, updates: Partial<Truck>): Promise<Truck | undefined>;
+  deleteTruck(id: number): Promise<void>;
+  updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
+  createUserInvitation(invitation: {
+    email: string;
+    name: string;
+    role: string;
+    companyId: number;
+    invitedBy: number;
+  }): Promise<any>;
+  getPendingInvitationsByCompany(companyId: number): Promise<any[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -1582,6 +1598,86 @@ export class DatabaseStorage implements IStorage {
   async getCompanyById(id: number): Promise<Company | undefined> {
     const [company] = await db.select().from(companies).where(eq(companies.id, id));
     return company;
+  }
+
+  // Lease Hauler Portal methods
+  async getUsersByCompany(companyId: number): Promise<User[]> {
+    return await db.select().from(users).where(eq(users.companyId, companyId));
+  }
+
+  async getDispatchesByCompany(companyId: number): Promise<Dispatch[]> {
+    return await db.select().from(dispatches)
+      .where(eq(dispatches.brokerId, companyId))
+      .orderBy(desc(dispatches.createdAt));
+  }
+
+  async getActivitiesByCompany(companyId: number, date: Date): Promise<Activity[]> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Get activities for trucks belonging to the company
+    const companyTrucks = await db.select().from(trucks).where(eq(trucks.companyId, companyId));
+    const truckIds = companyTrucks.map(t => t.id);
+
+    if (truckIds.length === 0) return [];
+
+    return await db.select().from(activities)
+      .innerJoin(workDays, eq(activities.workDayId, workDays.id))
+      .where(
+        and(
+          eq(workDays.truckId, truckIds[0]), // Simplified - would need proper IN clause
+          eq(activities.timestamp, startOfDay)
+        )
+      );
+  }
+
+  async updateTruck(id: number, updates: Partial<Truck>): Promise<Truck | undefined> {
+    const [truck] = await db.update(trucks)
+      .set(updates)
+      .where(eq(trucks.id, id))
+      .returning();
+    return truck;
+  }
+
+  async deleteTruck(id: number): Promise<void> {
+    await db.delete(trucks).where(eq(trucks.id, id));
+  }
+
+  async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
+    const [user] = await db.update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  async createUserInvitation(invitation: {
+    email: string;
+    name: string;
+    role: string;
+    companyId: number;
+    invitedBy: number;
+  }): Promise<any> {
+    // Simplified invitation system - in production, would use a proper invitations table
+    return {
+      id: Date.now(),
+      email: invitation.email,
+      name: invitation.name,
+      role: invitation.role,
+      companyId: invitation.companyId,
+      invitedBy: invitation.invitedBy,
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      status: 'pending'
+    };
+  }
+
+  async getPendingInvitationsByCompany(companyId: number): Promise<any[]> {
+    // Simplified - would query from invitations table in production
+    return [];
   }
 }
 

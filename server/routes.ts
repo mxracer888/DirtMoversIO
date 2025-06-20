@@ -950,6 +950,279 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Lease Hauler Portal API Routes
+  
+  // LH Dashboard Routes
+  app.get("/api/leasor/dashboard", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      // Get company stats for LH dashboard
+      const [trucks, drivers, dispatches, activities] = await Promise.all([
+        storage.getTrucksByCompany(user.companyId),
+        storage.getUsersByCompany(user.companyId),
+        storage.getDispatchesByCompany(user.companyId),
+        storage.getActivitiesByCompany(user.companyId, new Date())
+      ]);
+
+      const activeTrucks = trucks.filter(t => t.isActive).length;
+      const activeDrivers = drivers.filter(d => d.isActive && d.role === 'leasor_driver').length;
+      
+      res.json({
+        activeTrucks,
+        activeDrivers,
+        todayDispatches: dispatches.length,
+        todayActivities: activities
+      });
+    } catch (error) {
+      console.error("LH Dashboard error:", error);
+      res.status(500).json({ error: "Failed to fetch dashboard data" });
+    }
+  });
+
+  // LH Dispatch Routes
+  app.get("/api/leasor/dispatches", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const dispatches = await storage.getDispatchesByCompany(user.companyId);
+      res.json(dispatches);
+    } catch (error) {
+      console.error("LH Dispatches error:", error);
+      res.status(500).json({ error: "Failed to fetch dispatches" });
+    }
+  });
+
+  app.post("/api/leasor/dispatches/:id/assign", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const dispatchId = parseInt(req.params.id);
+      const { truckAssignments } = req.body;
+
+      const assignments = [];
+      for (const assignment of truckAssignments) {
+        const dispatchAssignment = await storage.createDispatchAssignment({
+          dispatchId,
+          truckId: assignment.truckId,
+          driverId: assignment.driverId || null,
+          assignedBy: user.id
+        });
+        assignments.push(dispatchAssignment);
+      }
+
+      await storage.updateDispatch(dispatchId, { status: 'assigned' });
+      res.json(assignments);
+    } catch (error) {
+      console.error("LH Assign dispatch error:", error);
+      res.status(400).json({ error: "Failed to assign dispatch" });
+    }
+  });
+
+  // LH Fleet Management Routes
+  app.get("/api/leasor/trucks", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const trucks = await storage.getTrucksByCompany(user.companyId);
+      res.json(trucks);
+    } catch (error) {
+      console.error("LH Trucks error:", error);
+      res.status(500).json({ error: "Failed to fetch trucks" });
+    }
+  });
+
+  app.post("/api/leasor/trucks", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const truckData = {
+        ...req.body,
+        companyId: user.companyId
+      };
+
+      const truck = await storage.createTruck(truckData);
+      res.json(truck);
+    } catch (error) {
+      console.error("LH Create truck error:", error);
+      res.status(400).json({ error: "Failed to create truck" });
+    }
+  });
+
+  app.patch("/api/leasor/trucks/:id", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const truckId = parseInt(req.params.id);
+      const truck = await storage.updateTruck(truckId, req.body);
+      
+      if (!truck) {
+        return res.status(404).json({ error: "Truck not found" });
+      }
+
+      res.json(truck);
+    } catch (error) {
+      console.error("LH Update truck error:", error);
+      res.status(400).json({ error: "Failed to update truck" });
+    }
+  });
+
+  app.delete("/api/leasor/trucks/:id", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const truckId = parseInt(req.params.id);
+      await storage.deleteTruck(truckId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("LH Delete truck error:", error);
+      res.status(400).json({ error: "Failed to delete truck" });
+    }
+  });
+
+  // LH Driver Management Routes
+  app.get("/api/leasor/drivers", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const drivers = await storage.getUsersByCompany(user.companyId);
+      const leasorDrivers = drivers.filter(d => d.role === 'leasor_driver');
+      res.json(leasorDrivers);
+    } catch (error) {
+      console.error("LH Drivers error:", error);
+      res.status(500).json({ error: "Failed to fetch drivers" });
+    }
+  });
+
+  app.post("/api/leasor/drivers/invite", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const { email, name } = req.body;
+      
+      // Create driver invitation (simplified implementation)
+      const invitation = await storage.createUserInvitation({
+        email,
+        name,
+        role: 'leasor_driver',
+        companyId: user.companyId,
+        invitedBy: user.id
+      });
+
+      res.json(invitation);
+    } catch (error) {
+      console.error("LH Invite driver error:", error);
+      res.status(400).json({ error: "Failed to invite driver" });
+    }
+  });
+
+  app.get("/api/leasor/invitations/pending", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const invitations = await storage.getPendingInvitationsByCompany(user.companyId);
+      res.json(invitations);
+    } catch (error) {
+      console.error("LH Pending invitations error:", error);
+      res.status(500).json({ error: "Failed to fetch pending invitations" });
+    }
+  });
+
+  app.patch("/api/leasor/drivers/:id/deactivate", async (req, res) => {
+    try {
+      if (!req.session?.userId) {
+        return res.status(401).json({ error: "Not authenticated" });
+      }
+
+      const user = await storage.getUser(req.session.userId);
+      if (!user || user.role !== 'leasor_admin') {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      const driverId = parseInt(req.params.id);
+      const driver = await storage.updateUser(driverId, { isActive: false });
+      
+      if (!driver) {
+        return res.status(404).json({ error: "Driver not found" });
+      }
+
+      res.json(driver);
+    } catch (error) {
+      console.error("LH Deactivate driver error:", error);
+      res.status(400).json({ error: "Failed to deactivate driver" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
