@@ -110,8 +110,8 @@ export default function DispatchesPage() {
     enabled: !!user,
   });
 
-  const { data: trucks = [], isLoading: trucksLoading } = useQuery<Truck[]>({
-    queryKey: ["/api/broker/trucks"],
+  const { data: leaseHaulerCompanies = [], isLoading: companiesLoading } = useQuery({
+    queryKey: ["/api/broker/lease-hauler-companies"],
     enabled: !!user,
   });
 
@@ -180,14 +180,15 @@ export default function DispatchesPage() {
   });
 
   const assignDispatchMutation = useMutation({
-    mutationFn: async ({ dispatchId, assignments }: { 
+    mutationFn: async ({ dispatchId, companyId, quantity }: { 
       dispatchId: number; 
-      assignments: Array<{ truckId: number; driverId?: number }> 
+      companyId: number;
+      quantity: number;
     }) => {
       const response = await fetch(`/api/dispatches/${dispatchId}/assign`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ truckAssignments: assignments }),
+        body: JSON.stringify({ companyId, quantity }),
       });
       if (!response.ok) throw new Error("Failed to assign dispatch");
       return response.json();
@@ -195,17 +196,16 @@ export default function DispatchesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/dispatches"] });
       setShowAssignmentForm(false);
-      setTruckAssignments({});
       setSelectedDispatch(null);
       toast({
         title: "Success",
-        description: "Dispatch assigned successfully",
+        description: "Dispatch assigned to lease hauler successfully",
       });
     },
     onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to assign dispatch",
+        description: "Failed to assign dispatch to lease hauler",
         variant: "destructive",
       });
     },
@@ -305,11 +305,8 @@ export default function DispatchesPage() {
     return statusColors[status as keyof typeof statusColors] || "bg-gray-100 text-gray-800";
   };
 
-  const trucksByType = trucks.filter((truck: Truck) => 
-    !form.watch("truckType") || truck.type === form.watch("truckType")
-  );
-
-  const assignedCount = Object.values(truckAssignments).reduce((sum, count) => sum + count, 0);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
+  const [assignmentQuantity, setAssignmentQuantity] = useState<number>(1);
 
   // Handle authentication loading and redirect
   if (authLoading) {
@@ -336,7 +333,7 @@ export default function DispatchesPage() {
     );
   }
 
-  if (dispatchesLoading || customersLoading || trucksLoading) {
+  if (dispatchesLoading || customersLoading || companiesLoading) {
     return (
       <div className="p-8">
         <div className="flex items-center justify-center h-64">
@@ -714,67 +711,83 @@ export default function DispatchesPage() {
             {showAssignmentForm && selectedDispatch && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Assign Trucks to {selectedDispatch.jobName}</CardTitle>
+                  <CardTitle>Assign Dispatch to Lease Hauler Company</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <Alert>
                       <AlertCircle className="h-4 w-4" />
                       <AlertDescription>
-                        Required: {selectedDispatch.quantity} {selectedDispatch.truckType} trucks
-                        {assignedCount > 0 && ` | Selected: ${assignedCount}`}
+                        Job: {selectedDispatch.jobName} | Required: {selectedDispatch.quantity} {selectedDispatch.truckType} trucks
                       </AlertDescription>
                     </Alert>
 
-                    <div className="space-y-3">
-                      {trucksByType.length === 0 ? (
-                        <p className="text-muted-foreground">
-                          No {selectedDispatch.truckType} trucks available
-                        </p>
-                      ) : (
-                        trucksByType.map((truck: Truck) => (
-                          <div key={truck.id} className="flex items-center justify-between p-3 border rounded">
-                            <div>
-                              <span className="font-medium">Truck {truck.number}</span>
-                              <span className="text-sm text-muted-foreground ml-2">
-                                ({truck.company.name})
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Label htmlFor={`truck-${truck.id}`}>Assign:</Label>
-                              <Select
-                                value={(truckAssignments[truck.id] || 0).toString()}
-                                onValueChange={(value) => handleTruckAssignment(truck.id, parseInt(value))}
-                              >
-                                <SelectTrigger className="w-20">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {Array.from({ length: selectedDispatch.quantity + 1 }, (_, i) => (
-                                    <SelectItem key={i} value={i.toString()}>
-                                      {i}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                        ))
-                      )}
+                    <div className="space-y-4">
+                      <div>
+                        <Label>Select Lease Hauler Company</Label>
+                        <Select 
+                          value={selectedCompanyId?.toString() || ""} 
+                          onValueChange={(value) => setSelectedCompanyId(parseInt(value))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose a lease hauler company" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {leaseHaulerCompanies.map((company: any) => (
+                              <SelectItem key={company.id} value={company.id.toString()}>
+                                <div className="flex justify-between items-center w-full">
+                                  <span>{company.name}</span>
+                                  <span className="text-sm text-muted-foreground ml-4">
+                                    {company.availableTrucks} trucks ({company.truckTypes.join(', ')})
+                                  </span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label>Number of Trucks to Assign</Label>
+                        <Select 
+                          value={assignmentQuantity.toString()} 
+                          onValueChange={(value) => setAssignmentQuantity(parseInt(value))}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: selectedDispatch.quantity }, (_, i) => (
+                              <SelectItem key={i + 1} value={(i + 1).toString()}>
+                                {i + 1}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
                     <div className="flex gap-2">
                       <Button
-                        onClick={submitAssignments}
-                        disabled={assignedCount !== selectedDispatch.quantity || assignDispatchMutation.isPending}
+                        onClick={() => {
+                          if (selectedCompanyId && assignmentQuantity) {
+                            assignDispatchMutation.mutate({
+                              dispatchId: selectedDispatch.id,
+                              companyId: selectedCompanyId,
+                              quantity: assignmentQuantity
+                            });
+                          }
+                        }}
+                        disabled={!selectedCompanyId || assignDispatchMutation.isPending}
                       >
-                        {assignDispatchMutation.isPending ? "Assigning..." : "Confirm Assignment"}
+                        {assignDispatchMutation.isPending ? "Assigning..." : "Assign to Lease Hauler"}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => {
                           setShowAssignmentForm(false);
-                          setTruckAssignments({});
+                          setSelectedCompanyId(null);
+                          setAssignmentQuantity(1);
                           setSelectedDispatch(null);
                         }}
                       >
