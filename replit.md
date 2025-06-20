@@ -122,6 +122,8 @@ The application follows a full-stack TypeScript architecture with the following 
 - June 19, 2025: Fixed demo authentication passwords with proper bcrypt hashing - demo logins now functional for sarah.broker@terrafirma.com and mike.johnson@mountaintrucking.com
 - June 20, 2025: Complete Lease Hauler Portal implementation - added intermediary dispatch management system with dashboard, fleet tracking, driver management, and role-based access control for leasor_admin and leasor_driver roles
 - June 20, 2025: MAJOR BREAKTHROUGH - Company-based dispatch assignment system fully operational with end-to-end filtering: brokers can assign dispatches to specific lease hauler companies, and lease haulers see only dispatches assigned to their company
+- June 20, 2025: CRITICAL SESSION AUTHENTICATION FIX - Resolved persistent 401 "Not authenticated" errors and "dispatch info lost" issues by fixing session configuration with proper cookie settings (secure: false, maxAge: 24hrs, httpOnly: true, sameSite: 'lax') and implementing comprehensive requireAuth middleware across all protected routes
+- June 20, 2025: Complete end-to-end authentication flow validated - login → session persistence → protected API access working seamlessly for all user roles (broker, leasor_admin, leasor_driver)
 
 ## User Preferences
 
