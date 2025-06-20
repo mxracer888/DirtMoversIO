@@ -1704,9 +1704,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getDispatchesByCompany(companyId: number): Promise<Dispatch[]> {
-    return await db.select().from(dispatches)
-      .where(eq(dispatches.brokerId, companyId))
-      .orderBy(desc(dispatches.createdAt));
+    // For leasor companies, get dispatches that have been assigned to their trucks
+    const result = await db.select({
+      dispatch: dispatches
+    })
+    .from(dispatchAssignments)
+    .innerJoin(dispatches, eq(dispatchAssignments.dispatchId, dispatches.id))
+    .innerJoin(trucks, eq(dispatchAssignments.truckId, trucks.id))
+    .where(eq(trucks.companyId, companyId))
+    .orderBy(desc(dispatches.createdAt));
+
+    return result.map(row => row.dispatch);
   }
 
   async getActivitiesByCompany(companyId: number, date: Date): Promise<Activity[]> {

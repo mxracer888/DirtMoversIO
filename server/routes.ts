@@ -629,9 +629,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else if (user.role === 'customer') {
         const customerDispatches = await storage.getDispatchesByCustomer(user.companyId!);
         dispatches = customerDispatches;
-      } else if (user.role === 'leasor') {
-        const assignments = await storage.getDispatchAssignmentsByLeasor(user.companyId!);
-        dispatches = assignments.map(a => a.dispatch);
+      } else if (user.role === 'leasor' || user.role === 'leasor_admin') {
+        console.log("Fetching dispatches for leasor with companyId:", user.companyId);
+        dispatches = await storage.getDispatchesByCompany(user.companyId!);
       } else if (user.role === 'driver') {
         const assignments = await storage.getDispatchAssignments(undefined, user.id);
         const dispatchPromises = assignments.map(a => storage.getDispatch(a.dispatchId));
