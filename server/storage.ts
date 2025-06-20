@@ -128,6 +128,7 @@ export class MemStorage implements IStorage {
   private dispatchAssignments: Map<number, DispatchAssignment> = new Map();
   private brokerLeasorRelationships: Map<number, BrokerLeasorRelationship> = new Map();
   private reusableData: Map<number, ReusableData> = new Map();
+  private userInvitations: Map<number, any> = new Map();
   
   private currentUserId = 1;
   private currentCompanyId = 1;
