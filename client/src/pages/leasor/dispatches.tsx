@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
-import { Package, Truck, User, MapPin, Calendar, CheckCircle, XCircle } from "lucide-react";
+import { Package, Truck, User, MapPin, Calendar, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 
 export default function LeasorDispatches() {
   const { user } = useAuth();
@@ -32,15 +32,39 @@ export default function LeasorDispatches() {
   const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
-  const { data: pendingDispatches } = useQuery({
-    queryKey: ["/api/leasor/dispatches/pending"],
-    enabled: !!user && user.role === "leasor_admin",
+  // Single dispatches query for lease haulers
+  const { data: dispatches, isLoading: dispatchesLoading, refetch: refetchDispatches } = useQuery({
+    queryKey: ["/api/dispatches"],
+    enabled: !!user && (user.role === "leasor_admin" || user.role === "leasor"),
   });
 
-  const { data: assignedDispatches } = useQuery({
-    queryKey: ["/api/leasor/dispatches/assigned"],
-    enabled: !!user && user.role === "leasor_admin",
+  // Log dispatch data when it changes
+  console.log("✅ LEASE HAULER DISPATCHES STATE:", {
+    userRole: user?.role,
+    companyId: user?.companyId,
+    dispatchCount: dispatches?.length || 0,
+    dispatches: dispatches,
+    loading: dispatchesLoading
   });
+
+  // Filter dispatches for lease hauler company
+  const companyDispatches = dispatches?.filter((dispatch: any) => {
+    // Check if dispatch is assigned to this company
+    const assignedToCompany = dispatch.companyDispatchAssignments?.some((assignment: any) => 
+      assignment.companyId === user?.companyId
+    );
+    console.log("🔍 DISPATCH FILTER CHECK:", {
+      dispatchId: dispatch.id,
+      jobName: dispatch.jobName,
+      companyDispatchAssignments: dispatch.companyDispatchAssignments,
+      userCompanyId: user?.companyId,
+      assignedToCompany
+    });
+    return assignedToCompany;
+  }) || [];
+
+  const pendingDispatches = companyDispatches.filter((d: any) => d.status === 'assigned_to_lh');
+  const assignedDispatches = companyDispatches.filter((d: any) => d.status === 'assigned_to_driver');
 
   const { data: availableDrivers } = useQuery({
     queryKey: ["/api/leasor/drivers/available"],
@@ -124,7 +148,52 @@ export default function LeasorDispatches() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Dispatch Management</h1>
+        <div className="flex gap-2">
+          <Button 
+            onClick={() => {
+              console.log("🔄 MANUAL REFRESH TRIGGERED BY USER");
+              refetchDispatches();
+            }}
+            variant="outline"
+            size="sm"
+            disabled={dispatchesLoading}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${dispatchesLoading ? 'animate-spin' : ''}`} />
+            Refresh Data
+          </Button>
+        </div>
       </div>
+
+      {/* Debug Info */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="text-blue-800 text-sm">Debug Information</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <strong>User Role:</strong> {user?.role || 'Unknown'}
+            </div>
+            <div>
+              <strong>Company ID:</strong> {user?.companyId || 'Unknown'}
+            </div>
+            <div>
+              <strong>Dispatches Loading:</strong> {dispatchesLoading ? 'Yes' : 'No'}
+            </div>
+            <div>
+              <strong>Total Dispatches:</strong> {dispatches?.length || 0}
+            </div>
+          </div>
+          {dispatches && (
+            <div className="mt-2">
+              <strong>Raw Dispatch Data:</strong>
+              <pre className="mt-1 p-2 bg-white rounded text-xs overflow-auto max-h-32">
+                {JSON.stringify(dispatches, null, 2)}
+              </pre>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Pending Dispatches */}
       <Card>

@@ -638,8 +638,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const customerDispatches = await storage.getDispatchesByCustomer(user.companyId!);
         dispatches = customerDispatches;
       } else if (user.role === 'leasor' || user.role === 'leasor_admin') {
-        console.log("Fetching dispatches for leasor with companyId:", user.companyId);
-        dispatches = await storage.getDispatchesByCompany(user.companyId!);
+        console.log("🏢 LEASOR DISPATCH REQUEST:", {
+          userId: user.id,
+          userRole: user.role,
+          companyId: user.companyId,
+          companyName: user.name
+        });
+        
+        // Get all dispatches that have company assignments for this leasor's company
+        const allDispatches = await storage.getAllDispatches();
+        console.log("📋 ALL DISPATCHES FOUND:", allDispatches.length);
+        
+        dispatches = allDispatches.filter(dispatch => {
+          const hasCompanyAssignment = dispatch.companyDispatchAssignments?.some(
+            (assignment: any) => assignment.companyId === user.companyId
+          );
+          
+          console.log("🔍 DISPATCH FILTER:", {
+            dispatchId: dispatch.id,
+            jobName: dispatch.jobName,
+            status: dispatch.status,
+            companyDispatchAssignments: dispatch.companyDispatchAssignments,
+            hasCompanyAssignment,
+            userCompanyId: user.companyId
+          });
+          
+          return hasCompanyAssignment;
+        });
+        
+        console.log("✅ FILTERED DISPATCHES FOR LEASOR:", {
+          totalFound: dispatches.length,
+          dispatches: dispatches.map(d => ({
+            id: d.id,
+            jobName: d.jobName,
+            status: d.status,
+            companyAssignments: d.companyDispatchAssignments?.length || 0
+          }))
+        });
       } else if (user.role === 'driver') {
         const assignments = await storage.getDispatchAssignments(undefined, user.id);
         const dispatchPromises = assignments.map(a => storage.getDispatch(a.dispatchId));

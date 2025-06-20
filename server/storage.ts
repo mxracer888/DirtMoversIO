@@ -61,6 +61,7 @@ export interface IStorage {
   
   // Dispatches
   getDispatches(brokerId?: number): Promise<Dispatch[]>;
+  getAllDispatches(): Promise<Dispatch[]>;
   getDispatch(id: number): Promise<Dispatch | undefined>;
   createDispatch(dispatch: InsertDispatch): Promise<Dispatch>;
   updateDispatch(id: number, updates: Partial<Dispatch>): Promise<Dispatch | undefined>;
