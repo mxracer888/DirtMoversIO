@@ -133,6 +133,7 @@ export class MemStorage implements IStorage {
   private brokerLeasorRelationships: Map<number, BrokerLeasorRelationship> = new Map();
   private reusableData: Map<number, ReusableData> = new Map();
   private userInvitations: Map<number, any> = new Map();
+  private companyDispatchAssignments: Map<number, any> = new Map();
   
   private currentUserId = 1;
   private currentCompanyId = 1;
@@ -793,8 +794,31 @@ export class MemStorage implements IStorage {
     return updatedDispatch;
   }
 
+  async getAllDispatches(): Promise<Dispatch[]> {
+    // Get all dispatches and attach company dispatch assignments
+    const dispatches = Array.from(this.dispatches.values());
+    return dispatches.map(dispatch => ({
+      ...dispatch,
+      companyDispatchAssignments: this.getCompanyDispatchAssignmentsByDispatch(dispatch.id)
+    }));
+  }
+
   async getDispatchesByCustomer(customerId: number): Promise<Dispatch[]> {
     return Array.from(this.dispatches.values()).filter(d => d.customerId === customerId);
+  }
+
+  private getCompanyDispatchAssignmentsByDispatch(dispatchId: number): any[] {
+    // Get company dispatch assignments for this dispatch
+    const assignments = Array.from(this.companyDispatchAssignments.values())
+      .filter(assignment => assignment.dispatchId === dispatchId);
+    
+    console.log("🔍 GETTING COMPANY ASSIGNMENTS FOR DISPATCH:", {
+      dispatchId,
+      foundAssignments: assignments.length,
+      assignments: assignments.map(a => ({ id: a.id, companyId: a.companyId, quantity: a.quantity }))
+    });
+    
+    return assignments;
   }
 
   // Dispatch Assignments
@@ -812,7 +836,7 @@ export class MemStorage implements IStorage {
     quantity: number;
     assignedBy: number;
   }): Promise<any> {
-    // For MemStorage, we'll store company assignments in a simple structure
+    // Store company assignments in memory
     const assignment = {
       id: Date.now(),
       dispatchId: data.dispatchId,
@@ -822,6 +846,16 @@ export class MemStorage implements IStorage {
       status: "pending_lh_assignment",
       createdAt: new Date()
     };
+    this.companyDispatchAssignments.set(assignment.id, assignment);
+    
+    console.log("💾 COMPANY DISPATCH ASSIGNMENT CREATED:", {
+      assignmentId: assignment.id,
+      dispatchId: assignment.dispatchId,
+      companyId: assignment.companyId,
+      quantity: assignment.quantity,
+      totalStoredAssignments: this.companyDispatchAssignments.size
+    });
+    
     return assignment;
   }
 
@@ -1513,6 +1547,29 @@ export class DatabaseStorage implements IStorage {
         .orderBy(desc(dispatches.createdAt));
     }
     return await db.select().from(dispatches).orderBy(desc(dispatches.createdAt));
+  }
+
+  async getAllDispatches(): Promise<Dispatch[]> {
+    // Get all dispatches with company dispatch assignments
+    const allDispatches = await db.select().from(dispatches).orderBy(desc(dispatches.createdAt));
+    
+    // For each dispatch, get company assignments
+    const dispatchesWithAssignments = await Promise.all(
+      allDispatches.map(async (dispatch) => {
+        const companyAssignments = await db.select()
+          .from(companyDispatchAssignments)
+          .where(eq(companyDispatchAssignments.dispatchId, dispatch.id));
+        
+        return {
+          ...dispatch,
+          companyDispatchAssignments: companyAssignments
+        };
+      })
+    );
+    
+    console.log("🚛 DATABASE: getAllDispatches found", dispatchesWithAssignments.length, "dispatches with assignments");
+    
+    return dispatchesWithAssignments;
   }
 
   async getDispatch(id: number): Promise<Dispatch | undefined> {
