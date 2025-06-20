@@ -7,7 +7,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
   name: text("name").notNull(),
-  role: text("role").notNull().default("driver"), // driver, broker_admin, broker_employee, customer_admin, customer_employee, leasor_admin, leasor_employee, admin
+  role: text("role").notNull().default("driver"), // driver, broker_admin, broker_employee, customer_admin, customer_employee, leasor_admin, leasor_driver, admin
   companyId: integer("company_id").notNull(),
   brokerId: integer("broker_id"), // For customers and leasors to link to their broker
   permissions: text("permissions").default("basic"), // basic, admin, full - controls what user can do within their role
@@ -159,6 +159,44 @@ export const reusableData = pgTable("reusable_data", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Driver invitations for LH companies
+export const driverInvitations = pgTable("driver_invitations", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  companyId: integer("company_id").notNull(), // LH company extending invitation
+  brokerId: integer("broker_id").notNull(), // Broker relationship
+  inviteCode: text("invite_code").notNull().unique(),
+  role: text("role").notNull().default("leasor_driver"),
+  permissions: text("permissions").default("basic"),
+  isUsed: boolean("is_used").default(false),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Truck swap and driver handoff logs
+export const truckSwapLogs = pgTable("truck_swap_logs", {
+  id: serial("id").primaryKey(),
+  workDayId: integer("work_day_id").notNull(),
+  dispatchId: integer("dispatch_id").notNull(),
+  fromTruckId: integer("from_truck_id").notNull(),
+  toTruckId: integer("to_truck_id").notNull(),
+  driverId: integer("driver_id").notNull(),
+  reason: text("reason"), // breakdown, maintenance, etc.
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const driverHandoffLogs = pgTable("driver_handoff_logs", {
+  id: serial("id").primaryKey(),
+  workDayId: integer("work_day_id").notNull(),
+  dispatchId: integer("dispatch_id").notNull(),
+  truckId: integer("truck_id").notNull(),
+  fromDriverId: integer("from_driver_id").notNull(),
+  toDriverId: integer("to_driver_id").notNull(),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -230,6 +268,21 @@ export const insertReusableDataSchema = createInsertSchema(reusableData).omit({
   usageCount: true,
 });
 
+export const insertDriverInvitationSchema = createInsertSchema(driverInvitations).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertTruckSwapLogSchema = createInsertSchema(truckSwapLogs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDriverHandoffLogSchema = createInsertSchema(driverHandoffLogs).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Login schema
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -263,4 +316,10 @@ export type DispatchAssignment = typeof dispatchAssignments.$inferSelect;
 export type InsertDispatchAssignment = z.infer<typeof insertDispatchAssignmentSchema>;
 export type ReusableData = typeof reusableData.$inferSelect;
 export type InsertReusableData = z.infer<typeof insertReusableDataSchema>;
+export type DriverInvitation = typeof driverInvitations.$inferSelect;
+export type InsertDriverInvitation = z.infer<typeof insertDriverInvitationSchema>;
+export type TruckSwapLog = typeof truckSwapLogs.$inferSelect;
+export type InsertTruckSwapLog = z.infer<typeof insertTruckSwapLogSchema>;
+export type DriverHandoffLog = typeof driverHandoffLogs.$inferSelect;
+export type InsertDriverHandoffLog = z.infer<typeof insertDriverHandoffLogSchema>;
 export type LoginRequest = z.infer<typeof loginSchema>;

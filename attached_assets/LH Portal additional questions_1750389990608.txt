@@ -1,0 +1,20 @@
+1. the leasor and lease hauler are the same thing. They may be used interchangeably. The DB already has entries for leasor and that's the feature this will tap into. 
+
+2. yes, LH admin and LH driver are fine. Generally speaking the current driver portal and full driver feature set is meant to be for drivers employed by Leasors. However, the broker company themselves employ their own drivers so there still needs to be the ability for the broker to assign dispatches to the brokering company and then to the drivers employed by the broker. We also need to ensure drivers can't see any information about leasor companies that they aren't employed by so we can avoid an issue of poaching drivers and drivers trying to move from one company to the other. 
+
+3. Yes, replace it with just the LH company. i.e. "ironside dump trucks" is one company that is a LH, "ABC Contractors" is another, and "Romero Landscaping" is yet another.  so when the broker assigns dipatches they'll just see a list 
+- Ironside Dump Trucks
+- ABC Contractors
+- Romero Landscaping 
+
+And then assign a given number of dispatches to that LH. So currently the logic looks at number of trucks needed in the dispatch and then allows you to select up to that many in the list. So if Ironside has 2 trucks inputted into their LH portal then the broker can assign up to 2 dispatches per day to that leasor. Keeping in mind that the broker themself "Arise Trucking" can assign dispatches to themelf and then assign those dispatches to their own drivers employed by them. 
+
+4. I don't quite understand. It seems to be the same thing. New dispatches when created will get assigned to various LH's or to the broker themself
+
+5. yes, drivers companyID should point to the LH that they work for. when new drivers are created in the system, the LH is who will "invite" them by email/invite code. So when the driver signs up with their email they are automatically associated with the LH. LH drivers and broker drivers will perform the same tasks and thus should see the same interface. The only difference is that broker drivers data will be managed by the broker who is their empoloyer and the broker will assign dispatches given to the company to their own drivers. 
+
+6. LH portal should be isolated so that they can't see any broker info or pages whatsoever. However, the broker dashboard can be kept as a sort of template to create the LH dashboard. Including the ability to see live data feeds like driver state in the workflow and whatnot for their own drivers and no other drivers employed by other LH's. LH's should also be able to see EOD data similar to how brokers do but again, only for their own drivers. 
+
+7. the real time updates should function exactly as they already do for the broker dashboard. 
+
+8. it should be kept under the same workday records. Currently drivers generate load data with time and location stamped workflow state changes. The current "load cards" can be appended to add the driver name that was assigned to the dispatch when the state changes occurred. Generally existing records shouldn't be modified. Activity logging will basically stay the same. So if I am driving and slip seat with a new driver, the driver will take over the truck in the exact state it was in. So if the truck was loaded, it will still be loaded when the new driver is in. If the truck just dumped and is headed back to get another load then the truck will still be headed to get another load albeit with a new driver behind the wheel. 
