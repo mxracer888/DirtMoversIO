@@ -1,0 +1,202 @@
+Failed to load resource: the server responded with a status of 401 ()Understand this error
+37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/:1 Error while trying to use the following icon from the Manifest: https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/apple-touch-icon.png (Download error or resource isn't a valid image)Understand this error
+index-ClKu0SFh.js:313 Form submitted with: Object
+index-ClKu0SFh.js:313 Calling login mutation with: Object
+index-ClKu0SFh.js:313 === CLIENT LOGIN START ===
+index-ClKu0SFh.js:313 Timestamp: 2025-06-20T04:28:24.396Z
+index-ClKu0SFh.js:313 Login mutation starting with data: Object
+index-ClKu0SFh.js:313 Request URL: /api/auth/login
+index-ClKu0SFh.js:313 Browser cookies before request: 
+index-ClKu0SFh.js:313 Request body: {"email":"sarah.broker@terrafirma.com","password":"broker123"}
+index-ClKu0SFh.js:313 Request headers to send: Object
+index-ClKu0SFh.js:313 Making fetch request...
+index-ClKu0SFh.js:313 Response received!
+index-ClKu0SFh.js:313 Response status: 200
+index-ClKu0SFh.js:313 Response ok: true
+index-ClKu0SFh.js:313 Response headers: Headers {}
+index-ClKu0SFh.js:313 Response type: basic
+index-ClKu0SFh.js:313 Response url: https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/auth/login
+index-ClKu0SFh.js:313 Browser cookies after response: 
+index-ClKu0SFh.js:313 Response ok, parsing result...
+index-ClKu0SFh.js:313 Login success response: {user: {…}}
+index-ClKu0SFh.js:313 === CLIENT LOGIN SUCCESS ===
+index-ClKu0SFh.js:313 Login success, invalidating queries and redirecting
+index-ClKu0SFh.js:48 
+            
+            
+           GET https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/auth/me 401 (Unauthorized)
+(anonymous) @ index-ClKu0SFh.js:48
+i @ index-ClKu0SFh.js:40
+w @ index-ClKu0SFh.js:40
+start @ index-ClKu0SFh.js:40
+fetch @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+batch @ index-ClKu0SFh.js:40
+refetchQueries @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+batch @ index-ClKu0SFh.js:40
+invalidateQueries @ index-ClKu0SFh.js:40
+onSuccess @ index-ClKu0SFh.js:313
+await in onSuccess
+execute @ index-ClKu0SFh.js:40Understand this error
+index-ClKu0SFh.js:313 Form submitted with: {email: 'sarah.broker@terrafirma.com', password: 'broker123'}
+index-ClKu0SFh.js:313 Calling login mutation with: {email: 'sarah.broker@terrafirma.com', password: 'broker123'}
+index-ClKu0SFh.js:313 === CLIENT LOGIN START ===
+index-ClKu0SFh.js:313 Timestamp: 2025-06-20T04:28:33.258Z
+index-ClKu0SFh.js:313 Login mutation starting with data: {email: 'sarah.broker@terrafirma.com', password: 'broker123'}
+index-ClKu0SFh.js:313 Request URL: /api/auth/login
+index-ClKu0SFh.js:313 Browser cookies before request: 
+index-ClKu0SFh.js:313 Request body: {"email":"sarah.broker@terrafirma.com","password":"broker123"}
+index-ClKu0SFh.js:313 Request headers to send: {Content-Type: 'application/json', credentials: 'include'}
+index-ClKu0SFh.js:313 Making fetch request...
+index-ClKu0SFh.js:313 Response received!
+index-ClKu0SFh.js:313 Response status: 200
+index-ClKu0SFh.js:313 Response ok: true
+index-ClKu0SFh.js:313 Response headers: Headers {}
+index-ClKu0SFh.js:313 Response type: basic
+index-ClKu0SFh.js:313 Response url: https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/auth/login
+index-ClKu0SFh.js:313 Browser cookies after response: 
+index-ClKu0SFh.js:313 Response ok, parsing result...
+index-ClKu0SFh.js:313 Login success response: {user: {…}}
+index-ClKu0SFh.js:313 === CLIENT LOGIN SUCCESS ===
+index-ClKu0SFh.js:313 Login success, invalidating queries and redirecting
+index-ClKu0SFh.js:48 
+            
+            
+           GET https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/dispatches 401 (Unauthorized)
+(anonymous) @ index-ClKu0SFh.js:48
+i @ index-ClKu0SFh.js:40
+w @ index-ClKu0SFh.js:40
+start @ index-ClKu0SFh.js:40
+fetch @ index-ClKu0SFh.js:40
+ya @ index-ClKu0SFh.js:40
+onSubscribe @ index-ClKu0SFh.js:40
+subscribe @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+iN @ index-ClKu0SFh.js:38
+zu @ index-ClKu0SFh.js:40
+oo @ index-ClKu0SFh.js:40
+CA @ index-ClKu0SFh.js:40
+Gs @ index-ClKu0SFh.js:40
+pv @ index-ClKu0SFh.js:40
+Us @ index-ClKu0SFh.js:38
+(anonymous) @ index-ClKu0SFh.js:40Understand this error
+index-ClKu0SFh.js:48 
+            
+            
+           GET https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/reusable-data/material_type 401 (Unauthorized)
+(anonymous) @ index-ClKu0SFh.js:48
+i @ index-ClKu0SFh.js:40
+w @ index-ClKu0SFh.js:40
+start @ index-ClKu0SFh.js:40
+fetch @ index-ClKu0SFh.js:40
+ya @ index-ClKu0SFh.js:40
+onSubscribe @ index-ClKu0SFh.js:40
+subscribe @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+iN @ index-ClKu0SFh.js:38
+zu @ index-ClKu0SFh.js:40
+oo @ index-ClKu0SFh.js:40
+CA @ index-ClKu0SFh.js:40
+Gs @ index-ClKu0SFh.js:40
+pv @ index-ClKu0SFh.js:40
+Us @ index-ClKu0SFh.js:38
+(anonymous) @ index-ClKu0SFh.js:40Understand this error
+index-ClKu0SFh.js:48 
+            
+            
+           GET https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/broker/customers 401 (Unauthorized)
+(anonymous) @ index-ClKu0SFh.js:48
+i @ index-ClKu0SFh.js:40
+w @ index-ClKu0SFh.js:40
+start @ index-ClKu0SFh.js:40
+fetch @ index-ClKu0SFh.js:40
+ya @ index-ClKu0SFh.js:40
+onSubscribe @ index-ClKu0SFh.js:40
+subscribe @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+iN @ index-ClKu0SFh.js:38
+zu @ index-ClKu0SFh.js:40
+oo @ index-ClKu0SFh.js:40
+CA @ index-ClKu0SFh.js:40
+Gs @ index-ClKu0SFh.js:40
+pv @ index-ClKu0SFh.js:40
+Us @ index-ClKu0SFh.js:38
+(anonymous) @ index-ClKu0SFh.js:40Understand this error
+index-ClKu0SFh.js:48 
+            
+            
+           GET https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/broker/trucks 401 (Unauthorized)
+(anonymous) @ index-ClKu0SFh.js:48
+i @ index-ClKu0SFh.js:40
+w @ index-ClKu0SFh.js:40
+start @ index-ClKu0SFh.js:40
+fetch @ index-ClKu0SFh.js:40
+ya @ index-ClKu0SFh.js:40
+onSubscribe @ index-ClKu0SFh.js:40
+subscribe @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+iN @ index-ClKu0SFh.js:38
+zu @ index-ClKu0SFh.js:40
+oo @ index-ClKu0SFh.js:40
+CA @ index-ClKu0SFh.js:40
+Gs @ index-ClKu0SFh.js:40
+pv @ index-ClKu0SFh.js:40
+Us @ index-ClKu0SFh.js:38
+(anonymous) @ index-ClKu0SFh.js:40Understand this error
+index-ClKu0SFh.js:48 
+            
+            
+           GET https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/reusable-data/location 401 (Unauthorized)
+(anonymous) @ index-ClKu0SFh.js:48
+i @ index-ClKu0SFh.js:40
+w @ index-ClKu0SFh.js:40
+start @ index-ClKu0SFh.js:40
+fetch @ index-ClKu0SFh.js:40
+ya @ index-ClKu0SFh.js:40
+onSubscribe @ index-ClKu0SFh.js:40
+subscribe @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+iN @ index-ClKu0SFh.js:38
+zu @ index-ClKu0SFh.js:40
+oo @ index-ClKu0SFh.js:40
+CA @ index-ClKu0SFh.js:40
+Gs @ index-ClKu0SFh.js:40
+pv @ index-ClKu0SFh.js:40
+Us @ index-ClKu0SFh.js:38
+(anonymous) @ index-ClKu0SFh.js:40Understand this error
+index-ClKu0SFh.js:48 
+            
+            
+           GET https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/reusable-data/job_name 401 (Unauthorized)
+(anonymous) @ index-ClKu0SFh.js:48
+i @ index-ClKu0SFh.js:40
+w @ index-ClKu0SFh.js:40
+start @ index-ClKu0SFh.js:40
+fetch @ index-ClKu0SFh.js:40
+ya @ index-ClKu0SFh.js:40
+onSubscribe @ index-ClKu0SFh.js:40
+subscribe @ index-ClKu0SFh.js:40
+(anonymous) @ index-ClKu0SFh.js:40
+iN @ index-ClKu0SFh.js:38
+zu @ index-ClKu0SFh.js:40
+oo @ index-ClKu0SFh.js:40
+CA @ index-ClKu0SFh.js:40
+Gs @ index-ClKu0SFh.js:40
+pv @ index-ClKu0SFh.js:40
+Us @ index-ClKu0SFh.js:38
+(anonymous) @ index-ClKu0SFh.js:40Understand this error
+index-ClKu0SFh.js:357 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-ClKu0SFh.js:357
+zu @ index-ClKu0SFh.js:40
+oo @ index-ClKu0SFh.js:40
+CA @ index-ClKu0SFh.js:40
+Gs @ index-ClKu0SFh.js:40
+pv @ index-ClKu0SFh.js:40
+Us @ index-ClKu0SFh.js:38
+(anonymous) @ index-ClKu0SFh.js:40Understand this warning
+index-ClKu0SFh.js:357 
+            
+            
+           POST https://37729c16-42b3-4df2-9fef-5481c00cc9de.picard.prod.repl.run/api/customers 401 (Unauthorized)

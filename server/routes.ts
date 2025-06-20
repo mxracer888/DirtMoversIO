@@ -67,20 +67,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Session userId set to:", req.session.userId);
       console.log("Session after setting userId:", JSON.stringify(req.session, null, 2));
       
-      // Force session regeneration for better compatibility
-      await new Promise<void>((resolve, reject) => {
-        req.session.regenerate((err) => {
-          if (err) {
-            console.log("Session regeneration failed, proceeding with existing session");
-            req.session.userId = user.id;
-            resolve();
-          } else {
-            console.log("Session regenerated successfully");
-            req.session.userId = user.id;
-            resolve();
-          }
-        });
-      });
+      // Set session userId directly without regeneration
+      req.session.userId = user.id;
       
       // Use Promise-based session save to ensure it completes before response
       console.log("Saving session...");
